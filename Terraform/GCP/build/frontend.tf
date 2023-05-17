@@ -9,10 +9,10 @@ resource "google_cloudbuild_trigger" "frontend" {
   }
 
   substitutions = {
-    _SERVICE_NAME    = "frontend"
-    _STS_SERVER      = "https://${var.auth_hostname}"
-    _API_SERVER      = "https://${var.app_hostname}"
-    _GITHUB_DEPLOY   = var.github_front_secret
+    _SERVICE_NAME  = "frontend"
+    _STS_SERVER    = "https://${var.auth_hostname}"
+    _API_SERVER    = "https://${var.app_hostname}"
+    _GITHUB_DEPLOY = var.github_front_secret
   }
 
   filename = "cloudbuild.yaml"
@@ -30,18 +30,19 @@ resource "google_cloudbuild_trigger" "frontend_deploy" {
     _ACTION      = "$(body.message.data.action)"
     _IMAGE_TAG   = "$(body.message.data.tag)"
     _HOST        = var.front_hostname
+    _VALUES_PATH = "./k8s/infrastructure/frontend.yaml"
   }
 
   source_to_build {
-    uri       = "https://github.com/ita-social-projects/OoS-Frontend"
-    ref       = "refs/heads/develop"
+    uri       = "https://github.com/ita-social-projects/OoS-Infrastructure"
+    ref       = "refs/heads/main"
     repo_type = "GITHUB"
   }
 
   git_file_source {
-    path      = "cloudbuild-deploy.yaml"
-    uri       = "https://github.com/ita-social-projects/OoS-Frontend"
-    revision  = "refs/heads/develop"
+    path      = "cloudbuild-deploy.yml"
+    uri       = "https://github.com/ita-social-projects/OoS-Infrastructure"
+    revision  = "refs/heads/main"
     repo_type = "GITHUB"
   }
   filter = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-frontend:.*$\")"

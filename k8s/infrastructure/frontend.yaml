@@ -2,14 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-#########################################################################
-#### This is an example, current values are located in frontend repo ####
-#########################################################################
-
 global: {}
 
 nameOverride: ""
 fullnameOverride: ""
+
+commonLabels:
+  tier: frontend
+  service: frontend
 
 image:
   fullTagOverride: ""

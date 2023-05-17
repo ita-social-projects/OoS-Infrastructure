@@ -17,7 +17,7 @@ steps:
     args:
     - upgrade
     - --install
-    - --values=./k8s/infrastructure/webapi.yaml
+    - --values=$_VALUES_PATH
     - --set=image.fullTagOverride=$_IMAGE_TAG
     - --set=ingress.hosts[0].host=$_HOST
     - --set=ingress.tls[0].hosts[0]=$_HOST

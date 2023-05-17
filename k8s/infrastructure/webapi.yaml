@@ -9,7 +9,7 @@ fullnameOverride: ""
 
 commonLabels:
   tier: backend
-  app: webapi
+  service: webapi
 
 image:
   fullTagOverride: ""
