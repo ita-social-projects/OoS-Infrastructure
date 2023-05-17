@@ -195,7 +195,7 @@ vector:
     # captures pod name logs
     transforms:
       pod_name:
-        condition: starts_with(string!(.kubernetes.pod_name),"outofschool-webapi-")
+        condition: contains(string!(.kubernetes.pod_name),"webapp")
         inputs:
         - k3s_logs
         type: filter

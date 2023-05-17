@@ -246,7 +246,10 @@ module "build" {
   discord_notification_webhook = var.discord_notification_webhook
 }
 
+## TODO: For now it will be here so we can easily move back Cloud Run
+## TODO: if something goes wrong with cluster
 module "extralb" {
+  count         = 0
   source        = "./extralb"
   project       = var.project
   random_number = random_integer.ri.result
