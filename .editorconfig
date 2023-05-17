@@ -1,4 +1,4 @@
-﻿[*.{yml,yaml}]
+﻿[*]
 charset = utf-8
 end_of_line = lf
 indent_size = 2
@@ -10,3 +10,7 @@ trim_trailing_whitespace = true
 [*.md]
 max_line_length = 0
 trim_trailing_whitespace = false
+
+[*.{tf,tfvars}]
+indent_size = 4
+indent_style = space

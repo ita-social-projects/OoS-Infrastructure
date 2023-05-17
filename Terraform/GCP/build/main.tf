@@ -38,15 +38,15 @@ resource "google_cloudbuild_trigger" "app_deploy" {
   }
 
   source_to_build {
-    uri       = "https://github.com/ita-social-projects/OoS-Backend"
-    ref       = "refs/heads/develop"
+    uri       = "https://github.com/ita-social-projects/OoS-Infrastructure"
+    ref       = "refs/heads/main"
     repo_type = "GITHUB"
   }
 
   git_file_source {
     path      = "cloudbuild-app-deploy.yml"
-    uri       = "https://github.com/ita-social-projects/OoS-Backend"
-    revision  = "refs/heads/develop"
+    uri       = "https://github.com/ita-social-projects/OoS-Infrastructure"
+    revision  = "refs/heads/main"
     repo_type = "GITHUB"
   }
   filter = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-api:.*$\")"
@@ -82,15 +82,15 @@ resource "google_cloudbuild_trigger" "auth_deploy" {
   }
 
   source_to_build {
-    uri       = "https://github.com/ita-social-projects/OoS-Backend"
-    ref       = "refs/heads/develop"
+    uri       = "https://github.com/ita-social-projects/OoS-Infrastructure"
+    ref       = "refs/heads/main"
     repo_type = "GITHUB"
   }
 
   git_file_source {
     path      = "cloudbuild-auth-deploy.yaml"
-    uri       = "https://github.com/ita-social-projects/OoS-Backend"
-    revision  = "refs/heads/develop"
+    uri       = "https://github.com/ita-social-projects/OoS-Infrastructure"
+    revision  = "refs/heads/main"
     repo_type = "GITHUB"
   }
   filter = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-auth:.*$\")"
