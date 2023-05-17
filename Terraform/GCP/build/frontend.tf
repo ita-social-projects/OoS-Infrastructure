@@ -25,12 +25,13 @@ resource "google_cloudbuild_trigger" "frontend_deploy" {
   }
 
   substitutions = {
-    _KUBE_CONFIG = var.kube_secret
-    _POOL        = google_cloudbuild_worker_pool.pool.id
-    _ACTION      = "$(body.message.data.action)"
-    _IMAGE_TAG   = "$(body.message.data.tag)"
-    _HOST        = var.front_hostname
-    _VALUES_PATH = "./k8s/infrastructure/frontend.yaml"
+    _KUBE_CONFIG  = var.kube_secret
+    _POOL         = google_cloudbuild_worker_pool.pool.id
+    _ACTION       = "$(body.message.data.action)"
+    _IMAGE_TAG    = "$(body.message.data.tag)"
+    _HOST         = var.front_hostname
+    _VALUES_PATH  = "./k8s/infrastructure/frontend.yaml"
+    _SERVICE_NAME = "frontend"
   }
 
   source_to_build {
