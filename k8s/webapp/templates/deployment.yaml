@@ -59,7 +59,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Release.Name }}
           {{- if .Values.image.fullTagOverride }}
           image: "{{ .Values.image.fullTagOverride }}"
           {{- else }}
