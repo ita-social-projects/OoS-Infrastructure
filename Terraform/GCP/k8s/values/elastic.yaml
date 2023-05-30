@@ -151,6 +151,15 @@ vector:
   # Stateless-Aggregator = Deployment
   role: "Agent"
 
+  image:
+    repository: timberio/vector
+    pullPolicy: IfNotPresent
+    # Overrides the image tag, the default is `{image.version}-{image.base}`.
+    tag: "0.30.0-debian"
+    # Overrides the image version, the default is the Chart appVersion.
+    version: ""
+    base: "debian"
+
   resources:
     requests:
       cpu: 10m
@@ -182,7 +191,7 @@ vector:
   customConfig:
     data_dir: /vector-data-dir
     api:
-      enabled: false
+      enabled: true
       address: 127.0.0.1:8686
       playground: false
     sources:
@@ -192,18 +201,21 @@ vector:
           - /var/log/syslog
       k3s_logs:
         type: kubernetes_logs
-    # captures pod name logs
     transforms:
-      pod_name:
-        condition: contains(string!(.kubernetes.pod_name),"webapp")
-        inputs:
-        - k3s_logs
-        type: filter
+      status_code:
+        type: remap
+        inputs: 
+          - k3s_logs
+        source: |-
+          del(.kubernetes.pod_labels)
+          if .kubernetes.container_name == "webapp" && exists(parse_json!(.message).fields.StatusCode) {
+            .kubernetes_webapi_StatusCode = parse_json!(.message).fields.StatusCode
+          }
     sinks:
       es_logs:
         type: elasticsearch
         inputs:
-          - k3s_logs
+          - status_code
           - file-syslog
         api_version: v7
         compression: none
