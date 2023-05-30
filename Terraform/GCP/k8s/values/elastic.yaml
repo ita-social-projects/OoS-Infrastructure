@@ -208,7 +208,7 @@ vector:
           - k3s_logs
         source: |-
           del(.kubernetes.pod_labels)
-          if .kubernetes.container_name == "webapp" && exists(parse_json!(.message).fields.StatusCode) {
+          if .kubernetes.container_name == "webapi" && exists(parse_json!(.message).fields.StatusCode) {
             .kubernetes_webapi_StatusCode = parse_json!(.message).fields.StatusCode
           }
     sinks:
