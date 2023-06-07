@@ -17,6 +17,7 @@ resource "google_cloudbuild_trigger" "backend_api" {
   }
   substitutions = {
     _GITHUB_DEPLOY = var.github_back_secret
+    _REGION        = var.region
   }
 
   filename = "cloudbuild-app.yml"
@@ -61,6 +62,10 @@ resource "google_cloudbuild_trigger" "backend_auth" {
     push {
       branch = "develop"
     }
+  }
+
+  substitutions = {
+    _REGION = var.region
   }
 
   filename = "cloudbuild-auth.yml"

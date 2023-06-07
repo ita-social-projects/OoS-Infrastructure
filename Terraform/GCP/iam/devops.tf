@@ -6,6 +6,8 @@ locals {
     "roles/compute.networkUser",
     "roles/compute.instanceAdmin",
     "roles/storage.admin",
+    "roles/artifactregistry.repoAdmin",
+    "roles/artifactregistry.createOnPushRepoAdmin",
     "roles/cloudbuild.builds.editor",
     "roles/run.developer",
     "roles/secretmanager.secretAccessor",

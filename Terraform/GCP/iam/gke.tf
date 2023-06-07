@@ -67,21 +67,21 @@ resource "google_project_iam_member" "gke_lb" {
   project = var.project
 }
 
-data "google_iam_role" "gke_object" {
-  name = "roles/storage.objectViewer"
+data "google_iam_role" "gke_pull" {
+  name = "roles/artifactregistry.reader"
 }
 
-resource "google_project_iam_custom_role" "gke_object" {
-  role_id     = "gcp_storage_object_viewer_custom_role"
-  title       = "Custom StorageObject Viewer"
+resource "google_project_iam_custom_role" "gke_pull" {
+  role_id     = "gcp_artifact_viewer_custom_role"
+  title       = "Custom Artifact Reader"
   description = "Role with filtered resourcemanager.projects.get & resourcemanager.projects.list for Prisma Cloud Exception"
   permissions = [
-    for p in data.google_iam_role.gke_object.included_permissions : p if length(regexall("resourcemanager.projects.*", p)) == 0
+    for p in data.google_iam_role.gke_pull.included_permissions : p if length(regexall("resourcemanager.projects.*", p)) == 0
   ]
 }
 
-resource "google_project_iam_member" "gke_object" {
-  role    = google_project_iam_custom_role.gke_object.id
+resource "google_project_iam_member" "gke_pull" {
+  role    = google_project_iam_custom_role.gke_pull.id
   member  = "serviceAccount:${google_service_account.gke.email}"
   project = var.project
 }
