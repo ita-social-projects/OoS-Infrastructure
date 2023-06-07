@@ -1,13 +1,12 @@
 resource "google_service_account" "pull" {
   account_id   = "gcr-puller-${var.random_number}"
-  display_name = "Pull from Container Registry"
+  display_name = "Pull from Artifact Registry"
 }
 
-resource "google_storage_bucket_iam_member" "pull" {
-  for_each = local.prefixes
-  bucket   = "${each.key}artifacts.${var.project}.appspot.com"
-  role     = "roles/storage.objectViewer"
-  member   = "serviceAccount:${google_service_account.pull.email}"
+resource "google_project_iam_member" "pull" {
+  role    = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.pull.email}"
+  project = var.project
 }
 
 resource "time_rotating" "pull_key_rotation" {
@@ -20,8 +19,4 @@ resource "google_service_account_key" "pull" {
   keepers = {
     rotation_time = time_rotating.pull_key_rotation.rotation_rfc3339
   }
-}
-
-locals {
-  prefixes = toset(["", "eu.", "us."])
 }

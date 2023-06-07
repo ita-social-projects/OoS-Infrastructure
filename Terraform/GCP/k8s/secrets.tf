@@ -44,7 +44,7 @@ resource "kubernetes_secret" "pull" {
   data = {
     ".dockerconfigjson" = jsonencode({
       auths = {
-        "https://gcr.io" = {
+        "https://europe-west1-docker.pkg.dev" = {
           "username" = "_json_key"
           "password" = trimspace(base64decode(var.pull_sa_key))
           "email"    = var.pull_sa_email

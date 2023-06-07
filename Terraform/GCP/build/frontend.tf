@@ -13,6 +13,7 @@ resource "google_cloudbuild_trigger" "frontend" {
     _STS_SERVER    = "https://${var.auth_hostname}"
     _API_SERVER    = "https://${var.app_hostname}"
     _GITHUB_DEPLOY = var.github_front_secret
+    _REGION        = var.region
   }
 
   filename = "cloudbuild.yaml"
