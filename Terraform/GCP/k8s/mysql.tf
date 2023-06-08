@@ -1,6 +1,6 @@
 resource "helm_release" "mysql_operator" {
   name             = "mysql-operator"
-  chart            = "../../k8s/infrastructure/charts/mysql-operator-2.0.9.tgz"
+  chart            = "../../k8s/infrastructure/charts/mysql-operator-2.0.10.tgz"
   namespace        = "mysql-operator"
   create_namespace = true
   wait             = true
@@ -25,7 +25,7 @@ resource "kubernetes_persistent_volume_claim" "backup_pvc" {
 
 resource "helm_release" "mysql" {
   name          = "mysql"
-  chart         = "../../k8s/infrastructure/charts/mysql-innodbcluster-2.0.9.tgz"
+  chart         = "../../k8s/infrastructure/charts/mysql-innodbcluster-2.0.10.tgz"
   namespace     = data.kubernetes_namespace.oos.metadata[0].name
   wait          = true
   wait_for_jobs = true
