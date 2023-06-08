@@ -13,10 +13,10 @@ dependencies:
     version: v1.11.0
     repository: https://charts.jetstack.io
   - name: mysql-operator
-    version: 2.0.9
+    version: 2.0.10
     repository: https://mysql.github.io/mysql-operator
   - name: mysql-innodbcluster
-    version: 2.0.9
+    version: 2.0.10
     repository: https://mysql.github.io/mysql-operator
   - name: phpmyadmin
     version: 11.0.0
@@ -37,5 +37,5 @@ dependencies:
     version: 4.6.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: outofschool
-    version: 1.0.4
+    version: 1.0.5
     repository: "file://../webapp"

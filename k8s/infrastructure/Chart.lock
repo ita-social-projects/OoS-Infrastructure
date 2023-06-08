@@ -4,10 +4,10 @@ dependencies:
   version: v1.11.0
 - name: mysql-operator
   repository: https://mysql.github.io/mysql-operator
-  version: 2.0.9
+  version: 2.0.10
 - name: mysql-innodbcluster
   repository: https://mysql.github.io/mysql-operator
-  version: 2.0.9
+  version: 2.0.10
 - name: phpmyadmin
   repository: https://charts.bitnami.com/bitnami
   version: 11.0.0
@@ -28,6 +28,6 @@ dependencies:
   version: 4.6.0
 - name: outofschool
   repository: file://../webapp
-  version: 1.0.4
-digest: sha256:7365c33aa1e7dfd05271c3f5eced4ef1e1387963d95e21ca67b9b60144582c08
-generated: "2023-05-15T16:18:23.072551+03:00"
+  version: 1.0.5
+digest: sha256:32349b11d8e1abfc79329404735d522499e29c56cfb6bbe6c30d673369c2d1bd
+generated: "2023-06-08T13:49:31.372206+03:00"
