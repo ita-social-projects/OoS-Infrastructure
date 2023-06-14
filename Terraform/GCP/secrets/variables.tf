@@ -45,3 +45,7 @@ variable "geo_apikey" {
 
 variable "deployer_kubeconfig" {
 }
+
+variable "enable_cloud_run" {
+  type = bool
+}
