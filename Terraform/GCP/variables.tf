@@ -152,3 +152,8 @@ variable "k3s_workers" {
 variable "discord_notification_webhook" {
   type = string
 }
+
+variable "enable_cloud_run" {
+  type = bool
+  default = true
+}
