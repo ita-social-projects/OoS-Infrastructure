@@ -1,8 +1,9 @@
 resource "google_cloudbuild_trigger" "frontend" {
-  name = "frontend"
-  github {
-    owner = "ita-social-projects"
-    name  = "OoS-Frontend"
+  provider = google-beta
+  location = var.region
+  name     = "frontend"
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.frontend.id
     push {
       branch = "develop"
     }
@@ -20,7 +21,8 @@ resource "google_cloudbuild_trigger" "frontend" {
 }
 
 resource "google_cloudbuild_trigger" "frontend_deploy" {
-  name = "frontend-deploy"
+  location = var.region
+  name     = "frontend-deploy"
   pubsub_config {
     topic = google_pubsub_topic.gcr.id
   }
