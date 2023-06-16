@@ -7,10 +7,11 @@ resource "google_pubsub_topic" "gcr" {
 }
 
 resource "google_cloudbuild_trigger" "backend_api" {
-  name = "backend-api"
-  github {
-    owner = "ita-social-projects"
-    name  = "OoS-Backend"
+  provider = google-beta
+  location = var.region
+  name     = "backend-api"
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.backend.id
     push {
       branch = "develop"
     }
@@ -24,7 +25,8 @@ resource "google_cloudbuild_trigger" "backend_api" {
 }
 
 resource "google_cloudbuild_trigger" "app_deploy" {
-  name = "backend-api-deploy"
+  location = var.region
+  name     = "backend-api-deploy"
   pubsub_config {
     topic = google_pubsub_topic.gcr.id
   }
@@ -55,10 +57,11 @@ resource "google_cloudbuild_trigger" "app_deploy" {
 }
 
 resource "google_cloudbuild_trigger" "backend_auth" {
-  name = "backend-auth"
-  github {
-    owner = "ita-social-projects"
-    name  = "OoS-Backend"
+  provider = google-beta
+  location = var.region
+  name     = "backend-auth"
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.backend.id
     push {
       branch = "develop"
     }
@@ -72,7 +75,8 @@ resource "google_cloudbuild_trigger" "backend_auth" {
 }
 
 resource "google_cloudbuild_trigger" "auth_deploy" {
-  name = "backend-auth-deploy"
+  location = var.region
+  name     = "backend-auth-deploy"
   pubsub_config {
     topic = google_pubsub_topic.gcr.id
   }
