@@ -43,10 +43,11 @@ elasticsearch:
       xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
       xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
       xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
-      xpack.security.http.ssl.enabled: false
-      xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
-      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
-      xpack.security.http.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
+      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
+      xpack.security.http.ssl.truststore.password: ${PKS12_PASSWORD}
+      xpack.security.http.ssl.keystore.password: ${PKS12_PASSWORD}
     elasticsearch-plugins.yml: |
       plugins:
         - id: analysis-icu
@@ -70,6 +71,11 @@ elasticsearch:
         secretKeyRef:
           name: elasticsearch-credentials
           key: username
+    - name: PKS12_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: pkcs12-password-secret
+          key: password-key
 
   # Allows you to load environment variables from kubernetes secret or config map
   envFrom: []

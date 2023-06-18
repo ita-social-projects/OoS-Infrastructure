@@ -105,6 +105,10 @@ elasticsearch:
 
 kibana:
   enabled: true
+  elasticsearchHosts: "https://elasticsearch-master:9200"
+  elasticsearchCertificateSecret: elastic-certificates
+  elasticsearchCertificateAuthoritiesFile: ca.crt
+  elasticsearchCredentialSecret: elasticsearch-credentials
   resources:
     requests:
       cpu: "200m"
@@ -125,6 +129,11 @@ kibana:
           key: password
     - name: 'NODE_OPTIONS'
       value: "--max-old-space-size=1024"
+    - name: "KIBANA_ENCRYPTION_KEY"
+      valueFrom:
+        secretKeyRef:
+          name: kibana-encription-secret
+          key: encryptionkey    
   ingress:
     enabled: true
     annotations:
@@ -138,7 +147,13 @@ kibana:
     tls:
     - secretName: kibana-tls
       hosts: []
-
+  kibanaConfig:
+    kibana.yml: |
+      server.ssl.enabled: true
+      server.ssl.certificate: /usr/share/kibana/config/certs/tls.crt
+      server.ssl.key: /usr/share/kibana/config/certs/tls.key
+      xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+      
 vector:
   enabled: true
 
@@ -171,9 +186,18 @@ vector:
     ports:
       - port: 8686
 
+  extraVolumeMounts:
+    - name: elasticsearch-certs
+      mountPath: /usr/share/vector/certs
+      readOnly: true
+  extraVolumes:
+    - name: elasticsearch-certs
+      secret:
+        secretName: elastic-certificates
+
   env:
     - name: "ES_ENDPOINT"
-      value: "http://elasticsearch-master.default.svc:9200"
+      value: "https://elasticsearch-master:9200"
     - name: "ES_USERNAME"
       valueFrom:
         secretKeyRef:
@@ -229,6 +253,13 @@ vector:
           strategy: basic
           user: "${ES_USERNAME}"
           password: "${ES_PASSWORD}"
+        tls:
+          ca_path: "/usr/share/vector/certs/ca.crt"
+          crt_path: "/usr/share/vector/certs/tls.crt" 
+          key_path: "/usr/share/vector/certs/tls.key" 
+          verify_certificate : true 
+          verify_hostname: true 
+            
 
 metricbeat:
   enabled: true
@@ -266,6 +297,11 @@ metricbeat:
         hostPath:
           path: /etc/mtab
           type: File
+
+    secretMounts:
+      - name: elasticsearch-master-certs
+        secretName: elastic-certificates
+        path: /usr/share/metricbeat/certs/      
 
     metricbeatConfig:
       metricbeat.yml: |-
@@ -325,10 +361,7 @@ metricbeat:
           password: '${ES_PASSWORD}'
           enabled: true
           allow_older_versions: true
-    secretMounts:
-      - name: elasticsearch-master-certs
-        secretName: elastic-certificates
-        path: /usr/share/metricbeat/certs/
+
     securityContext:
       runAsUser: 0
       privileged: false
@@ -343,9 +376,9 @@ metricbeat:
   deployment:
     extraEnvs:
       - name: "ES_ENDPOINT"
-        value: "http://elasticsearch-master.default.svc:9200"
+        value: "https://elasticsearch-master:9200"
       - name: "KIBANA_URL"
-        value: "http://elastic-kibana.default.svc:5601"
+        value: "https://elastic-kibana.:5601"
       - name: "ES_USERNAME"
         valueFrom:
           secretKeyRef:
@@ -439,6 +472,15 @@ metricbeat:
           password: '${ES_PASSWORD}'
           enabled: true
           allow_older_versions: true
+          ssl.certificate_authorities: ["/usr/share/metricbeat/certs/elastic-certificate/ca.crt"]
+          ssl.certificate: "/usr/share/metricbeat/certs/tls.crt"
+          ssl.key: "/usr/share/metricbeat/certs/tls.key"
+        setup.kibana:
+          host: "${KIBANA_URL}"
+          setup.kibana.ssl.enabled: true
+          setup.kibana.ssl.certificate_authorities: ["/usr/share/metricbeat/certs/elastic-certificate/ca.crt"]
+          setup.kibana.ssl.certificate: "/usr/share/metricbeat/certs/tls.crt"
+          setup.kibana.ssl.key: "/usr/share/metricbeat/certs/tls.key"
 
     secretMounts:
       - name: elasticsearch-master-certs

@@ -1,3 +1,4 @@
+
 resource "kubectl_manifest" "elastic_ssl" {
   yaml_body = <<-EOF
   apiVersion: cert-manager.io/v1
@@ -16,6 +17,12 @@ resource "kubectl_manifest" "elastic_ssl" {
       name: ${kubectl_manifest.oos_issuer.name}
     renewBefore: 168h0m0s
     secretName: elastic-certificates
+    keystores:
+      pkcs12:
+        create: true
+        passwordSecretRef: # Password used to encrypt the keystore
+          key: password-key
+          name: pkcs12-password-secret
   EOF
 }
 
