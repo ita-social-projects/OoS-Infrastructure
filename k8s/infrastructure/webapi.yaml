@@ -18,6 +18,22 @@ image:
 deploy:
   containerPort: 8080
 
+storage:
+  extraVolumes:
+    - name: elastic-certs
+      secret:
+        secretName: elastic-certificates
+    
+  extraVolumeMounts: 
+    - name: elastic-certs
+      mountPath: "/workspace/elastic/certs"
+      readOnly: true 
+
+initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', "mkdir -p /workspace/ca-certificates/binding/; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /workspace/ca-certificates/binding/outschool-ca.pem"]
+   
 configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
@@ -62,6 +78,20 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/session-cookie-hash: sha1
+    nginx.ingress.kubernetes.io/session-cookie-name: REALTIMESERVERID
+    nginx.ingress.kubernetes.io/server-snippets: |
+      location / {
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header Connection "upgrade";
+        proxy_cache_bypass $http_upgrade;
+      }
   hosts:
     - host: "replace_me"
       paths:

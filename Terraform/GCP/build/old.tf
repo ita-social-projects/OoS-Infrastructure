@@ -1,4 +1,5 @@
 resource "google_cloudbuild_trigger" "backend_auth_old" {
+  count    = var.enable_cloud_run ? 1 : 0
   name     = "backend-auth-old"
   disabled = true
   github {
@@ -23,7 +24,8 @@ resource "google_cloudbuild_trigger" "backend_auth_old" {
 }
 
 resource "google_cloudbuild_trigger" "backend_api_old" {
-  name = "backend-api-old"
+  count    = var.enable_cloud_run ? 1 : 0
+  name     = "backend-api-old"
   disabled = true
   github {
     owner = "ita-social-projects"
@@ -51,6 +53,7 @@ resource "google_cloudbuild_trigger" "backend_api_old" {
 }
 
 resource "google_cloudbuild_trigger" "frontend_old" {
+  count    = var.enable_cloud_run ? 1 : 0
   name     = "frontend-old"
   disabled = true
   github {

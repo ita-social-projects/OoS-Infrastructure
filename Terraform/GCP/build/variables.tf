@@ -125,3 +125,7 @@ variable "gcf_sa_email" {
 variable "discord_notification_webhook" {
   type = string
 }
+
+variable "enable_cloud_run" {
+  type = bool
+}

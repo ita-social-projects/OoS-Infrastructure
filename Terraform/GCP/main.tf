@@ -210,6 +210,7 @@ module "secrets" {
   github_access_token        = var.github_access_token
   geo_apikey                 = var.geo_apikey
   deployer_kubeconfig        = module.k8s.deployer_kubeconfig
+  enable_cloud_run           = var.enable_cloud_run
 }
 
 module "build" {
@@ -244,12 +245,13 @@ module "build" {
   gcf_bucket                   = module.storage.gcf_bucket
   gcf_sa_email                 = module.iam.gcf_sa_email
   discord_notification_webhook = var.discord_notification_webhook
+  enable_cloud_run             = var.enable_cloud_run
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run
 ## TODO: if something goes wrong with cluster
 module "extralb" {
-  count         = 0
+  count         = var.enable_cloud_run ? 1 : 0
   source        = "./extralb"
   project       = var.project
   random_number = random_integer.ri.result
