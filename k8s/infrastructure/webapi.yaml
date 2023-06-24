@@ -119,6 +119,15 @@ storage:
     - name: elastic-certs
       secret:
         secretName: elastic-certificates
+    - name: binding
+      empty: {}    
+
+  extraVolumeMounts: 
+      - name: elastic-certs
+        mountPath: "/workspace/elastic/certs"
+        readOnly: true
+      - name: binding
+        mountPAth: /workspace/ca-certificates/binding   
 
 initContainers:
   - name: init-myservice
@@ -128,6 +137,8 @@ initContainers:
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
         readOnly: true
+      - name: binding
+        mountPAth: /workspace/ca-certificates/binding
 
 
 
