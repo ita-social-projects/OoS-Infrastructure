@@ -287,6 +287,6 @@ initContainers:
         mountPath: "/workspace/elastic/certs"
         readOnly: true
       - name: binding
-        mountPAth: /workspace/ca-certificates/binding
+        mountPath: /workspace/ca-certificates/binding
 
 
