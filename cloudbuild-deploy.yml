@@ -18,7 +18,7 @@ steps:
     - upgrade
     - --install
     - --values=$_VALUES_PATH
-    - --set=image.fullTagOverride="europe-west1-docker.pkg.dev/gcp101292-pozashkillya/outofschool/oos-api:f69ceb8"
+    - --set=image.fullTagOverride=$_IMAGE_TAG
     - --set=ingress.hosts[0].host=$_HOST
     - --set=ingress.tls[0].hosts[0]=$_HOST
     - --wait

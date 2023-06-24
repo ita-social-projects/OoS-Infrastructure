@@ -114,4 +114,15 @@ serviceAccount:
   imagePullSecrets:
   - name: outofschool-gcp-pull-secrets
 
+storage:
+  extraVolumes:
+    - name: elastic-certs
+      secret:
+        secretName: elastic-certificates
+
+  extraVolumeMounts: 
+    - name: elastic-certs
+      mountPath: "/workspace/elastic/certs"
+      readOnly: true
+
 
