@@ -92,3 +92,37 @@ resource "kubernetes_secret" "webapi_secrets" {
     GeoCoding__ApiKey = var.geo_apikey
   }
 }
+
+resource "random_password" "pkcs12-password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "kubernetes_secret" "pkcs12-password-secret" {
+  metadata {
+    name      = "pkcs12-password"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    password-key = random_password.pkcs12-password.result
+  }
+}
+
+resource "random_password" "kibana-encriptionkey" {
+  length           = 32
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "kubernetes_secret" "kibana-encription-secret" {
+  metadata {
+    name      = "kibana-key"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    encryptionkey = random_password.kibana-encriptionkey.result
+  }
+}
