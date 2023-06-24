@@ -114,31 +114,31 @@ serviceAccount:
   imagePullSecrets:
   - name: outofschool-gcp-pull-secrets
 
-storage:
+  storage:
   extraVolumes:
     - name: elastic-certs
       secret:
         secretName: elastic-certificates
     - name: binding
-      empty: {}    
+      empty: {}
 
   extraVolumeMounts: 
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
         readOnly: true
       - name: binding
-        mountPAth: /workspace/ca-certificates/binding   
+        mountPath: /workspace/ca-certificates/binding   
 
 initContainers:
   - name: init-myservice
     image: busybox:1.28
-    command: ['sh', '-c', "mkdir -p /workspace/ca-certificates/binding/; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /workspace/ca-certificates/binding/outschool-ca.pem"]
+    command: ['sh', '-c', "mkdir -p /workspace/ca-certificates/binding; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /workspace/ca-certificates/binding/outschool-ca.pem"]
     volumeMounts: 
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
         readOnly: true
       - name: binding
-        mountPAth: /workspace/ca-certificates/binding
+        mountPath: /workspace/ca-certificates/binding
 
 
 
