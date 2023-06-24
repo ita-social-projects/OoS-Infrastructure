@@ -262,20 +262,3 @@ pdb:
   create: false
   minAvailable: 1
   maxUnavailable: ""
-
-storage:
-  extraVolumes:
-    - name: elastic-certs
-      secret:
-        secretName: elastic-certificates
-
-  extraVolumeMounts: 
-    - name: elastic-certs
-      mountPath: "/workspace/elastic/certs"
-      readOnly: true 
-
-initContainers:
-  - name: init-myservice
-    image: busybox:1.28
-    command: ['sh', '-c', "mkdir -p /workspace/ca-certificates/binding/; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /workspace/ca-certificates/binding/outschool-ca.pem"]
-
