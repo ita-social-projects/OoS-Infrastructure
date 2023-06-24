@@ -114,7 +114,7 @@ serviceAccount:
   imagePullSecrets:
   - name: outofschool-gcp-pull-secrets
 
-  storage:
+storage:
   extraVolumes:
     - name: elastic-certs
       secret:
