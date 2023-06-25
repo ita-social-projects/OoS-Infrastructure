@@ -125,21 +125,25 @@ storage:
 
   extraVolumeMounts: 
       - name: elastic-certs
-        mountPath: "/workspace/bindings/ca-certificates"
+        mountPath: "/workspace/elastic/certs"
         readOnly: true
-      # - name: binding
-      #   mountPath: /workspace/bindings/ca-certificates
+      - name: binding
+        mountPath: /workspace/bindings/ca-certificates
 
-# initContainers:
-#   - name: init-myservice
-#     image: busybox:1.28
-#     command: ['sh', '-c', "mkdir -p /workspace/bindings/ca-certificates; echo ca-certificates > /workspace/bindings/ca-certificates/type; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /workspace/bindings/ca-certificates/outschool-ca.pem"]
-#     volumeMounts: 
-#       - name: elastic-certs
-#         mountPath: "/workspace/elastic/certs"
-#         readOnly: true
-#       - name: binding
-#         mountPath: /workspace/bindings/ca-certificates
+initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    #command: ['sh', '-c', "mkdir -p /workspace/bindings/ca-certificates; echo ca-certificates > /workspace/bindings/ca-certificates/type; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /workspace/bindings/ca-certificates/outschool-ca.pem"]
+    command: 
+      - sh
+      - -c
+      - "echo ca-certificates > /workspace/bindings/ca-certificates/type"
+    volumeMounts: 
+      - name: elastic-certs
+        mountPath: "/workspace/elastic/certs"
+        readOnly: true
+      - name: binding
+        mountPath: /workspace/bindings/ca-certificates
 
 
 
