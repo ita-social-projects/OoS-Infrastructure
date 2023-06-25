@@ -22,7 +22,7 @@ configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ConnectionStringsOverride__DefaultConnection__UserId: api
-    SERVICE_BINDING_ROOT:  /workspace/bindings/ca-certificates
+    SERVICE_BINDING_ROOT: /workspace/bindings/ca-certificates
   extraEnvVarsSecret: "webapi-secrets"
   secrets:
   - type: env
