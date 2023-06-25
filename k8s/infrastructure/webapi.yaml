@@ -22,7 +22,7 @@ configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ConnectionStringsOverride__DefaultConnection__UserId: api
-    SERVICE_BINDING_ROOT: /bindings
+    SERVICE_BINDING_ROOT:  /workspace/bindings/ca-certificates
   extraEnvVarsSecret: "webapi-secrets"
   secrets:
   - type: env
@@ -128,18 +128,18 @@ storage:
         mountPath: "/workspace/elastic/certs"
         readOnly: true
       - name: binding
-        mountPath: /bindings/ca-certificates
+        mountPath: /workspace/bindings/ca-certificates
 
 initContainers:
   - name: init-myservice
     image: busybox:1.28
-    command: ['sh', '-c', "mkdir -p /bindings/ca-certificates ; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /bindings/ca-certificates/outschool-ca.pem"]
+    command: ['sh', '-c', "mkdir -p /workspace//bindings/ca-certificates; echo ca-certificates >> /workspace/bindings/ca-certificates/type; cat /workspace/elastic/certs/ca.crt /workspace/elastic/certs/tls.crt /workspace/elastic/certs/tls.key > /bindings/ca-certificates/outschool-ca.pem"]
     volumeMounts: 
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
         readOnly: true
       - name: binding
-        mountPath: /bindings/ca-certificates
+        mountPath: /workspace/bindings/ca-certificates
 
 
 
