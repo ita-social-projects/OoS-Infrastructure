@@ -24,7 +24,7 @@ configuration:
     ConnectionStringsOverride__DefaultConnection__UserId: api
     SERVICE_BINDING_ROOT: /workspace/bindings
     Elasticsearch__Urls__0: https://elasticsearch-master:9200
-   extraEnvVarsSecret: "webapi-secrets"
+  extraEnvVarsSecret: "webapi-secrets"
   secrets:
   - type: env
     name: mysql-api-auth
