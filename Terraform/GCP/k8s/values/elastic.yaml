@@ -109,6 +109,13 @@ kibana:
   elasticsearchCertificateSecret: elastic-certificates
   elasticsearchCertificateAuthoritiesFile: ca.crt
   elasticsearchCredentialSecret: elasticsearch-credentials
+  kibanaConfig:
+    kibana.yml: |
+      server.ssl.enabled: true
+      server.ssl.certificate: /usr/share/kibana/config/certs/tls.crt
+      server.ssl.key: /usr/share/kibana/config/certs/tls.key
+      xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+
   resources:
     requests:
       cpu: "200m"
@@ -144,7 +151,7 @@ kibana:
       hosts: []
 
 vector:
-  enabled: true
+  enabled: false
 
   # fullnameOverride -- Override the full name of resources.
   fullnameOverride: vector
@@ -235,7 +242,7 @@ vector:
           password: "${ES_PASSWORD}"
 
 metricbeat:
-  enabled: true
+  enabled: false
 
   # last release kube-state-metrics
   kube-state-metrics:
