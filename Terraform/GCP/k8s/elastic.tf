@@ -21,7 +21,7 @@ resource "kubectl_manifest" "elastic_ssl" {
         create: true
         passwordSecretRef: # Password used to encrypt the keystore
           key: password-key
-          name: pkcs12-password-secret
+          name: pkcs12-password
   EOF
 }
 

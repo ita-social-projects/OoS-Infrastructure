@@ -111,11 +111,7 @@ kibana:
   elasticsearchCredentialSecret: elasticsearch-credentials
   kibanaConfig:
     kibana.yml: |
-      server.ssl.enabled: true
-      server.ssl.certificate: /usr/share/kibana/config/certs/tls.crt
-      server.ssl.key: /usr/share/kibana/config/certs/tls.key
       xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
-
   resources:
     requests:
       cpu: "200m"
@@ -136,6 +132,11 @@ kibana:
           key: password
     - name: 'NODE_OPTIONS'
       value: "--max-old-space-size=1024"
+    - name: "KIBANA_ENCRYPTION_KEY"
+      valueFrom:
+        secretKeyRef:
+          name: kibana-key
+          key: encryptionkey     
   ingress:
     enabled: true
     annotations:
