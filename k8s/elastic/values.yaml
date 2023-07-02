@@ -75,9 +75,9 @@ elasticsearch:
       path: /usr/share/elasticsearch/config/certs
 
   # Allows you to load environment variables from kubernetes secret or config map
-  envFrom: []
-  # - secretRef:
-  #     name: env-secret
+  envFrom: 
+  - secretRef:
+      name: root-secret
   # - configMapRef:
   #     name: config-map
   hostAliases: []

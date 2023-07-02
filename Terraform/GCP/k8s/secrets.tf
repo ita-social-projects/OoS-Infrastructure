@@ -123,6 +123,6 @@ resource "kubernetes_secret" "pkcs12-password-secret" {
   }
 
   data = {
-    PKS12-PASSWORD = random_password.pkcs12-password
+    PKS12-PASSWORD = random_password.pkcs12-password.result
   }
 }
