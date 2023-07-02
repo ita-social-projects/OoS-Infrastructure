@@ -29,11 +29,6 @@ generateCertificate: false
 
 elasticsearch:
   replicas: 1
-  protocol: http
-  secretMounts:
-    - name: elastic-certificates
-      secretName: elastic-certificates
-      path: /usr/share/elasticsearch/config/certs
   extraEnvs:
     - name: ELASTIC_PASSWORD
       valueFrom:

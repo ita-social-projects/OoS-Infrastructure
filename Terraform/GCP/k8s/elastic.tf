@@ -16,12 +16,6 @@ resource "kubectl_manifest" "elastic_ssl" {
       name: ${kubectl_manifest.oos_issuer.name}
     renewBefore: 168h0m0s
     secretName: elastic-certificates
-    keystores:
-      pkcs12:
-        create: true
-        passwordSecretRef: # Password used to encrypt the keystore
-          key: password-key
-          name: pkcs12-password
   EOF
 }
 
