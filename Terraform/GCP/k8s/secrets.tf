@@ -109,3 +109,20 @@ resource "kubernetes_secret" "kibana-encription-secret" {
     encryptionkey = random_password.kibana-encriptionkey.result
   }
 }
+
+resource "random_password" "pkcs12-password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "kubernetes_secret" "pkcs12-password-secret" {
+  metadata {
+    name      = "pkcs12-password"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    PKS12-PASSWORD = random_password.pkcs12-password
+  }
+}

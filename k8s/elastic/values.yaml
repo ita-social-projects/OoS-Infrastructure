@@ -47,15 +47,20 @@ elasticsearch:
         key: username
   esConfig:
     elasticsearch.yml: |
-      xpack.license.self_generated.type: basic
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
-      xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
-      xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
-      xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
+      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
+      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
+      xpack.security.transport.ssl.key_passphrase: ${PKS12-PASSWORD}
+      xpack.security.transport.ssl.truststore.password: ${PKS12-PASSWORD}
+      xpack.security.transport.ssl.keystore.password: ${PKS12-PASSWORD}
       xpack.security.http.ssl.enabled: true
-      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/tls/http.p12
+      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
+      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
+      xpack.security.http.ssl.key_passphrase: ${PKS12-PASSWORD}
+      xpack.security.http.ssl.truststore.password: ${PKS12-PASSWORD}
+      xpack.security.http.ssl.keystore.password: ${PKS12-PASSWORD}
     elasticsearch-plugins.yml: |
       plugins:
         - id: analysis-icu
@@ -66,11 +71,8 @@ elasticsearch:
   #    key = value
   secretMounts:
     - name: elastic-certificates
-      secretName: elastic-certificates
+      secretName: root-secret
       path: /usr/share/elasticsearch/config/certs
-    - name: elastic-security
-      secretName: elastic-security
-      path: /usr/share/elasticsearch/config/tls
 
   # Allows you to load environment variables from kubernetes secret or config map
   envFrom: []

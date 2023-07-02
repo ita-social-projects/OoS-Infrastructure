@@ -33,6 +33,14 @@ resource "kubectl_manifest" "ca_certificate" {
       algorithm: ECDSA
       size: 256
     secretName: root-secret
+    dnsNames:
+    - elasticsearch-master
+    keystores:
+      pkcs12:
+        create: true
+        passwordSecretRef: # Password used to encrypt the keystore
+          key: PKS12-PASSWORD
+          name: pkcs12-password
   EOF
 }
 
