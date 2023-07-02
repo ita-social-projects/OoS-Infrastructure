@@ -45,6 +45,12 @@ elasticsearch:
       secretKeyRef:
         name: elasticsearch-credentials
         key: username
+  - name: PCS12_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: root-secret
+        key: password
+            
   esConfig:
     elasticsearch.yml: |
       xpack.security.enabled: true
@@ -52,15 +58,13 @@ elasticsearch:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
-      xpack.security.transport.ssl.key_passphrase: ${PKS12-PASSWORD}
-      xpack.security.transport.ssl.truststore.password: ${PKS12-PASSWORD}
-      xpack.security.transport.ssl.keystore.password: ${PKS12-PASSWORD}
+      xpack.security.transport.ssl.truststore.password: ${password-key}
+      xpack.security.transport.ssl.keystore.password: ${password-key}
       xpack.security.http.ssl.enabled: true
       xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
       xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
-      xpack.security.http.ssl.key_passphrase: ${PKS12-PASSWORD}
-      xpack.security.http.ssl.truststore.password: ${PKS12-PASSWORD}
-      xpack.security.http.ssl.keystore.password: ${PKS12-PASSWORD}
+      xpack.security.http.ssl.truststore.password: ${password-key}
+      xpack.security.http.ssl.keystore.password: ${password-key}
     elasticsearch-plugins.yml: |
       plugins:
         - id: analysis-icu
@@ -70,14 +74,14 @@ elasticsearch:
   #  log4j2.properties: |
   #    key = value
   secretMounts:
-    - name: elastic-certificates
+    - name: root-secret
       secretName: root-secret
       path: /usr/share/elasticsearch/config/certs
 
   # Allows you to load environment variables from kubernetes secret or config map
   envFrom: 
   - secretRef:
-      name: root-secret
+      name: pkcs12-password-secret
   # - configMapRef:
   #     name: config-map
   hostAliases: []

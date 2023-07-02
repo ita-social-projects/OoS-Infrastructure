@@ -118,11 +118,11 @@ resource "random_password" "pkcs12-password" {
 
 resource "kubernetes_secret" "pkcs12-password-secret" {
   metadata {
-    name      = "pkcs12-password"
+    name      = "pkcs12-password-secret"
     namespace = data.kubernetes_namespace.oos.metadata[0].name
   }
 
   data = {
-    PKS12-PASSWORD = random_password.pkcs12-password.result
+    password-key = random_password.pkcs12-password.result
   }
 }
