@@ -28,7 +28,7 @@ elasticConfigJob:
         version: 2
   secret: elasticsearch-credentials
 
-generateCertificate: true
+generateCertificate: false
 
 elasticsearch:
   replicas: 1

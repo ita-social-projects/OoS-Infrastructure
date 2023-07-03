@@ -111,7 +111,7 @@ resource "kubernetes_secret" "kibana-encription-secret" {
 }
 
 resource "random_password" "pkcs12-password" {
-  length           = 16
+  length           = 32
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }

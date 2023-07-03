@@ -33,6 +33,8 @@ spec:
           mountPath: /etc/script
         - name: roles-vol
           mountPath: /etc/roles
+        - name: elastic-certs
+          mountPath: /etc/ssl/certs
       restartPolicy: OnFailure
       volumes:
       - name: roles-vol
@@ -41,6 +43,10 @@ spec:
       - name: script-vol
         configMap:
           name: {{ include "elastic.fullname" . }}-es-script
+      - name: elastic-certs
+        secret:
+          secretName: root-secret
+           
   backoffLimit: 4
   ttlSecondsAfterFinished: 3600
   activeDeadlineSeconds: 600
