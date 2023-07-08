@@ -104,9 +104,6 @@ kibana:
   elasticsearchCertificateSecret: elastic-certificates
   elasticsearchCertificateAuthoritiesFile: ca.crt
   elasticsearchCredentialSecret: elasticsearch-credentials
-  kibanaConfig:
-    kibana.yml: |
-      xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
   resources:
     requests:
       cpu: "200m"
