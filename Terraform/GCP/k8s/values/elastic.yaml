@@ -101,27 +101,10 @@ elasticsearch:
 kibana:
   enabled: true
   elasticsearchHosts: "https://elasticsearch-master:9200"
-  elasticsearch.ssl.certificateAuthorities: [ "config/certs/ca.crt" ]
+  elasticsearchCertificateSecret: root-secret
+  elasticsearch.ssl.certificateAuthorities: ca.crt
   elasticsearchCredentialSecret: elasticsearch-credentials
   protocol: http
-  extraEnvs:
-  - name: "KIBANA_ENCRYPTION_KEY"
-    valueFrom:
-      secretKeyRef:
-        name: kibana
-        key: encryptionkey
-  envFrom: 
-  - secretRef:
-      name: pkcs12-password-secret
-  extraVolumes:
-    - name: elastic-certs
-      secret:
-        secretName: root-secret
-
-  extraVolumeMounts:
-    - name: elastic-certs
-      mountPath: /usr/share/kibana/config/certs
-      readOnly: true
   # - name: extras
   #   mountPath: /usr/share/extras
   #   readOnly: true
