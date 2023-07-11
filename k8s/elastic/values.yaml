@@ -50,7 +50,7 @@ elasticsearch:
       secretKeyRef:
         name: root-secret
         key: password
-            
+
   esConfig:
     elasticsearch.yml: |
       xpack.security.enabled: true
@@ -75,12 +75,12 @@ elasticsearch:
   #  log4j2.properties: |
   #    key = value
   secretMounts:
-    - name: root-secret
-      secretName: root-secret
+    - name: elastic-certificates
+      secretName: elastic-certificates
       path: /usr/share/elasticsearch/config/certs
 
   # Allows you to load environment variables from kubernetes secret or config map
-  envFrom: 
+  envFrom:
   - secretRef:
       name: pkcs12-password-secret
   # - configMapRef:
@@ -120,23 +120,23 @@ elasticsearch:
   #       secretName: elastic-certificates
   #   - name: elastic-https
   #     emptyDir: {}
-  # extraVolumeMounts: 
+  # extraVolumeMounts:
   #   - name: elastic-https
   #     mountPath: /usr/share/elasticsearch/config/tls
   # initContainers:
   #   - name: init
   #     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
-  #     command: 
+  #     command:
   #       - sh
   #       - -c
   #       - "./bin/elasticsearch-certutil cert --name elasticsearch-master --dns elasticsearch-master --dns elasticsearch-master-0 --ca-cert config/certs/ca.crt --ca-key config/certs/tls.key --pass '' --ca-pass '' --out config/tls/http.p12"
-  #     volumeMounts: 
+  #     volumeMounts:
   #       - name: elastic-certs
   #         mountPath: /usr/share/elasticsearch/config/certs
   #         readOnly: true
   #       - name: elastic-https
   #         mountPath: /usr/share/elasticsearch/config/tls
-  
+
 
   resources:
     requests:
@@ -180,10 +180,10 @@ kibana:
   enabled: false
   resources:
     requests:
-      cpu: "500m"
+      cpu: "512m"
       memory: "1Gi"
     limits:
-      cpu: "500m"
+      cpu: "512m"
       memory: "1Gi"
   extraEnvs:
     - name: 'ELASTICSEARCH_USERNAME'

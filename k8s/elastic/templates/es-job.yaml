@@ -34,7 +34,7 @@ spec:
         - name: roles-vol
           mountPath: /etc/roles
         - name: elastic-certs
-          mountPath: /etc/ssl/certs
+          mountPath: /usr/local/share/ca-certificates
       restartPolicy: OnFailure
       volumes:
       - name: roles-vol
@@ -45,8 +45,8 @@ spec:
           name: {{ include "elastic.fullname" . }}-es-script
       - name: elastic-certs
         secret:
-          secretName: root-secret
-           
+          secretName: elastic-certificates
+
   backoffLimit: 4
   ttlSecondsAfterFinished: 3600
   activeDeadlineSeconds: 600

@@ -93,23 +93,6 @@ resource "kubernetes_secret" "webapi_secrets" {
   }
 }
 
-resource "random_password" "kibana-encriptionkey" {
-  length           = 32
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
-}
-
-resource "kubernetes_secret" "kibana-encription-secret" {
-  metadata {
-    name      = "kibana-key"
-    namespace = data.kubernetes_namespace.oos.metadata[0].name
-  }
-
-  data = {
-    encryptionkey = random_password.kibana-encriptionkey.result
-  }
-}
-
 resource "random_password" "pkcs12-password" {
   length           = 32
   special          = true
