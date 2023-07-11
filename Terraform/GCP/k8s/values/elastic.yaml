@@ -462,7 +462,7 @@ metricbeat:
           password: '${ES_PASSWORD}'
           enabled: true
           allow_older_versions: true
-          ssl.certificate_authorities: ["/usr/share/metricbeat/certs/keystore.p12"]
+          ssl.certificate_authorities: ["/usr/share/metricbeat/certs/ca.crt"]
     secretMounts:
       - name: elasticsearch-master-certs
         secretName: elastic-certificates
