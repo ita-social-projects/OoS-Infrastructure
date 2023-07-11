@@ -127,6 +127,11 @@ variable "redis_port" {
   type = number
 }
 
+variable "enable_cloud_run" {
+  type = bool
+  default = false
+}
+
 variable "geo_apikey" {
   type = string
 }
@@ -153,7 +158,3 @@ variable "discord_notification_webhook" {
   type = string
 }
 
-variable "enable_cloud_run" {
-  type = bool
-  default = true
-}

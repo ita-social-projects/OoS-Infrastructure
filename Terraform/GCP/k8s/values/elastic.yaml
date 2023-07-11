@@ -23,17 +23,11 @@ elasticConfigJob:
             - space:default
       metadata:
         version: 2
-  secret: elasticsearch-credentials
 
 generateCertificate: false
 
 elasticsearch:
   replicas: 1
-  protocol: http
-  secretMounts:
-    - name: elastic-certificates
-      secretName: elastic-certificates
-      path: /usr/share/elasticsearch/config/certs
   extraEnvs:
     - name: ELASTIC_PASSWORD
       valueFrom:
@@ -105,6 +99,20 @@ elasticsearch:
 
 kibana:
   enabled: true
+  elasticsearchHosts: "https://elasticsearch-master:9200"
+  elasticsearchCredentialSecret: "elasticsearch-credentials"
+  protocol: http
+  # - name: extras
+  #   mountPath: /usr/share/extras
+  #   readOnly: true
+  #
+
+  healthCheckPath: "/api/status"
+  secretMounts:
+    - name: elastic-certificates
+      secretName: elastic-certificates
+      path: /usr/share/kibana/config/certs
+
   resources:
     requests:
       cpu: "200m"
@@ -113,7 +121,9 @@ kibana:
       cpu: "500m"
       memory: "1256Mi"
   extraEnvs:
-    - name: 'ELASTICSEARCH_USERNAME'
+    - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+      value: "/usr/share/kibana/config/certs/ca.crt"
+    - name: "ELASTICSEARCH_USERNAME"
       valueFrom:
         secretKeyRef:
           name: elasticsearch-credentials
@@ -173,7 +183,7 @@ vector:
 
   env:
     - name: "ES_ENDPOINT"
-      value: "http://elasticsearch-master.default.svc:9200"
+      value: "https://elasticsearch-master:9200"
     - name: "ES_USERNAME"
       valueFrom:
         secretKeyRef:
@@ -184,6 +194,16 @@ vector:
         secretKeyRef:
           name: elasticsearch-credentials
           key: password
+
+  extraVolumeMounts:
+    - name: elastic-certificates
+      mountPath: /usr/share/vector/elastic
+      readOnly: true
+
+  extraVolumes:
+    - name: elastic-certificates
+      secret:
+        secretName: elastic-certificates
 
   # customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
   # using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/)
@@ -204,7 +224,7 @@ vector:
     transforms:
       status_code:
         type: remap
-        inputs: 
+        inputs:
           - k3s_logs
         source: |-
           del(.kubernetes.pod_labels)
@@ -229,6 +249,9 @@ vector:
           strategy: basic
           user: "${ES_USERNAME}"
           password: "${ES_PASSWORD}"
+        tls:
+          ca_path : "/usr/share/vector/elastic/ca.crt"
+          verify_certificate : true
 
 metricbeat:
   enabled: true
@@ -242,7 +265,7 @@ metricbeat:
     enabled: true
     extraEnvs:
       - name: "ES_ENDPOINT"
-        value: "http://elasticsearch-master.default.svc:9200"
+        value: "https://elasticsearch-master:9200"
       - name: "ES_USERNAME"
         valueFrom:
           secretKeyRef:
@@ -324,7 +347,7 @@ metricbeat:
           username: '${ES_USERNAME}'
           password: '${ES_PASSWORD}'
           enabled: true
-          allow_older_versions: true
+          ssl.certificate_authorities: ["/usr/share/metricbeat/certs/ca.crt"]
     secretMounts:
       - name: elasticsearch-master-certs
         secretName: elastic-certificates
@@ -343,9 +366,9 @@ metricbeat:
   deployment:
     extraEnvs:
       - name: "ES_ENDPOINT"
-        value: "http://elasticsearch-master.default.svc:9200"
+        value: "https://elasticsearch-master:9200"
       - name: "KIBANA_URL"
-        value: "http://elastic-kibana.default.svc:5601"
+        value: "http://elastic-kibana:5601"
       - name: "ES_USERNAME"
         valueFrom:
           secretKeyRef:
@@ -439,7 +462,7 @@ metricbeat:
           password: '${ES_PASSWORD}'
           enabled: true
           allow_older_versions: true
-
+          ssl.certificate_authorities: ["/usr/share/metricbeat/certs/ca.crt"]
     secretMounts:
       - name: elasticsearch-master-certs
         secretName: elastic-certificates

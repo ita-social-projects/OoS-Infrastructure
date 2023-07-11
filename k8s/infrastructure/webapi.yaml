@@ -22,6 +22,8 @@ configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ConnectionStringsOverride__DefaultConnection__UserId: api
+    SERVICE_BINDING_ROOT: /workspace/bindings
+    Elasticsearch__Urls__0: https://elasticsearch-master:9200
   extraEnvVarsSecret: "webapi-secrets"
   secrets:
   - type: env
@@ -113,3 +115,35 @@ readinessProbe:
 serviceAccount:
   imagePullSecrets:
   - name: outofschool-gcp-pull-secrets
+
+storage:
+  extraVolumes:
+    - name: elastic-certs
+      secret:
+        secretName: elastic-certificates
+    - name: binding
+      emptyDir: {}
+
+  extraVolumeMounts: 
+      - name: elastic-certs
+        mountPath: "/workspace/elastic/certs"
+        readOnly: true
+      - name: binding
+        mountPath: /workspace/bindings/ca-certificates
+
+initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: 
+      - sh
+      - -c
+      - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/elastic/certs/*.crt /workspace/bindings/ca-certificates"
+    volumeMounts: 
+      - name: elastic-certs
+        mountPath: "/workspace/elastic/certs"
+        readOnly: true
+      - name: binding
+        mountPath: /workspace/bindings/ca-certificates
+
+
+
