@@ -180,10 +180,10 @@ kibana:
   enabled: false
   resources:
     requests:
-      cpu: "512m"
+      cpu: "500m"
       memory: "1Gi"
     limits:
-      cpu: "512m"
+      cpu: "500m"
       memory: "1Gi"
   extraEnvs:
     - name: 'ELASTICSEARCH_USERNAME'

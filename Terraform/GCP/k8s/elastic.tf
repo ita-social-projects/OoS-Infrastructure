@@ -9,6 +9,8 @@ resource "kubectl_manifest" "elastic_ssl" {
     dnsNames:
       - elasticsearch-master
       - elasticsearch-master-0
+      - elasticsearch-master.default.svc
+      - elasticsearch-master.default.svc.cluster.local
     duration: 2160h0m0s
     issuerRef:
       kind: Issuer
