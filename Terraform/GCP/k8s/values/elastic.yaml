@@ -422,14 +422,12 @@ metricbeat:
             add_metadata: true
             hosts: ["${KUBE_STATE_METRICS_HOSTS}"]
           - module: elasticsearch
-            metricsets:
-              - node
-              - node_stats
             period: 60s
             hosts: ["${ES_ENDPOINT}"]
             username: "${ES_USERNAME}"
             password: "${ES_PASSWORD}"
             xpack.enabled: true
+            ssl.certificate_authorities: ["/usr/share/metricbeat/certs/ca.crt"]
           - module: kibana
             period: 60s
             hosts:
@@ -530,6 +528,7 @@ metricbeat:
         - events
         - pods
         - services
+        - jobs
       verbs: ["get", "list", "watch"]
     - apiGroups: ["extensions"]
       resources:
