@@ -17,6 +17,23 @@ image:
 
 deploy:
   containerPort: 8080
+  extraObjects:
+  - apiVersion: cert-manager.io/v1
+    kind: Certificate
+    metadata:
+      name: authserver-certificates
+      namespace: default
+    spec:
+      dnsNames:
+      - authserver-webapp
+      - authserver-webapp.default.svc
+      - authserver-webapp.default.svc.cluster.local
+      duration: 2160h0m0s
+      issuerRef:
+        kind: Issuer
+        name: oos-issuer
+      renewBefore: 168h0m0s
+      secretName: authserver-certificates
 
 configuration:
   extraEnvironment:
@@ -55,6 +72,17 @@ resources:
   requests:
     cpu: 500m
     memory: 256Mi
+
+storage:
+  extraVolumes:
+  - name: authserver-certificates
+    secret:
+      secretName: authserver-certificates
+
+  extraVolumeMounts:
+  - name: authserver-certificates
+    mountPath: "/etc/openiddict"
+    readOnly: true
 
 autoscaling:
   enabled: false
