@@ -1,201 +1,1399 @@
-# Default values for elastic.
-# This is a YAML-formatted file.
-
 # TODO: Think how to make it simpler so it can be moved to Elastic PostStart
 elasticConfigJob:
-  roles:
-    outofschool:
-      cluster:
-        - monitor
-      indices:
-        - names:
-            - workshop
-          privileges:
-            - read
-            - write
-            - delete
-            - create_index
-            - view_index_metadata
-            - manage
-          allow_restricted_indices: false
-      applications:
-        - application: kibana-.kibana
-          privileges:
-            - space_read
-          resources:
-            - space:default
-      metadata:
-        version: 2
-  secret: elasticsearch-credentials
-
-generateCertificate: false
 
 elasticsearch:
-  replicas: 1
-  protocol: https
-  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-  extraEnvs:
-  - name: ELASTIC_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: elasticsearch-credentials
-        key: password
-  - name: ELASTIC_USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: elasticsearch-credentials
-        key: username
-  - name: PCS12_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: root-secret
-        key: password
+  clusterName: "elasticsearch"
+  nodeGroup: "master"
 
-  esConfig:
-    elasticsearch.yml: |
-      xpack.security.enabled: true
-      xpack.security.transport.ssl.enabled: true
-      xpack.security.transport.ssl.verification_mode: certificate
-      xpack.security.transport.ssl.keystore.type: PKCS12
-      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
-      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
-      xpack.security.transport.ssl.truststore.password: ${password-key}
-      xpack.security.transport.ssl.keystore.password: ${password-key}
-      xpack.security.http.ssl.enabled: true
-      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
-      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
-      xpack.security.http.ssl.truststore.password: ${password-key}
-      xpack.security.http.ssl.keystore.password: ${password-key}
-    elasticsearch-plugins.yml: |
-      plugins:
-        - id: analysis-icu
-        - id: analysis-ukrainian
-        - id: mapper-murmur3
-        - id: mapper-size
+  # The service that non master groups will try to connect to when joining the cluster
+  # This should be set to clusterName + "-" + nodeGroup for your master group
+  masterService: ""
+
+  # Elasticsearch roles that will be applied to this nodeGroup
+  # These will be set as environment variables. E.g. node.master=true
+  roles:
+    master: "true"
+    ingest: "true"
+    data: "true"
+    remote_cluster_client: "true"
+    ml: "true"
+
+  replicas: 1
+  minimumMasterNodes: 2
+
+  esMajorVersion: ""
+
+  clusterDeprecationIndexing: "false"
+
+  # Allows you to add any config files in /usr/share/elasticsearch/config/
+  # such as elasticsearch.yml and log4j2.properties
+  esConfig: {}
+  #  elasticsearch.yml: |
+  #    key:
+  #      nestedkey: value
   #  log4j2.properties: |
   #    key = value
-  secretMounts:
-    - name: elastic-certificates
-      secretName: elastic-certificates
-      path: /usr/share/elasticsearch/config/certs
+
+  esJvmOptions: {}
+  #  processors.options: |
+  #    -XX:ActiveProcessorCount=3
+
+  # Extra environment variables to append to this nodeGroup
+  # This will be appended to the current 'env:' key. You can use any of the kubernetes env
+  # syntax here
+  extraEnvs: []
+  #  - name: MY_ENVIRONMENT_VAR
+  #    value: the_value_goes_here
 
   # Allows you to load environment variables from kubernetes secret or config map
-  envFrom:
-  - secretRef:
-      name: pkcs12-password-secret
+  envFrom: []
+  # - secretRef:
+  #     name: env-secret
   # - configMapRef:
   #     name: config-map
+
+  # A list of secrets and their paths to mount inside the pod
+  # This is useful for mounting certificates for security and for mounting
+  # the X-Pack license
+  secretMounts: []
+  #  - name: elastic-certificates
+  #    secretName: elastic-certificates
+  #    path: /usr/share/elasticsearch/config/certs
+  #    defaultMode: 0755
+
   hostAliases: []
   #- ip: "127.0.0.1"
   #  hostnames:
   #  - "foo.local"
   #  - "bar.local"
-  esJavaOpts: "-Xms512m -Xmx512m" # example: "-Xmx1g -Xms1g"
-  volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
-    storageClassName: "openebs-hostpath"
-    resources:
-      requests:
-        storage: 100M
-  # extraVolumes:
-  # - name: plugins
-  #   emptyDir: {}
-  # extraVolumeMounts:
-  # - name: plugins
-  #   mountPath: /plugins
-  # extraInitContainers:
-  # - name: plugins
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.16.1
-  #   command:
-  #   - /bin/sh
-  #   - '-c'
-  #   - |
-  #     ./bin/elasticsearch-plugin list | grep -q analysis-ukrainian || ./bin/elasticsearch-plugin install --batch analysis-icu analysis-ukrainian mapper-murmur3 mapper-size
-  #   volumeMounts:
-  #   - name: plugins
-  #     mountPath: /plugins
-  # extraVolumes:
-  #   - name: elastic-certs
-  #     secret:
-  #       secretName: elastic-certificates
-  #   - name: elastic-https
-  #     emptyDir: {}
-  # extraVolumeMounts:
-  #   - name: elastic-https
-  #     mountPath: /usr/share/elasticsearch/config/tls
-  # initContainers:
-  #   - name: init
-  #     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
-  #     command:
-  #       - sh
-  #       - -c
-  #       - "./bin/elasticsearch-certutil cert --name elasticsearch-master --dns elasticsearch-master --dns elasticsearch-master-0 --ca-cert config/certs/ca.crt --ca-key config/certs/tls.key --pass '' --ca-pass '' --out config/tls/http.p12"
-  #     volumeMounts:
-  #       - name: elastic-certs
-  #         mountPath: /usr/share/elasticsearch/config/certs
-  #         readOnly: true
-  #       - name: elastic-https
-  #         mountPath: /usr/share/elasticsearch/config/tls
 
+  image: "docker.elastic.co/elasticsearch/elasticsearch"
+  imageTag: "7.17.3"
+  imagePullPolicy: "IfNotPresent"
 
-  resources:
-    requests:
-      cpu: "500m"
-      memory: "1Gi"
-    limits:
-      cpu: "500m"
-      memory: "1Gi"
-  rbac:
-    create: true
-  lifecycle: {}
-  # preStop:
-  #   exec:
-  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-  # postStart:
-  #   exec:
-  #     command:
-  #       - bash
-  #       - -c
-  #       - |
-  #         #!/bin/bash
-  #         # Add a template to adjust number of shards/replicas
-  #         TEMPLATE_NAME=my_template
-  #         INDEX_PATTERN="logstash-*"
-  #         SHARD_COUNT=8
-  #         REPLICA_COUNT=1
-  #         ES_URL=http://localhost:9200
-  #         while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
-  #         curl -XPUT "$ES_URL/_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d'{"index_patterns":['\""$INDEX_PATTERN"\"'],"settings":{"number_of_shards":'$SHARD_COUNT',"number_of_replicas":'$REPLICA_COUNT'}}'
-  # TODO: check if need this
-  # Disable privileged init Container creation.
-  # sysctlInitContainer:
-  #   enabled: false
-  # TODO: check if need this
-  # Restrict the use of the memory-mapping when sysctlInitContainer is disabled.
-  # esConfig:
-  #   elasticsearch.yml: |
-  #     node.store.allow_mmap: false
+  podAnnotations:
+    {}
+    # iam.amazonaws.com/role: es-cluster
+
+  # additionals labels
+  labels: {}
+
+  esJavaOpts: "" # example: "-Xmx1g -Xms1g"
+
+  resources: {}
+
+  initResources: {}
+    # limits:
+    #   cpu: "25m"
+    #   # memory: "128Mi"
+    # requests:
+    #   cpu: "25m"
+    #   memory: "128Mi"
+
+  networkHost: "0.0.0.0"
+
+  volumeClaimTemplate: {}
+
+  rbac: {}
+
+  podSecurityPolicy:
+    create: false
+    name: ""
+    spec:
+      privileged: true
+      fsGroup:
+        rule: RunAsAny
+      runAsUser:
+        rule: RunAsAny
+      seLinux:
+        rule: RunAsAny
+      supplementalGroups:
+        rule: RunAsAny
+      volumes:
+        - secret
+        - configMap
+        - persistentVolumeClaim
+        - emptyDir
+
+  persistence:
+    enabled: true
+    labels:
+      # Add default labels for the volumeClaimTemplate of the StatefulSet
+      enabled: false
+    annotations: {}
+
+  extraVolumes:
+    []
+    # - name: extras
+    #   emptyDir: {}
+
+  extraVolumeMounts:
+    []
+    # - name: extras
+    #   mountPath: /usr/share/extras
+    #   readOnly: true
+
+  extraContainers:
+    []
+    # - name: do-something
+    #   image: busybox
+    #   command: ['do', 'something']
+
+  extraInitContainers:
+    []
+    # - name: do-something
+    #   image: busybox
+    #   command: ['do', 'something']
+
+  # This is the PriorityClass settings as defined in
+  # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+  priorityClassName: ""
+
+  # By default this will make sure two pods don't end up on the same node
+  # Changing this to a region would allow you to spread pods across regions
+  antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+  # Hard means that by default pods will only be scheduled if there are enough nodes for them
+  # and that they will never end up on the same node. Setting this to soft will do this "best effort"
+  antiAffinity: "hard"
+
+  # This is the node affinity settings as defined in
+  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#node-affinity-beta-feature
+  nodeAffinity: {}
+
+  # The default is to deploy all pods serially. By setting this to parallel all pods are started at
+  # the same time when bootstrapping the cluster
+  podManagementPolicy: "Parallel"
+
+  # The environment variables injected by service links are not used, but can lead to slow Elasticsearch boot times when
+  # there are many services in the current namespace.
+  # If you experience slow pod startups you probably want to set this to `false`.
+  enableServiceLinks: true
+
+  protocol: https
+  httpPort: 9200
+  transportPort: 9300
+
+  service: {}
+    # enabled: true
+    # labels: {}
+    # labelsHeadless: {}
+    # type: ClusterIP
+    # # Consider that all endpoints are considered "ready" even if the Pods themselves are not
+    # # https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec
+    # publishNotReadyAddresses: false
+    # nodePort: ""
+    # annotations: {}
+    # httpPortName: http
+    # transportPortName: transport
+    # loadBalancerIP: ""
+    # loadBalancerSourceRanges: []
+    # externalTrafficPolicy: ""
+
+  updateStrategy: RollingUpdate
+
+  # This is the max unavailable setting for the pod disruption budget
+  # The default value of 1 will make sure that kubernetes won't allow more than 1
+  # of your pods to be unavailable during maintenance
+  maxUnavailable: 1
+
+  podSecurityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #     - ALL
+    # # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  # How long to wait for elasticsearch to stop gracefully
+  terminationGracePeriod: 120
+
+  sysctlVmMaxMapCount: 262144
+
+  readinessProbe: {}
+    # failureThreshold: 3
+    # initialDelaySeconds: 10
+    # periodSeconds: 10
+    # successThreshold: 3
+    # timeoutSeconds: 5
+
+  # https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-health.html#request-params wait_for_status
+  clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
+
+  ## Use an alternate scheduler.
+  ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+  ##
+  schedulerName: ""
+
+  imagePullSecrets: []
+  nodeSelector: {}
+  tolerations: []
+
+  # Enabling this will publicly expose your Elasticsearch instance.
+  # Only enable this if you have security enabled on your cluster
+  ingress:
+    enabled: false
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    className: "nginx"
+    pathtype: ImplementationSpecific
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  nameOverride: ""
+  fullnameOverride: ""
+  healthNameOverride: ""
+
+  lifecycle:
+    {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+    # postStart:
+    #   exec:
+    #     command:
+    #       - bash
+    #       - -c
+    #       - |
+    #         #!/bin/bash
+    #         # Add a template to adjust number of shards/replicas
+    #         TEMPLATE_NAME=my_template
+    #         INDEX_PATTERN="logstash-*"
+    #         SHARD_COUNT=8
+    #         REPLICA_COUNT=1
+    #         ES_URL=http://localhost:9200
+    #         while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
+    #         curl -XPUT "$ES_URL/_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d'{"index_patterns":['\""$INDEX_PATTERN"\"'],"settings":{"number_of_shards":'$SHARD_COUNT',"number_of_replicas":'$REPLICA_COUNT'}}'
+
+  sysctlInitContainer:
+    enabled: true
+
+  keystore: []
+
+  networkPolicy:
+    ## Enable creation of NetworkPolicy resources. Only Ingress traffic is filtered for now.
+    ## In order for a Pod to access Elasticsearch, it needs to have the following label:
+    ## {{ template "uname" . }}-client: "true"
+    ## Example for default configuration to access HTTP port:
+    ## elasticsearch-master-http-client: "true"
+    ## Example for default configuration to access transport port:
+    ## elasticsearch-master-transport-client: "true"
+
+    http:
+      enabled: false
+      ## if explicitNamespacesSelector is not set or set to {}, only client Pods being in the networkPolicy's namespace
+      ## and matching all criteria can reach the DB.
+      ## But sometimes, we want the Pods to be accessible to clients from other namespaces, in this case, we can use this
+      ## parameter to select these namespaces
+      ##
+      # explicitNamespacesSelector:
+      #   # Accept from namespaces with all those different rules (only from whitelisted Pods)
+      #   matchLabels:
+      #     role: frontend
+      #   matchExpressions:
+      #     - {key: role, operator: In, values: [frontend]}
+      ## Additional NetworkPolicy Ingress "from" rules to set. Note that all rules are OR-ed.
+      ##
+      # additionalRules:
+      #   - podSelector:
+      #       matchLabels:
+      #         role: frontend
+      #   - podSelector:
+      #       matchExpressions:
+      #         - key: role
+      #           operator: In
+      #           values:
+      #             - frontend
+
+    transport:
+      ## Note that all Elasticsearch Pods can talk to themselves using transport port even if enabled.
+      enabled: false
+      # explicitNamespacesSelector:
+      #   matchLabels:
+      #     role: frontend
+      #   matchExpressions:
+      #     - {key: role, operator: In, values: [frontend]}
+      # additionalRules:
+      #   - podSelector:
+      #       matchLabels:
+      #         role: frontend
+      #   - podSelector:
+      #       matchExpressions:
+      #         - key: role
+      #           operator: In
+      #           values:
+      #             - frontend
+
+  tests:
+    enabled: true
+
+  # Deprecated
+  # please use the above podSecurityContext.fsGroup instead
+  fsGroup: ""
 
 kibana:
-  enabled: false
+  elasticsearchHosts: "https://elasticsearch-master:9200"
+
+  replicas: 1
+
+  # Extra environment variables to append to this nodeGroup
+  # This will be appended to the current 'env:' key. You can use any of the kubernetes env
+  # syntax here
+  extraEnvs:
+    - name: "NODE_OPTIONS"
+      value: "--max-old-space-size=1800"
+  #  - name: MY_ENVIRONMENT_VAR
+  #    value: the_value_goes_here
+
+  # Allows you to load environment variables from kubernetes secret or config map
+  envFrom: []
+  # - secretRef:
+  #     name: env-secret
+  # - configMapRef:
+  #     name: config-map
+
+  # A list of secrets and their paths to mount inside the pod
+  # This is useful for mounting certificates for security and for mounting
+  # the X-Pack license
+  secretMounts: []
+  #  - name: kibana-keystore
+  #    secretName: kibana-keystore
+  #    path: /usr/share/kibana/data/kibana.keystore
+  #    subPath: kibana.keystore # optional
+
+  hostAliases: []
+  #- ip: "127.0.0.1"
+  #  hostnames:
+  #  - "foo.local"
+  #  - "bar.local"
+
+  image: "docker.elastic.co/kibana/kibana"
+  imageTag: "7.17.3"
+  imagePullPolicy: "IfNotPresent"
+
+  # additionals labels
+  labels: {}
+
+  annotations: {}
+
+  podAnnotations: {}
+  # iam.amazonaws.com/role: es-cluster
+
   resources:
     requests:
-      cpu: "500m"
-      memory: "1Gi"
+      cpu: "1000m"
+      memory: "2Gi"
     limits:
-      cpu: "500m"
-      memory: "1Gi"
-  extraEnvs:
-    - name: 'ELASTICSEARCH_USERNAME'
-      valueFrom:
-        secretKeyRef:
-          name: elasticsearch-credentials
-          key: username
-    - name: 'ELASTICSEARCH_PASSWORD'
-      valueFrom:
-        secretKeyRef:
-          name: elasticsearch-credentials
-          key: password
+      cpu: "1000m"
+      memory: "2Gi"
+
+  protocol: http
+
+  serverHost: "0.0.0.0"
+
+  healthCheckPath: "/app/kibana"
+
+  # Allows you to add any config files in /usr/share/kibana/config/
+  # such as kibana.yml
+  kibanaConfig: {}
+  #   kibana.yml: |
+  #     key:
+  #       nestedkey: value
+
+  # If Pod Security Policy in use it may be required to specify security context as well as service account
+
+  podSecurityContext:
+    fsGroup: 1000
+
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    # readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+
+  serviceAccount: ""
+
+  # Whether or not to automount the service account token in the pod. Normally, Kibana does not need this
+  automountToken: true
+
+  # This is the PriorityClass settings as defined in
+  # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+  priorityClassName: ""
+
+  httpPort: 5601
+
+  extraVolumes:
+    []
+    # - name: extras
+    #   emptyDir: {}
+
+  extraVolumeMounts:
+    []
+    # - name: extras
+    #   mountPath: /usr/share/extras
+    #   readOnly: true
+    #
+
+  extraContainers: []
+  # - name: dummy-init
+  #   image: busybox
+  #   command: ['echo', 'hey']
+
+  extraInitContainers: []
+  # - name: dummy-init
+  #   image: busybox
+  #   command: ['echo', 'hey']
+
+  updateStrategy:
+    type: "Recreate"
+
+  service:
+    type: ClusterIP
+    loadBalancerIP: ""
+    port: 5601
+    nodePort: ""
+    labels: {}
+    annotations:
+      {}
+      # cloud.google.com/load-balancer-type: "Internal"
+      # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+      # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+      # service.beta.kubernetes.io/openstack-internal-load-balancer: "true"
+      # service.beta.kubernetes.io/cce-load-balancer-internal-vpc: "true"
+    loadBalancerSourceRanges:
+      []
+      # 0.0.0.0/0
+    httpPortName: http
+
+  ingress:
+    enabled: false
+    className: "nginx"
+    pathtype: ImplementationSpecific
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: kibana-example.local
+        paths:
+          - path: /
+    #tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 3
+    timeoutSeconds: 5
+
+  imagePullSecrets: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  nameOverride: ""
+  fullnameOverride: ""
+
+  lifecycle:
+    {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+    # postStart:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
+  # Deprecated - use only with versions < 6.6
+  elasticsearchURL: "" # "http://elasticsearch-master:9200"
+
+metricbeat:
+  daemonset:
+    # Annotations to apply to the daemonset
+    annotations: {}
+    # additionals labels
+    labels: {}
+    affinity: {}
+    # Include the daemonset
+    enabled: true
+    # Extra environment variables for Metricbeat container.
+    envFrom: []
+    # - configMapRef:
+    #     name: config-secret
+    extraEnvs: []
+    #  - name: MY_ENVIRONMENT_VAR
+    #    value: the_value_goes_here
+    extraVolumes: []
+    # - name: extras
+    #   emptyDir: {}
+    extraVolumeMounts: []
+    # - name: extras
+    #   mountPath: /usr/share/extras
+    #   readOnly: true
+    hostAliases: []
+    #- ip: "127.0.0.1"
+    #  hostnames:
+    #  - "foo.local"
+    #  - "bar.local"
+    hostNetworking: false
+    # Allows you to add any config files in /usr/share/metricbeat
+    # such as metricbeat.yml for daemonset
+    metricbeatConfig:
+      metricbeat.yml: |
+        metricbeat.modules:
+        - module: kubernetes
+          metricsets:
+            - container
+            - node
+            - pod
+            - system
+            - volume
+          period: 10s
+          host: "${NODE_NAME}"
+          hosts: ["https://${NODE_NAME}:10250"]
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          ssl.verification_mode: "none"
+          # If using Red Hat OpenShift remove ssl.verification_mode entry and
+          # uncomment these settings:
+          #ssl.certificate_authorities:
+            #- /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+          processors:
+          - add_kubernetes_metadata: ~
+        - module: kubernetes
+          enabled: true
+          metricsets:
+            - event
+        - module: system
+          period: 10s
+          metricsets:
+            - cpu
+            - load
+            - memory
+            - network
+            - process
+            - process_summary
+          processes: ['.*']
+          process.include_top_n:
+            by_cpu: 5
+            by_memory: 5
+        - module: system
+          period: 1m
+          metricsets:
+            - filesystem
+            - fsstat
+          processors:
+          - drop_event.when.regexp:
+              system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+        output.elasticsearch:
+          hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+    nodeSelector: {}
+    # A list of secrets and their paths to mount inside the pod
+    # This is useful for mounting certificates for security other sensitive values
+    secretMounts: []
+    #  - name: metricbeat-certificates
+    #    secretName: metricbeat-certificates
+    #    path: /usr/share/metricbeat/certs
+    # Various pod security context settings. Bear in mind that many of these have an impact on metricbeat functioning properly.
+    # - Filesystem group for the metricbeat user. The official elastic docker images always have an id of 1000.
+    # - User that the container will execute as. Typically necessary to run as root (0) in order to properly collect host container logs.
+    # - Whether to execute the metricbeat containers as privileged containers. Typically not necessarily unless running within environments such as OpenShift.
+    securityContext:
+      runAsUser: 0
+      privileged: false
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "1000m"
+        memory: "200Mi"
+    tolerations: []
+
+  deployment:
+    # Annotations to apply to the deployment
+    annotations: {}
+    # additionals labels
+    labels: {}
+    affinity: {}
+    # Include the deployment
+    enabled: true
+    # Extra environment variables for Metricbeat container.
+    envFrom: []
+    # - configMapRef:
+    #     name: config-secret
+    extraEnvs: []
+    #  - name: MY_ENVIRONMENT_VAR
+    #    value: the_value_goes_here
+    # Allows you to add any config files in /usr/share/metricbeat
+    extraVolumes: []
+    # - name: extras
+    #   emptyDir: {}
+    extraVolumeMounts: []
+    # - name: extras
+    #   mountPath: /usr/share/extras
+    #   readOnly: true
+    # such as metricbeat.yml for deployment
+    hostAliases: []
+    #- ip: "127.0.0.1"
+    #  hostnames:
+    #  - "foo.local"
+    #  - "bar.local"
+    metricbeatConfig:
+      metricbeat.yml: |
+        metricbeat.modules:
+        - module: kubernetes
+          enabled: true
+          metricsets:
+            - state_node
+            - state_deployment
+            - state_replicaset
+            - state_pod
+            - state_container
+          period: 10s
+          hosts: ["${KUBE_STATE_METRICS_HOSTS}"]
+        output.elasticsearch:
+          hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+    nodeSelector: {}
+    # A list of secrets and their paths to mount inside the pod
+    # This is useful for mounting certificates for security other sensitive values
+    secretMounts: []
+    #  - name: metricbeat-certificates
+    #    secretName: metricbeat-certificates
+    #    path: /usr/share/metricbeat/certs
+    securityContext:
+      runAsUser: 0
+      privileged: false
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "1000m"
+        memory: "200Mi"
+    tolerations: []
+
+  # Replicas being used for the kube-state-metrics metricbeat deployment
+  replicas: 1
+
+  extraContainers: ""
+  # - name: dummy-init
+  #   image: busybox
+  #   command: ['echo', 'hey']
+
+  extraInitContainers: ""
+  # - name: dummy-init
+  #   image: busybox
+  #   command: ['echo', 'hey']
+
+  # Root directory where metricbeat will write data to in order to persist registry data across pod restarts (file position and other metadata).
+  hostPathRoot: /var/lib
+
+  image: "docker.elastic.co/beats/metricbeat"
+  imageTag: "7.17.3"
+  imagePullPolicy: "IfNotPresent"
+  imagePullSecrets: []
+
+  livenessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - |
+          #!/usr/bin/env bash -e
+          curl --fail 127.0.0.1:5066
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  readinessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - |
+          #!/usr/bin/env bash -e
+          metricbeat test output
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  # Whether this chart should self-manage its service account, role, and associated role binding.
+  managedServiceAccount: true
+
+  clusterRoleRules:
+    - apiGroups: [""]
+      resources:
+        - nodes
+        - namespaces
+        - events
+        - pods
+        - services
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["extensions"]
+      resources:
+        - replicasets
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["apps"]
+      resources:
+        - statefulsets
+        - deployments
+        - replicasets
+      verbs: ["get", "list", "watch"]
+    - apiGroups: [""]
+      resources:
+        - nodes/stats
+      verbs: ["get"]
+    - apiGroups:
+        - ""
+      resources:
+        - nodes/stats
+      verbs:
+        - get
+    - nonResourceURLs:
+        - "/metrics"
+      verbs:
+        - get
+
+  podAnnotations:
+    {}
+    # iam.amazonaws.com/role: es-cluster
+
+  # Custom service account override that the pod will use
+  serviceAccount: ""
+
+  # Annotations to add to the ServiceAccount that is created if the serviceAccount value isn't set.
+  serviceAccountAnnotations:
+    {}
+    # eks.amazonaws.com/role-arn: arn:aws:iam::111111111111:role/k8s.clustername.namespace.serviceaccount
+
+  # How long to wait for metricbeat pods to stop gracefully
+  terminationGracePeriod: 30
+
+  # This is the PriorityClass settings as defined in
+  # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+  priorityClassName: ""
+
+  updateStrategy: RollingUpdate
+
+  # Override various naming aspects of this chart
+  # Only edit these if you know what you're doing
+  nameOverride: ""
+  fullnameOverride: ""
+
+  kube_state_metrics:
+    enabled: true
+    # host is used only when kube_state_metrics.enabled: false
+    host: ""
+
+  # Add sensitive data to k8s secrets
+  secrets: []
+  #  - name: "env"
+  #    value:
+  #      ELASTICSEARCH_PASSWORD: "LS1CRUdJTiBgUFJJVkFURSB"
+  #      api_key: ui2CsdUadTiBasRJRkl9tvNnw
+  #  - name: "tls"
+  #    value:
+  #      ca.crt: |
+  #        LS0tLS1CRUdJT0K
+  #        LS0tLS1CRUdJT0K
+  #        LS0tLS1CRUdJT0K
+  #        LS0tLS1CRUdJT0K
+  #      cert.crt: "LS0tLS1CRUdJTiBlRJRklDQVRFLS0tLS0K"
+  #      cert.key.filepath: "secrets.crt" # The path to file should be relative to the `values.yaml` file.
+
+  # DEPRECATED
+  affinity: {}
+  envFrom: []
+  extraEnvs: []
+  extraVolumes: []
+  extraVolumeMounts: []
+  # Allows you to add any config files in /usr/share/metricbeat
+  # such as metricbeat.yml for both daemonset and deployment
+  metricbeatConfig: {}
+  nodeSelector: {}
+  podSecurityContext: {}
+  resources: {}
+  secretMounts: []
+  tolerations: []
+  labels: {}
 
 vector:
-  enabled: true
+  # Default values for Vector
+  # See Vector helm documentation to learn more:
+  # https://vector.dev/docs/setup/installation/package-managers/helm/
+
+  # nameOverride -- Override the name of resources.
+  nameOverride: ""
+
+  # fullnameOverride -- Override the full name of resources.
+  fullnameOverride: ""
+
+  # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
+  # "Agent", "Aggregator", and "Stateless-Aggregator".
+
+  # Each role is created with the following workloads:
+  # Agent = DaemonSet
+  # Aggregator = StatefulSet
+  # Stateless-Aggregator = Deployment
+  role: "Aggregator"
+
+  # rollWorkload -- Add a checksum of the generated ConfigMap to workload annotations.
+  rollWorkload: true
+
+  # commonLabels -- Add additional labels to all created resources.
+  commonLabels: {}
+
+  # Define the Vector image to use.
+  image:
+    # image.repository -- Override default registry and name for Vector's image.
+    repository: timberio/vector
+    # image.pullPolicy -- The [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy) for
+    # Vector's image.
+    pullPolicy: IfNotPresent
+    # image.pullSecrets -- The [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)
+    # to reference for the Vector Pods.
+    pullSecrets: []
+    # image.tag -- The tag to use for Vector's image.
+    # @default -- Derived from the Chart's appVersion.
+    tag: ""
+    # image.sha -- The SHA to use for Vector's image.
+    sha: ""
+
+  # replicas -- Specify the number of Pods to create. Valid for the "Aggregator" and "Stateless-Aggregator" roles.
+  replicas: 1
+
+  # podManagementPolicy -- Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies)
+  # for the StatefulSet. Valid for the "Aggregator" role.
+  podManagementPolicy: OrderedReady
+
+  # Create a Secret resource for Vector to use.
+  secrets:
+    # secrets.generic -- Each Key/Value will be added to the Secret's data key, each value should be raw and NOT base64
+    # encoded. Any secrets can be provided here. It's commonly used for credentials and other access related values.
+    # **NOTE: Don't commit unencrypted secrets to git!**
+    generic: {}
+      # my_variable: "my-secret-value"
+      # datadog_api_key: "api-key"
+      # awsAccessKeyId: "access-key"
+      # awsSecretAccessKey: "secret-access-key"
+
+  autoscaling:
+    # autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+    # for Vector. Valid for the "Aggregator" and "Stateless-Aggregator" roles.
+    enabled: false
+    # autoscaling.minReplicas -- Minimum replicas for Vector's HPA.
+    minReplicas: 1
+    # autoscaling.maxReplicas -- Maximum replicas for Vector's HPA.
+    maxReplicas: 10
+    # autoscaling.targetCPUUtilizationPercentage -- Target CPU utilization for Vector's HPA.
+    targetCPUUtilizationPercentage: 80
+    # autoscaling.targetMemoryUtilizationPercentage -- (int) Target memory utilization for Vector's HPA.
+    targetMemoryUtilizationPercentage:
+    # autoscaling.customMetric -- Target a custom metric for autoscaling.
+    customMetric: {}
+      #  - type: Pods
+      #    pods:
+      #      metric:
+      #        name: utilization
+      #      target:
+      #        type: AverageValue
+      #        averageValue: 95
+    # autoscaling.behavior -- Configure separate scale-up and scale-down behaviors.
+    behavior: {}
+      # scaleDown:
+      #   stabilizationWindowSeconds: 300
+
+  podDisruptionBudget:
+    # podDisruptionBudget.enabled -- Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
+    # for Vector.
+    enabled: false
+    # podDisruptionBudget.minAvailable -- The number of Pods that must still be available after an eviction.
+    minAvailable: 1
+    # podDisruptionBudget.maxUnavailable -- (int) The number of Pods that can be unavailable after an eviction.
+    maxUnavailable:
+
+  rbac:
+    # rbac.create -- If true, create and use RBAC resources. Only valid for the "Agent" role.
+    create: true
+
+  psp:
+    # psp.create -- If true, create a [PodSecurityPolicy](https://kubernetes.io/docs/concepts/security/pod-security-policy/)
+    # resource. PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25. Intended for use
+    # with the "Agent" role.
+    create: false
+
+  serviceAccount:
+    # serviceAccount.create -- If true, create a ServiceAccount for Vector.
+    create: true
+    # serviceAccount.annotations -- Annotations to add to Vector's ServiceAccount.
+    annotations: {}
+    # serviceAccount.name -- The name of the ServiceAccount to use. If not set and serviceAccount.create is true, a name
+    # is generated using the fullname template.
+    name:
+    # serviceAccount.automountToken -- Automount API credentials for Vector's ServiceAccount.
+    automountToken: true
+
+  # podAnnotations -- Set annotations on Vector Pods.
+  podAnnotations: {}
+
+  # podLabels -- Set labels on Vector Pods.
+  podLabels:
+    vector.dev/exclude: "true"
+
+  # podPriorityClassName -- Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass)
+  # on Vector Pods.
+  podPriorityClassName: ""
+
+  # podHostNetwork -- Configure hostNetwork on Vector Pods.
+  podHostNetwork: false
+
+  # podSecurityContext -- Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  # for Vector Pods.
+  podSecurityContext: {}
+
+  # workloadResourceAnnotations -- Set annotations on the Vector DaemonSet, Deployment or StatefulSet.
+  workloadResourceAnnotations: {}
+
+  # securityContext -- Specify securityContext on Vector containers.
+  securityContext: {}
+
+  # command -- Override Vector's default command.
+  command: []
+
+  # args -- Override Vector's default arguments.
+  args:
+    - --config-dir
+    - "/etc/vector/"
+
+  # env -- Set environment variables for Vector containers.
+  env: []
+    # - name: MY_VARIABLE
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: vector
+    #       key: my_variable
+    # - name: AWS_ACCESS_KEY_ID
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: vector
+    #       key: awsAccessKeyId
+
+  # envFrom -- Define environment variables from Secrets or ConfigMaps.
+  envFrom: []
+    # - secretRef:
+    #     name: vector
+
+  # containerPorts -- Manually define Vector's containerPorts, overriding automated generation of containerPorts.
+  containerPorts: []
+
+  # resources -- Set Vector resource requests and limits.
+  resources: {}
+    # requests:
+    #   cpu: 200m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 256Mi
+
+  # lifecycle -- Set lifecycle hooks for Vector containers.
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command:
+    #     - /bin/sleep
+    #     - "10"
+
+  # updateStrategy -- Customize the updateStrategy used to replace Vector Pods, this is also used for the
+  # DeploymentStrategy for the "Stateless-Aggregators". Valid options depend on the chosen role.
+
+  # Agent (DaemonSetUpdateStrategy): https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/daemon-set-v1/#DaemonSetSpec)
+  # Aggregator (StatefulSetUpdateStrategy): https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec
+  # Stateless-Aggregator (DeploymentStrategy): https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
+  updateStrategy: {}
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxUnavailable: 1
+
+  # terminationGracePeriodSeconds -- Override Vector's terminationGracePeriodSeconds.
+  terminationGracePeriodSeconds: 60
+
+  # nodeSelector -- Configure a [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
+  # for Vector Pods.
+  nodeSelector: {}
+
+  # tolerations -- Configure Vector Pods to be scheduled on [tainted](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  # nodes.
+  tolerations: []
+
+  # affinity -- Configure [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+  # rules for Vector Pods.
+  affinity: {}
+
+  # topologySpreadConstraints -- Configure [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/)
+  # for Vector Pods. Valid for the "Aggregator" and "Stateless-Aggregator" roles.
+  topologySpreadConstraints: []
+
+  # Configuration for Vector's Service.
+  service:
+    # service.enabled -- If true, create and provide a Service resource for Vector.
+    enabled: true
+    # service.type -- Set the type for Vector's Service.
+    type: "ClusterIP"
+    # service.annotations -- Set annotations on Vector's Service.
+    annotations: {}
+    # service.topologyKeys -- Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology)
+    # field on Vector's Service.
+    topologyKeys: []
+    #   - "kubernetes.io/hostname"
+    #   - "topology.kubernetes.io/zone"
+    #   - "topology.kubernetes.io/region"
+    #   - "*"
+    # service.ports -- Manually set the Service ports, overriding automated generation of Service ports.
+    ports: []
+    # service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
+    externalTrafficPolicy: ""
+    # service.loadBalancerIP -- Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer).
+    loadBalancerIP: ""
+    # service.ipFamilyPolicy -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
+    ipFamilyPolicy: ""
+    # service.ipFamilies -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
+    ipFamilies: []
+
+  # Configuration for Vector's Headless Service.
+  serviceHeadless:
+    # serviceHeadless.enabled -- If true, create and provide a Headless Service resource for Vector.
+    enabled: true
+
+  # Configuration for Vector's Ingress.
+  ingress:
+    # ingress.enabled -- If true, create and use an Ingress resource.
+    enabled: false
+    # ingress.className -- Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress),
+    # requires Kubernetes >= 1.18
+    className: ""
+    # ingress.annotations -- Set annotations on the Ingress.
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # ingress.hosts -- Configure the hosts and paths for the Ingress.
+    hosts: []
+    #  - host: chart-example.local
+    #    paths:
+    #      - path: /
+    #        pathType: ImplementationSpecific
+    #        # Specify the port name or number on the Service
+    #        # Using name requires Kubernetes >=1.19
+    #        port:
+    #          name: ""
+    #          number: ""
+    # ingress.tls -- Configure TLS for the Ingress.
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  # existingConfigMaps -- List of existing ConfigMaps for Vector's configuration instead of creating a new one. Requires
+  # dataDir to be set. Additionally, containerPorts, service.ports, and serviceHeadless.ports should be specified based on
+  # your supplied configuration. If set, this parameter takes precedence over customConfig and the chart's default configs.
+  existingConfigMaps: []
+
+  # dataDir -- Specify the path for Vector's data, only used when existingConfigMaps are used.
+  dataDir: ""
+
+  # customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
+  # using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/)
+  # for all options.
+  customConfig: {}
+    # data_dir: /vector-data-dir
+    # api:
+    #   enabled: true
+    #   address: 127.0.0.1:8686
+    #   playground: false
+    # sources:
+    #   vector:
+    #     address: 0.0.0.0:6000
+    #     type: vector
+    #     version: "2"
+    # sinks:
+    #   stdout:
+    #     type: console
+    #     inputs: [vector]
+    #     encoding:
+    #       codec: json
+
+  # extraVolumes -- Additional Volumes to use with Vector Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional Volume to mount into Vector Containers.
+  extraVolumeMounts: []
+
+  # initContainers -- Init Containers to be added to the Vector Pods.
+  initContainers: []
+
+  # extraContainers -- Extra Containers to be added to the Vector Pods.
+  extraContainers: []
+
+  # Configuration for Vector's data persistence.
+  persistence:
+    # persistence.enabled -- If true, create and use PersistentVolumeClaims.
+    enabled: false
+    # persistence.existingClaim -- Name of an existing PersistentVolumeClaim to use. Valid for the "Aggregator" role.
+    existingClaim: ""
+    # persistence.storageClassName -- Specifies the storageClassName for PersistentVolumeClaims. Valid for the
+    # "Aggregator" role.
+    # storageClassName: default
+
+    # persistence.accessModes -- Specifies the accessModes for PersistentVolumeClaims. Valid for the "Aggregator" role.
+    accessModes:
+      - ReadWriteOnce
+    # persistence.size -- Specifies the size of PersistentVolumeClaims. Valid for the "Aggregator" role.
+    size: 10Gi
+    # persistence.finalizers -- Specifies the finalizers of PersistentVolumeClaims. Valid for the "Aggregator" role.
+    finalizers:
+      - kubernetes.io/pvc-protection
+    # persistence.selectors -- Specifies the selectors for PersistentVolumeClaims. Valid for the "Aggregator" role.
+    selectors: {}
+
+    hostPath:
+      # persistence.hostPath.path -- Override path used for hostPath persistence. Valid for the "Agent" role, persistence
+      # is always used for the "Agent" role.
+      path: "/var/lib/vector"
+
+  # dnsPolicy -- Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy)
+  # for Vector Pods.
+  dnsPolicy: ClusterFirst
+
+  # dnsConfig -- Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config)
+  # options for Vector Pods.
+  dnsConfig: {}
+    # nameservers:
+    #   - 1.2.3.4
+    # searches:
+    #   - ns1.svc.cluster-domain.example
+    #   - my.dns.search.suffix
+    # options:
+    #   - name: ndots
+    #     value: "2"
+    #   - name: edns0
+
+  # livenessProbe -- Override default liveness probe settings. If customConfig is used, requires customConfig.api.enabled
+  # to be set to true.
+  livenessProbe: {}
+    # httpGet:
+    #   path: /health
+    #   port: api
+
+  # readinessProbe -- Override default readiness probe settings. If customConfig is used,
+  # requires customConfig.api.enabled to be set to true.
+  readinessProbe: {}
+    # httpGet:
+    #   path: /health
+    #   port: api
+
+  # Configure a PodMonitor for Vector, requires the PodMonitor CRD to be installed.
+  podMonitor:
+    # podMonitor.enabled -- If true, create a PodMonitor for Vector.
+    enabled: false
+    # podMonitor.jobLabel -- Override the label to retrieve the job name from.
+    jobLabel: app.kubernetes.io/name
+    # podMonitor.port -- Override the port to scrape.
+    port: prom-exporter
+    # podMonitor.path -- Override the path to scrape.
+    path: /metrics
+    # podMonitor.relabelings -- [RelabelConfigs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+    # to apply to samples before scraping.
+    relabelings: []
+    # podMonitor.metricRelabelings -- [MetricRelabelConfigs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs)
+    # to apply to samples before ingestion.
+    metricRelabelings: []
+    # podMonitor.additionalLabels -- Adds additional labels to the PodMonitor.
+    additionalLabels: {}
+    # podMonitor.honorLabels -- If true, honor_labels is set to true in the [scrape config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
+    honorLabels: false
+    # podMonitor.honorTimestamps -- If true, honor_timestamps is set to true in the [scrape config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
+    honorTimestamps: true
+
+  # Optional built-in HAProxy load balancer.
+  haproxy:
+    # haproxy.enabled -- If true, create a HAProxy load balancer.
+    enabled: false
+
+    # Define the HAProxy image to use.
+    image:
+      # haproxy.image.repository -- Override default registry and name for HAProxy.
+      repository: haproxytech/haproxy-alpine
+      # haproxy.image.pullPolicy -- HAProxy image pullPolicy.
+      pullPolicy: IfNotPresent
+      # haproxy.image.pullSecrets -- The [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)
+      # to reference for the HAProxy Pods.
+      pullSecrets: []
+      # haproxy.image.tag -- The tag to use for HAProxy's image.
+      tag: "2.4.17"
+
+    # haproxy.rollWorkload -- Add a checksum of the generated ConfigMap to the HAProxy Deployment.
+    rollWorkload: true
+
+    # haproxy.replicas -- Set the number of HAProxy Pods to create.
+    replicas: 1
+
+    serviceAccount:
+      # haproxy.serviceAccount.create -- If true, create a HAProxy ServiceAccount.
+      create: true
+      # haproxy.serviceAccount.annotations -- Annotations to add to the HAProxy ServiceAccount.
+      annotations: {}
+      # haproxy.serviceAccount.name -- The name of the HAProxy ServiceAccount to use. If not set and create is true, a
+      # name is generated using the fullname template.
+      name:
+      # haproxy.serviceAccount.automountToken -- Automount API credentials for the HAProxy ServiceAccount.
+      automountToken: true
+
+    # haproxy.strategy -- Customize the [strategy](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/)
+    # used to replace HAProxy Pods.
+    strategy: {}
+      # rollingUpdate:
+      #   maxSurge: 25%
+      #   maxUnavailable: 25%
+      # type: RollingUpdate
+
+    # haproxy.terminationGracePeriodSeconds -- Override HAProxy's terminationGracePeriodSeconds.
+    terminationGracePeriodSeconds: 60
+
+    # haproxy.podAnnotations -- Set annotations on HAProxy Pods.
+    podAnnotations: {}
+
+    # haproxy.podLabels -- Set labels on HAProxy Pods.
+    podLabels: {}
+
+    # haproxy.podPriorityClassName -- Set the priorityClassName on HAProxy Pods.
+    podPriorityClassName: ""
+
+    # haproxy.podSecurityContext -- Allows you to overwrite the default PodSecurityContext for HAProxy.
+    podSecurityContext: {}
+      # fsGroup: 2000
+
+    # haproxy.securityContext -- Specify securityContext on HAProxy containers.
+    securityContext: {}
+      # capabilities:
+      #   drop:
+      #   - ALL
+      # readOnlyRootFilesystem: true
+      # runAsNonRoot: true
+      # runAsUser: 1000
+
+    # haproxy.containerPorts -- Manually define HAProxy's containerPorts, overrides automated generation of containerPorts.
+    containerPorts: []
+
+    # HAProxy's Service configuration.
+    service:
+      # haproxy.service.type -- Set type of HAProxy's Service.
+      type: ClusterIP
+      # haproxy.service.annotations -- Set annotations on HAProxy's Service.
+      annotations: {}
+      # haproxy.service.topologyKeys -- Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology)
+      # field on HAProxy's Service spec.
+      topologyKeys: []
+      #   - "kubernetes.io/hostname"
+      #   - "topology.kubernetes.io/zone"
+      #   - "topology.kubernetes.io/region"
+      #   - "*"
+      # haproxy.service.ports -- Manually set HAPRoxy's Service ports, overrides automated generation of Service ports.
+      ports: []
+      # haproxy.service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
+      externalTrafficPolicy: ""
+      # haproxy.service.loadBalancerIP -- Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer).
+      loadBalancerIP: ""
+      # haproxy.service.ipFamilyPolicy -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
+      ipFamilyPolicy: ""
+      # haproxy.service.ipFamilies -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
+      ipFamilies: []
+
+    # haproxy.existingConfigMap -- Use this existing ConfigMap for HAProxy's configuration instead of creating a new one.
+    # Additionally, haproxy.containerPorts and haproxy.service.ports should be specified based on your supplied
+    # configuration. If set, this parameter takes precedence over customConfig and the chart's default configs.
+    existingConfigMap: ""
+
+    # haproxy.customConfig -- Override HAProxy's default configs, if used **all** options need to be specified.
+    # This parameter supports using Helm templates to insert values dynamically. By default, this chart will parse
+    # Vector's configuration from customConfig to generate HAProxy's config, which can be overwritten with
+    # haproxy.customConfig.
+    customConfig: ""
+
+    # haproxy.extraVolumes -- Additional Volumes to use with HAProxy Pods.
+    extraVolumes: []
+
+    # haproxy.extraVolumeMounts -- Additional Volume to mount into HAProxy Containers.
+    extraVolumeMounts: []
+
+    # haproxy.initContainers -- Init Containers to be added to the HAProxy Pods.
+    initContainers: []
+
+    # haproxy.extraContainers -- Extra Containers to be added to the HAProxy Pods.
+    extraContainers: []
+
+    autoscaling:
+      # haproxy.autoscaling.enabled -- Create a HorizontalPodAutoscaler for HAProxy.
+      enabled: false
+      # haproxy.autoscaling.minReplicas -- Minimum replicas for HAProxy's HPA.
+      minReplicas: 1
+      # haproxy.autoscaling.maxReplicas -- Maximum replicas for HAProxy's HPA.
+      maxReplicas: 10
+      # haproxy.autoscaling.targetCPUUtilizationPercentage -- Target CPU utilization for HAProxy's HPA.
+      targetCPUUtilizationPercentage: 80
+      # haproxy.autoscaling.targetMemoryUtilizationPercentage -- (int) Target memory utilization for HAProxy's HPA.
+      targetMemoryUtilizationPercentage:
+      # haproxy.autoscaling.customMetric -- Target a custom metric for autoscaling.
+      customMetric: {}
+        #  - type: Pods
+        #    pods:
+        #      metric:
+        #        name: utilization
+        #      target:
+        #        type: AverageValue
+        #        averageValue: 95
+
+    # haproxy.resources -- Set HAProxy resource requests and limits.
+    resources: {}
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+
+    # haproxy.livenessProbe -- Override default HAProxy liveness probe settings.
+    livenessProbe:
+      tcpSocket:
+        port: 1024
+
+    # haproxy.readinessProbe -- Override default HAProxy readiness probe settings.
+    readinessProbe:
+      tcpSocket:
+        port: 1024
+
+    # haproxy.nodeSelector -- Configure a [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
+    # for HAProxy Pods
+    nodeSelector: {}
+
+    # haproxy.tolerations -- Configure HAProxy Pods to be scheduled on [tainted](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+    # nodes.
+    tolerations: []
+
+    # haproxy.affinity -- Configure [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+    # rules for HAProxy Pods.
+    affinity: {}
