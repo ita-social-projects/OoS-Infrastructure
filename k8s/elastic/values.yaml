@@ -1,12 +1,12 @@
 # TODO: Think how to make it simpler so it can be moved to Elastic PostStart
-elasticConfigJob:
+elasticConfigJob: {}
 
 elasticsearch:
   clusterName: "elasticsearch"
   nodeGroup: "master"
 
-kibana:
+kibana: {}
 
-metricbeat:
+metricbeat: {}
 
-vector:
+vector: {}
