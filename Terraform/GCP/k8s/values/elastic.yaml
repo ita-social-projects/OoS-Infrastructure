@@ -24,7 +24,6 @@ elasticConfigJob:
       metadata:
         version: 2
   secret: elasticsearch-credentials
-  elastic-certs-secret: elastic-certificates
 
 elasticsearch:
   enabled: true
