@@ -45,11 +45,6 @@ elasticsearch:
       secretKeyRef:
         name: elasticsearch-credentials
         key: username
-  - name: PCS12_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: root-secret
-        key: password
   envFrom:
   - secretRef:
       name: pkcs12-password-secret
@@ -141,13 +136,18 @@ kibana:
         secretKeyRef:
           name: elasticsearch-credentials
           key: username
-    - name: 'ELASTICSEARCH_PASSWORD'
+    - name: "ELASTICSEARCH_PASSWORD"
       valueFrom:
         secretKeyRef:
           name: elasticsearch-credentials
           key: password
-    - name: 'NODE_OPTIONS'
+    - name: "NODE_OPTIONS"
       value: "--max-old-space-size=1024"
+    - name: "ENCRIPTION_KEY"
+      valueFrom:
+        secretKeyRef:
+          name: kibana-encription-key
+          key: ENCRIPTION_KEY
 
   ingress:
     enabled: true
@@ -162,6 +162,14 @@ kibana:
     tls:
     - secretName: kibana-tls
       hosts: []
+
+  kibanaConfig:
+    kibana.yml: |
+      server.host: "0.0.0.0"
+      server.shutdownTimeout: "5s"
+      elasticsearch.hosts: [ "https://elasticsearch-master:9200" ]
+      monitoring.ui.container.elasticsearch.enabled: true
+      xpack.encryptedSavedObjects.encryptionKey: ${ENCRIPTION_KEY}
 
 vector:
   enabled: true

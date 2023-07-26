@@ -109,3 +109,22 @@ resource "kubernetes_secret" "pkcs12-password-secret" {
     password-key = random_password.pkcs12-password.result
   }
 }
+
+resource "random_password" "kibana_encription_key" {
+  length  = 32
+  special = false
+}
+
+resource "kubernetes_secret" "kibana_encription_key" {
+  metadata {
+    name      = "kibana-encription-key"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    ENCRIPTION_KEY = random_password.kibana_encription_key.result
+  }
+}
+
+
+
