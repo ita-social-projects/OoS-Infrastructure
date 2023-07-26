@@ -86,6 +86,11 @@ resource "kubernetes_role" "deployer" {
     resources  = ["ingresses"]
     verbs      = ["*"]
   }
+  rule {
+    api_groups = ["cert-manager.io"]
+    resources  = ["certificates"]
+    verbs      = ["*"]
+  }
 }
 
 resource "kubernetes_role_binding" "example" {
