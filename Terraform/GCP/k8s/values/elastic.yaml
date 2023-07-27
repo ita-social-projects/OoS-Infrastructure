@@ -100,6 +100,7 @@ elasticsearch:
       cert-manager.io/issuer: "letsencrypt"
       cert-manager.io/duration: 2160h0m0s
       cert-manager.io/renew-before: 168h0m0s
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     hosts:
       - host: ""
         paths:

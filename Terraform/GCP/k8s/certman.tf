@@ -1,6 +1,6 @@
 resource "helm_release" "cert_manager" {
   name             = "cert-manager"
-  chart            = "../../k8s/infrastructure/charts/cert-manager-v1.11.0.tgz"
+  chart            = "../../k8s/infrastructure/charts/cert-manager-v1.12.3.tgz"
   namespace        = "cert-manager"
   create_namespace = true
   wait             = true

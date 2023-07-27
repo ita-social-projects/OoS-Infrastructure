@@ -1,6 +1,6 @@
 resource "helm_release" "redis" {
   name          = "redis"
-  chart         = "../../k8s/infrastructure/charts/redis-17.9.3.tgz"
+  chart         = "../../k8s/infrastructure/charts/redis-17.14.2.tgz"
   namespace     = data.kubernetes_namespace.oos.metadata[0].name
   wait          = true
   wait_for_jobs = true
