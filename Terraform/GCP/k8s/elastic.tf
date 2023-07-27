@@ -73,3 +73,5 @@ resource "helm_release" "elastic" {
     helm_release.ingress
   ]
 }
+
+
