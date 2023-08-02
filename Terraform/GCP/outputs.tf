@@ -36,3 +36,7 @@ output "clusterstore_pass" {
 output "image_bucket" {
   value = module.storage.image_bucket
 }
+
+output "introspection_secret" {
+  value = module.k8s.introspection_secret
+}
