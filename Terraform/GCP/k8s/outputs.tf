@@ -5,3 +5,7 @@ output "ingress_name" {
 output "deployer_kubeconfig" {
   value = local.deployer_kubeconfig
 }
+
+output "introspection_secret" {
+  value = random_password.introspection_secret.result
+}
