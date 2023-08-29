@@ -113,13 +113,10 @@ kibana:
   enabled: true
   elasticsearchHosts: "https://elasticsearch-master:9200"
   elasticsearchCredentialSecret: "elasticsearch-credentials"
+  elasticsearchCertificateSecret: "elastic-certificates"
+  elasticsearchCertificateAuthoritiesFile: "ca.crt"
   protocol: http
   healthCheckPath: "/api/status"
-
-  secretMounts:
-    - name: elastic-certificates
-      secretName: elastic-certificates
-      path: /usr/share/kibana/config/certs
 
   resources:
     requests:
@@ -130,8 +127,6 @@ kibana:
       memory: "1256Mi"
 
   extraEnvs:
-    - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
-      value: "/usr/share/kibana/config/certs/ca.crt"
     - name: "ELASTICSEARCH_USERNAME"
       valueFrom:
         secretKeyRef:
