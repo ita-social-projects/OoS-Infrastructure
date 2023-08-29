@@ -98,8 +98,8 @@ resource "kubernetes_secret" "webapi_secrets" {
   }
 
   data = {
-    GeoCoding__ApiKey      = var.geo_apikey
-    Identity__ClientSecret = random_password.introspection_secret.result
+    GeoCoding__ApiKey                 = var.geo_apikey
+    AuthorizationServer__ClientSecret = random_password.introspection_secret.result
   }
 }
 
