@@ -49,6 +49,10 @@ elasticsearch:
   - secretRef:
       name: pkcs12-password-secret
 
+  createCert: false
+  secret:
+    enabled: false
+
   esConfig:
     elasticsearch.yml: |
       xpack.security.enabled: true
@@ -69,7 +73,6 @@ elasticsearch:
         - id: analysis-icu
         - id: analysis-ukrainian
         - id: mapper-murmur3
-        - id: mapper-size
 
   secretMounts:
     - name: elastic-certificates
@@ -116,7 +119,6 @@ kibana:
   elasticsearchCertificateSecret: "elastic-certificates"
   elasticsearchCertificateAuthoritiesFile: "ca.crt"
   protocol: http
-  healthCheckPath: "/api/status"
 
   resources:
     requests:
@@ -127,16 +129,6 @@ kibana:
       memory: "1256Mi"
 
   extraEnvs:
-    - name: "ELASTICSEARCH_USERNAME"
-      valueFrom:
-        secretKeyRef:
-          name: elasticsearch-credentials
-          key: username
-    - name: "ELASTICSEARCH_PASSWORD"
-      valueFrom:
-        secretKeyRef:
-          name: elasticsearch-credentials
-          key: password
     - name: "NODE_OPTIONS"
       value: "--max-old-space-size=1024"
     - name: "ENCRIPTION_KEY"
@@ -488,6 +480,7 @@ metricbeat:
           username: '${ES_USERNAME}'
           password: '${ES_PASSWORD}'
           enabled: true
+          protocol: https
           allow_older_versions: true
           ssl.certificate_authorities: ["/usr/share/metricbeat/certs/ca.crt"]
     secretMounts:

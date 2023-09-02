@@ -4,16 +4,16 @@ description: A Helm chart for Elastic & optional Kibana & Logging Agent Vector
 
 type: application
 
-version: 7.17.3
+version: 20230902+v4
 
-appVersion: "7.16.3"
+appVersion: "8.5.1"
 
 dependencies:
   - name: elasticsearch
-    version: 7.17.3
+    version: 8.5.1
     repository: https://helm.elastic.co
   - name: kibana
-    version: 7.17.3
+    version: 8.5.1
     condition: kibana.enabled
     repository: https://helm.elastic.co
   - name: vector
@@ -21,7 +21,7 @@ dependencies:
     condition: vector.enabled
     repository: https://helm.vector.dev
   - name: metricbeat
-    version: 7.17.3
+    version: 8.5.1
     condition: metricbeat.enabled
     repository: https://helm.elastic.co
 

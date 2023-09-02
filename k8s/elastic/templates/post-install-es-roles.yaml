@@ -3,6 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ include "elastic.fullname" . }}-es-roles
   namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
 data:
 {{- range $key, $value := .Values.elasticConfigJob.roles }}
   {{ $key }}.json: |

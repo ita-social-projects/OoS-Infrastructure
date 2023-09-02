@@ -16,10 +16,10 @@ dependencies:
   version: 17.14.2
 - name: elasticsearch
   repository: https://helm.elastic.co
-  version: 7.17.3
+  version: 8.5.1
 - name: kibana
   repository: https://helm.elastic.co
-  version: 7.17.3
+  version: 8.5.1
 - name: vector
   repository: https://helm.vector.dev
   version: 0.20.1
@@ -29,5 +29,5 @@ dependencies:
 - name: outofschool
   repository: file://../webapp
   version: 1.0.5
-digest: sha256:6dffb7f7b57c74de71e73ed14a8aa81bd0b9b8d35b77ca3032c286d6e21b9a04
-generated: "2023-07-27T12:30:48.362621+03:00"
+digest: sha256:2d48941d2e7acf31c6785f705df599cd1bc9433ab8eada69ab50340b50b1ea02
+generated: "2023-09-02T13:13:57.741219+03:00"

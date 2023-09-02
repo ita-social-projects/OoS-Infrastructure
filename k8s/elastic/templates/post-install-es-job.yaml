@@ -4,8 +4,10 @@ kind: Job
 metadata:
   name: {{ include "elastic.fullname" . }}-{{- (randAlphaNum 8) | lower }}
   annotations:
-    checksum/script: {{ include (print $.Template.BasePath "/es-script.yaml") . | sha256sum }}
-    checksum/roles: {{ include (print $.Template.BasePath "/es-roles.yaml") . | sha256sum }}
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+    checksum/script: {{ include (print $.Template.BasePath "/post-install-es-script.yaml") . | sha256sum }}
+    checksum/roles: {{ include (print $.Template.BasePath "/post-install-es-roles.yaml") . | sha256sum }}
 spec:
   template:
     spec:
