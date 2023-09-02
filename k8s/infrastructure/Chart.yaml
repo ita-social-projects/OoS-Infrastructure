@@ -25,10 +25,10 @@ dependencies:
     version: 17.14.2
     repository: https://charts.bitnami.com/bitnami
   - name: elasticsearch
-    version: 7.17.3
+    version: 8.5.1
     repository: https://helm.elastic.co
   - name: kibana
-    version: 7.17.3
+    version: 8.5.1
     repository: https://helm.elastic.co
   - name: vector
     version: 0.20.1

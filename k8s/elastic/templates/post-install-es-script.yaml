@@ -3,6 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ include "elastic.fullname" . }}-es-script
   namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
 data:
   setup.sh: |
     #!/bin/bash
