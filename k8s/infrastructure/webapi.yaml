@@ -94,7 +94,7 @@ resources:
     memory: 768Mi
   requests:
     cpu: 500m
-    memory: 256Mi
+    memory: 384Mi
 
 autoscaling:
   enabled: true
@@ -124,7 +124,7 @@ storage:
     - name: binding
       emptyDir: {}
 
-  extraVolumeMounts: 
+  extraVolumeMounts:
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
         readOnly: true
@@ -134,11 +134,11 @@ storage:
 initContainers:
   - name: init-myservice
     image: busybox:1.28
-    command: 
+    command:
       - sh
       - -c
       - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/elastic/certs/*.crt /workspace/bindings/ca-certificates"
-    volumeMounts: 
+    volumeMounts:
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
         readOnly: true
