@@ -295,19 +295,19 @@ vector:
           url = .url.original
           duration_sec = .http.response.duration_sec
           status_code = .http.response.status_code
-          .message = {{`"{{ method }} request to {{ url }} finished in {{ duration_sec }} s with status {{ status_code }}"`}} ?? ""
+          .message = {{`"{{ method }} request to {{ url }} finished in {{ duration_sec }} s with status {{ status_code }}" ?? ""`}}
 
           # Coerce fields
-          .http."response.status_code" = to_int!(.http.response.status_code)
-          .http."upstream.status_code" = to_int!(.http.upstream.status_code)
+          .http.response.status_code = to_int!(.http.response.status_code)
+          .http.upstream.status_code = to_int!(.http.upstream.status_code)
 
-          .http."request.bytes" = to_int!(.http.request.bytes)
-          .http."response.body.bytes" = to_int!(.http.response.body.bytes)
-          .http."response.bytes" = to_int!(.http.response.bytes)
-          .http."upstream.bytes" = to_int!(.http.upstream.bytes)
+          .http.request.bytes = to_int!(.http.request.bytes)
+          .http.response.body.bytes = to_int!(.http.response.body.bytes)
+          .http.response.bytes = to_int!(.http.response.bytes)
+          .http.upstream.bytes = to_int!(.http.upstream.bytes)
 
-          .http."response.duration_sec" = to_float!(.http.response.duration_sec)
-          .http."upstream.duration_sec" = to_float!(.http.upstream.duration_sec)
+          .http.response.duration_sec = to_float!(.http.response.duration_sec)
+          .http.upstream.duration_sec = to_float!(.http.upstream.duration_sec)
       serilog_parse_logs:
         type: remap
         # TODO: add sink for dropped events
