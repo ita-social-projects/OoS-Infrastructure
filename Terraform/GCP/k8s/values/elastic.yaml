@@ -281,6 +281,8 @@ vector:
         type: remap
         inputs:
           - logs_router.nginx
+        # TODO: add sink for dropped events
+        drop_on_error: true
         source: |-
           # Leave only one possible field that contains IP
           if .network.source_ip == "" {
@@ -288,6 +290,12 @@ vector:
           }
 
           .@timestamp = del(.timestamp)
+          # {{``}} is used to escape helm templating
+          method = .http.request.method
+          url = .url.original
+          duration_sec = .http.response.duration_sec
+          status_code = .http.response.status_code
+          .message = {{`"{{ method }} request to {{ url }} finished in {{ duration_sec }} s with status {{ status_code }}"`}} ?? ""
 
           # Coerce fields
           .http."response.status_code" = to_int!(.http.response.status_code)
