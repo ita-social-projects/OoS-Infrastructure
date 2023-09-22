@@ -9,6 +9,18 @@ controller:
   config:
     proxy-body-size: 100m
     use-forwarded-headers: "true"
+    log-format-escape-json: "true"
+    proxy-set-headers: "ingress-nginx/custom-headers"
+    # Can edit it as pretty JSON
+    # but need to convert to single line string before applying
+    log-format-upstream: '{"event":{"created":"$time_iso8601"},"trace":{"id":"$req_id"},
+      "user":{"agent":"$http_user_agent","name":"$remote_user"},
+      "network":{"source_ip":"$proxy_protocol_addr","x_forwarded_for":"$proxy_add_x_forwarded_for"},
+      "http":{"version":"$server_protocol","request":{"method":"$request_method","referrer":"$http_referer","bytes":"$request_length"},
+      "response":{"status_code":"$status","duration_sec":"$request_time","bytes":"$bytes_sent","body":{"bytes":"$body_bytes_sent"}},
+      "upstream":{"bytes":"$upstream_response_length","status_code":"$upstream_status","duration_sec":"$upstream_response_time",
+      "address":"$upstream_addr","name":"$proxy_upstream_name","alternative_name":"$proxy_alternative_upstream_name"}},
+      "url":{"vhost":"$host","path":"$uri","query":"$args","original":"$request_uri"},"log":{"logger":"nginx"}}'
   metrics:
     enabled: false
     serviceMonitor:
