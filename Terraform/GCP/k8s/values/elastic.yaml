@@ -328,13 +328,6 @@ vector:
           normal: .log.level != "Error" && !exists(.error)
           error: .log.level == "Error" || exists(.error)
     sinks:
-      # TODO: delete before merge
-      # debug_sink:
-      #   type: console
-      #   inputs:
-      #     - nginx_process_logs
-      #   encoding:
-      #     codec: json
       nginx_logs:
         type: elasticsearch
         inputs:
