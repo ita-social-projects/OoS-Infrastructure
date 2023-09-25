@@ -5,7 +5,7 @@ resource "google_secret_manager_secret" "geo_key" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 

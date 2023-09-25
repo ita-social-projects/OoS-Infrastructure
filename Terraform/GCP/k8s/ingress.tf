@@ -20,6 +20,10 @@ resource "helm_release" "ingress" {
     name  = "controller.service.enableHttp"
     value = var.enable_ingress_http
   }
+  set {
+    name  = "controller.service.loadBalancerIP"
+    value = var.ingress_ip
+  }
   depends_on = [
     helm_release.cert_manager,
     kubectl_manifest.custom_tracing_headers

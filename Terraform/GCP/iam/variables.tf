@@ -23,3 +23,8 @@ variable "devops" {
   type        = list(string)
   description = "E-mails of devops with edit permissions"
 }
+
+variable "enable_dns" {
+  type        = bool
+  description = "Should we use managed hosted zone and dns challenge for Let's Encrypt"
+}

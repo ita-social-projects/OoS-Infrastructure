@@ -115,3 +115,15 @@ variable "sendgrid_key" {
 variable "geo_apikey" {
   type = string
 }
+
+variable "enable_dns" {
+  type        = bool
+  description = "Should we use managed hosted zone and dns challenge for Let's Encrypt"
+}
+
+variable "dns_sa_key" {
+}
+
+variable "ingress_ip" {
+  type = string
+}

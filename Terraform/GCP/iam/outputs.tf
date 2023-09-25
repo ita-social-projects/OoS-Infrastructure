@@ -33,3 +33,7 @@ output "pull_sa_key" {
 output "gcf_sa_email" {
   value = google_service_account.notification.email
 }
+
+output "dns_sa_key" {
+  value = var.enable_dns ? google_service_account_key.dns[0].private_key : ""
+}

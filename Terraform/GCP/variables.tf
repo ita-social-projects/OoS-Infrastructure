@@ -36,22 +36,22 @@ variable "admin_ips" {
   description = "Admin IPs to manage database if needed"
 }
 
-variable "auth_hostname" {
+variable "auth_subdomain" {
   type        = string
   default     = "none"
-  description = "Identity Server custom hostname"
+  description = "Identity Server custom subdomain"
 }
 
-variable "app_hostname" {
+variable "app_subdomain" {
   type        = string
   default     = "none"
-  description = "Web application custom hostname"
+  description = "Web application custom subdomain"
 }
 
-variable "front_hostname" {
+variable "front_subdomain" {
   type        = string
-  default     = "none"
-  description = "Frontend custom hostname"
+  default     = ""
+  description = "Frontend custom subdomain"
 }
 
 variable "devops" {
@@ -64,34 +64,34 @@ variable "letsencrypt_email" {
   description = "E-mail of letsencrypt user"
 }
 
-variable "sql_hostname" {
+variable "sql_subdomain" {
   type        = string
-  description = "Hostname for application database"
+  description = "subdomain for application database"
 }
 
-variable "k8s_api_hostname" {
+variable "k8s_api_subdomain" {
   type        = string
-  description = "Hostname for K8S API"
+  description = "subdomain for K8S API"
 }
 
-variable "phpmyadmin_hostname" {
+variable "phpmyadmin_subdomain" {
   type        = string
-  description = "Hostname for PHPMyAdmin"
+  description = "subdomain for PHPMyAdmin"
 }
 
-variable "kibana_hostname" {
+variable "kibana_subdomain" {
   type        = string
-  description = "Hostname for Kibana"
+  description = "subdomain for Kibana"
 }
 
-variable "elastic_hostname" {
+variable "elastic_subdomain" {
   type        = string
-  description = "Hostname for Elastic"
+  description = "subdomain for Elastic"
 }
 
-variable "redis_hostname" {
+variable "redis_subdomain" {
   type        = string
-  description = "Hostname for Redis"
+  description = "subdomain for Redis"
 }
 
 variable "sender_email" {
@@ -128,7 +128,7 @@ variable "redis_port" {
 }
 
 variable "enable_cloud_run" {
-  type = bool
+  type    = bool
   default = false
 }
 
@@ -158,3 +158,14 @@ variable "discord_notification_webhook" {
   type = string
 }
 
+variable "dns_domain" {
+  type        = string
+  description = "DNS Name for the managed hosted zone. Without the dot (.) in the end"
+  default     = ""
+}
+
+variable "enable_dns" {
+  type        = bool
+  default     = false
+  description = "Should we use managed hosted zone and dns challenge for Let's Encrypt"
+}
