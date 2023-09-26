@@ -63,6 +63,7 @@ EOF
 }
 
 module "workers" {
+  count      = var.k3s_workers > 0 ? 1 : 0
   source     = "./nodes"
   node_role  = "worker"
   node_count = var.k3s_workers

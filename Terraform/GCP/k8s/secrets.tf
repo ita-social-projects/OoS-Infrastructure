@@ -136,5 +136,17 @@ resource "kubernetes_secret" "kibana_encription_key" {
   }
 }
 
-
+resource "kubernetes_secret" "dns_gcp_credentials" {
+  count = var.enable_dns ? 1 : 0
+  metadata {
+    name      = "dns01-solver-keys"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+  data = {
+    "key.json" = base64decode(var.dns_sa_key)
+  }
+  depends_on = [
+    helm_release.cert_manager
+  ]
+}
 

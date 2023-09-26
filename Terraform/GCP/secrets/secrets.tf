@@ -5,7 +5,7 @@ resource "google_secret_manager_secret" "secret_es_api" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -22,7 +22,7 @@ resource "google_secret_manager_secret" "secret_app_pass" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -39,7 +39,7 @@ resource "google_secret_manager_secret" "secret_auth_pass" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -56,7 +56,7 @@ resource "google_secret_manager_secret" "secret_sendgrid_key" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -73,7 +73,7 @@ resource "google_secret_manager_secret" "redis_secret" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -89,7 +89,7 @@ resource "google_secret_manager_secret" "kube_secret" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 

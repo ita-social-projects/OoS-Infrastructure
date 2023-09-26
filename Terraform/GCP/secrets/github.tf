@@ -4,7 +4,7 @@ resource "google_secret_manager_secret" "github_front_secret" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -19,7 +19,7 @@ resource "google_secret_manager_secret" "github_back_secret" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
@@ -34,7 +34,7 @@ resource "google_secret_manager_secret" "github_token_secret" {
   labels = var.labels
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
