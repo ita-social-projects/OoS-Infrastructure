@@ -10,10 +10,18 @@ locals {
     app        = var.app_subdomain
     front      = var.front_subdomain
   }
+
   hostnames = {
     for name, subdomain in local.subdomains : name => subdomain == "" ? var.dns_domain : "${subdomain}.${var.dns_domain}"
   }
+
+  kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
 }
+
+data "google_secret_manager_secret_version" "kubeconfig" {
+  secret = "kubeconfig"
+}
+
 resource "random_integer" "ri" {
   min = 10000
   max = 99999
@@ -93,17 +101,27 @@ resource "time_sleep" "wait_30_seconds" {
 }
 
 provider "kubernetes" {
-  config_path = "./cluster/kubeconfig.yaml"
+  host                   = "https://${module.cluster.lb_inet_address}:6443"
+  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
+  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
+  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
 }
 
 provider "helm" {
   kubernetes {
-    config_path = "./cluster/kubeconfig.yaml"
+    host                   = "https://${module.cluster.lb_inet_address}:6443"
+    cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
+    client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
+    client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
   }
 }
 
 provider "kubectl" {
-  config_path = "./cluster/kubeconfig.yaml"
+  host                   = "https://${module.cluster.lb_inet_address}:6443"
+  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
+  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
+  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
+  load_config_file       = false
 }
 
 module "k8s" {

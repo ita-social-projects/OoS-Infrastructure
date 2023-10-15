@@ -60,9 +60,32 @@ If you CCM does not remove `network-unavailable` taint then run the following sc
 ```
 kubectl proxy
 
-for i in `kubectl get nodes -o jsonpath='{.items[*].metadata.name}'`; do 
+for i in `kubectl get nodes -o jsonpath='{.items[*].metadata.name}'`; do
     curl http://127.0.0.1:8001/api/v1/nodes/$i/status > a.json
     cat a.json | tr -d '\n' | sed 's/{[^}]\+NetworkUnavailable[^}]\+}/{"type": "NetworkUnavailable","status": "False","reason": "RouteCreated","message": "Manually set through k8s api"}/g' > b.json
     curl -X PUT http://127.0.0.1:8001/api/v1/nodes/$i/status -H "Content-Type: application/json" -d @b.json
 done
+```
+
+8. Use kubeconfig from google secret.
+
+Add k3s.yaml in existing Google Secret:
+```gcloud secrets versions add kubeconfig --data-file="k3s.yaml"```
+
+Configure terraform:
+```hcl
+data "google_secret_manager_secret_version" "kubeconfig" {
+  secret = "kubeconfig"
+}
+
+locals {
+  kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
+}
+
+provider "kubernetes" {
+  host                   = "https://${module.cluster.lb_inet_address}:6443"
+  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
+  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
+  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
+}
 ```
