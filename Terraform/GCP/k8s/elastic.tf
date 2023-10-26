@@ -34,7 +34,7 @@ resource "helm_release" "elastic" {
   wait_for_jobs = true
   # Disable running kibana preinstall hooks on further upgrades. Will be fixed when moved to ECK
   disable_webhooks = true
-  timeout          = 600
+  timeout          = 1200
   values = [
     "${file("${path.module}/values/elastic.yaml")}"
   ]
