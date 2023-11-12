@@ -178,5 +178,4 @@ variable "k3s_secret" {
 variable "k3s_port" {
   type = string
   default = "6443"
-
 }

@@ -63,7 +63,7 @@ variable "subnet_cidr" {
 }
 
 variable "subnet_name" {
-  type = string
+  type    = string
   default = "outofschool"
 }
 
@@ -76,7 +76,7 @@ variable "k3s_version" {
 }
 
 variable "k3s_masters" {
-  type    = number
+  type = number
 }
 
 variable "k3s_workers" {

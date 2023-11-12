@@ -4,14 +4,14 @@ module "masters" {
   node_count = var.k3s_masters
   shutdown   = file("${path.module}/shutdown.sh")
   startup = templatefile("${path.module}/startup-master.sh", {
-    ROOT_CA_PRIVATE_KEY = tls_private_key.root_key.private_key_pem,
-    ROOT_CA_PEM_CERT    = tls_self_signed_cert.root_ca.cert_pem,
-    INTERMEDIATE_CA_PEM = tls_locally_signed_cert.intermediate.cert_pem,
-    INTERMEDIATE_CA_KEY = tls_private_key.intermediate.private_key_pem,
-    SERVER_KEY          = tls_private_key.server.private_key_pem,
-    SERVER_PEM          = tls_locally_signed_cert.server.cert_pem,
-    CLIENT_KEY          = tls_private_key.client.private_key_pem,
-    CLIENT_PEM          = tls_locally_signed_cert.client.cert_pem,
+    ROOT_CA_PRIVATE_KEY    = tls_private_key.root_key.private_key_pem,
+    ROOT_CA_PEM_CERT       = tls_self_signed_cert.root_ca.cert_pem,
+    INTERMEDIATE_CA_PEM    = tls_locally_signed_cert.intermediate.cert_pem,
+    INTERMEDIATE_CA_KEY    = tls_private_key.intermediate.private_key_pem,
+    SERVER_KEY             = tls_private_key.server.private_key_pem,
+    SERVER_PEM             = tls_locally_signed_cert.server.cert_pem,
+    CLIENT_KEY             = tls_private_key.client.private_key_pem,
+    CLIENT_PEM             = tls_locally_signed_cert.client.cert_pem,
     db_username            = var.db_username
     db_password            = var.db_password
     db_host                = var.db_host
@@ -63,9 +63,9 @@ done
 
 # Remove label
 declare -a names
-%{ for i in module.masters.names ~}
+%{for i in module.masters.names~}
 names+=${i}
-%{ endfor ~}
+%{endfor~}
 # Iterate through the list of instances
 for name in "$${names[@]}"; do
   echo "Proccesing instance $name"
