@@ -16,10 +16,14 @@ locals {
   }
 
   kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
+
+  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
+  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
+  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
 }
 
 data "google_secret_manager_secret_version" "kubeconfig" {
-  secret = "kubeconfig"
+  secret = var.k3s_secret
 }
 
 resource "random_integer" "ri" {
@@ -98,30 +102,6 @@ resource "time_sleep" "wait_30_seconds" {
   depends_on = [module.cluster]
 
   destroy_duration = "30s"
-}
-
-provider "kubernetes" {
-  host                   = "https://${module.cluster.lb_inet_address}:6443"
-  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
-  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
-  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = "https://${module.cluster.lb_inet_address}:6443"
-    cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
-    client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
-    client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
-  }
-}
-
-provider "kubectl" {
-  host                   = "https://${module.cluster.lb_inet_address}:6443"
-  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
-  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
-  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
-  load_config_file       = false
 }
 
 module "k8s" {
@@ -251,4 +231,25 @@ module "dns" {
   subdomains = [
     for name, subdomain in local.subdomains : subdomain if name != "k8s"
   ]
+}
+
+module "cluster-new" {
+  source           = "./cluster-new"
+  project          = var.project
+  zone             = var.zone
+  region           = var.region
+  labels           = var.labels
+  random_number    = random_integer.ri.result
+  sa_email         = module.iam.gke_sa_email
+  admin_ips        = var.admin_ips
+  k8s_api_hostname = local.hostnames["k8s"]
+  credentials      = var.credentials
+  db_username      = module.sql.db_username
+  db_password      = module.sql.db_password
+  db_host          = module.sql.db_host
+  subnet_cidr      = module.network.vpc.subnets["${var.region}/outofschool"].ip_cidr_range
+  network_name     = module.network.vpc.network_name
+  k3s_version      = var.k3s_version
+  k3s_workers      = var.k3s_workers
+  k3s_masters      = var.k3s_masters
 }

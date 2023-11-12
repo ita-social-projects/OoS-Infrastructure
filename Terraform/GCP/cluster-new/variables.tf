@@ -64,6 +64,7 @@ variable "subnet_cidr" {
 
 variable "subnet_name" {
   type = string
+  default = "outofschool"
 }
 
 variable "network_name" {
