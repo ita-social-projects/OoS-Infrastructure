@@ -62,6 +62,10 @@ variable "subnet_cidr" {
   type = string
 }
 
+variable "subnet_name" {
+  type = string
+}
+
 variable "network_name" {
   type = string
 }
@@ -76,4 +80,14 @@ variable "k3s_masters" {
 
 variable "k3s_workers" {
   type = number
+}
+
+variable "k3s_secret" {
+  type    = string
+  default = "kubeconfig"
+}
+
+variable "k3s_port" {
+  type    = string
+  default = "6443"
 }
