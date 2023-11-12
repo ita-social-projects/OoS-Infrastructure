@@ -10,6 +10,3 @@ output "lb_inet_address" {
   value = google_compute_address.lb.address
 }
 
-output "names" {
-  value = module.masters.names
-}

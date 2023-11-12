@@ -99,38 +99,3 @@ module "workers" {
     google_compute_forwarding_rule.k3s_api_internal
   ]
 }
-
-resource "null_resource" "test" {
-  provisioner "local-exec" {
-    command = <<EOF
-echo test
-EOF
-  }
-}
-
-resource "null_resource" "test1" {
-  provisioner "local-exec" {
-    command = <<EOF
-echo test
-EOF
-  }
-}
-
-resource "null_resource" "test12" {
-  provisioner "local-exec" {
-    command = <<EOF
-echo test
-EOF
-  }
-}
-
-resource "null_resource" "test3" {
-  provisioner "local-exec" {
-    command = <<EOF
-echo test
-EOF
-  }
-}
-
-
-

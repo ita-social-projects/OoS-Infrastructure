@@ -8,7 +8,7 @@ set -uo pipefail
 # sudo service stackdriver-agent start
 
 export INSTALL_K3S_VERSION=${k3s_version}
-#export K3S_DATASTORE_ENDPOINT="mysql://${db_username}:${db_password}@tcp(${db_host}:3306)/k3s"
+export K3S_DATASTORE_ENDPOINT="mysql://${db_username}:${db_password}@tcp(${db_host}:3306)/k3s"
 export K3S_TOKEN=${token}
 
 # Generate custom ca-certs

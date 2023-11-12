@@ -131,9 +131,7 @@ resource "google_compute_per_instance_config" "k3s" {
 }
 
 locals {
-  # full_names = [
-  #   for i in range(1, var.node_count + 1) : format("k3s-%s%d", var.node_role, i)
-  # ]
-  full_names = ["k3s-master3"]
-
+  full_names = [
+    for i in range(1, var.node_count + 1) : format("k3s-%s%d", var.node_role, i)
+  ]
 }
