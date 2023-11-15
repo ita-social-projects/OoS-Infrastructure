@@ -62,6 +62,10 @@ variable "subnet_cidr" {
   type = string
 }
 
+variable "subnet_name" {
+  type = string
+}
+
 variable "network_name" {
   type = string
 }
@@ -71,9 +75,61 @@ variable "k3s_version" {
 }
 
 variable "k3s_masters" {
-  type    = number
+  type = number
 }
 
 variable "k3s_workers" {
   type = number
 }
+
+variable "k3s_secret" {
+  type    = string
+  default = "kubeconfig"
+}
+
+variable "k3s_port" {
+  type    = string
+  default = "6443"
+}
+
+variable "root_ca_cert_pem" {
+  type = string
+}
+
+variable "intermediate_cert_pem" {
+  type = string
+}
+
+variable "intermediate_private_key_pem" {
+  type = string
+}
+
+variable "server_private_key_pem" {
+  type = string
+}
+
+variable "server_cert_pem" {
+  type = string
+}
+
+variable "client_private_key_pem" {
+  type = string
+}
+
+variable "client_cert_pem" {
+  type = string
+}
+
+variable "cluster_ca_certificate" {
+  type = string
+}
+
+variable "client_certificate" {
+  type = string
+}
+
+variable "client_key" {
+  type = string
+}
+
+

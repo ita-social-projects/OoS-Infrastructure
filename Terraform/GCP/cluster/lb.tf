@@ -1,6 +1,7 @@
 data "google_compute_subnetwork" "outofschool" {
-  name   = "outofschool"
-  region = var.region
+  project = var.project
+  name    = var.subnet_name
+  region  = var.region
 }
 
 resource "google_compute_address" "lb_internal" {

@@ -25,7 +25,7 @@ resource "google_compute_instance_template" "k3s" {
 
   network_interface {
     network    = var.network_name
-    subnetwork = "outofschool"
+    subnetwork = var.subnet_name
   }
 
   metadata = {
@@ -129,7 +129,6 @@ resource "google_compute_per_instance_config" "k3s" {
     }
   }
 }
-
 
 locals {
   full_names = [
