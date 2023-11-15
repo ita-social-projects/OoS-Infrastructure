@@ -412,7 +412,7 @@ vector:
           verify_certificate : true
 
 metricbeat:
-  enabled: true
+  enabled: false
 
   # last release kube-state-metrics
   kube-state-metrics:
