@@ -1,6 +1,6 @@
 module "vpc" {
   source  = "terraform-google-modules/network/google"
-  version = "~> 5.0"
+  version = "8.0.0"
 
   project_id   = var.project
   network_name = "outofschool-${var.random_number}"
@@ -49,7 +49,7 @@ module "vpc" {
 
 module "cloud_router" {
   source  = "terraform-google-modules/cloud-router/google"
-  version = "~> 2.0.0"
+  version = "6.0.2"
   project = var.project
   name    = "oos-cloud-router"
   network = module.vpc.network_name

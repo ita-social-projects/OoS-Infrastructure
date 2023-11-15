@@ -2,7 +2,13 @@ terraform {
   required_providers {
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
+      version = ">= 1.14.0"
+    }
+    google = {
+      version = "~>5.6.0"
+    }
+    google-beta = {
+      version = "~>5.6.0"
     }
   }
 }
