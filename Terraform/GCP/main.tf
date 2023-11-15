@@ -78,25 +78,41 @@ module "sql" {
 }
 
 module "cluster" {
-  source           = "./cluster"
-  project          = var.project
-  zone             = var.zone
-  region           = var.region
-  labels           = var.labels
-  random_number    = random_integer.ri.result
-  sa_email         = module.iam.gke_sa_email
-  admin_ips        = var.admin_ips
-  k8s_api_hostname = local.hostnames["k8s"]
-  credentials      = var.credentials
-  db_username      = module.sql.db_username
-  db_password      = module.sql.db_password
-  db_host          = module.sql.db_host
-  subnet_cidr      = module.network.vpc.subnets["${var.region}/outofschool"].ip_cidr_range
-  network_name     = module.network.vpc.network_name
-  k3s_version      = var.k3s_version
-  k3s_workers      = var.k3s_workers
-  k3s_masters      = var.k3s_masters
+  source                       = "./cluster-new"
+  project                      = var.project
+  zone                         = var.zone
+  region                       = var.region
+  labels                       = var.labels
+  random_number                = random_integer.ri.result
+  sa_email                     = module.iam.gke_sa_email
+  admin_ips                    = var.admin_ips
+  k8s_api_hostname             = local.hostnames["k8s"]
+  credentials                  = var.credentials
+  db_username                  = module.sql.db_username
+  db_password                  = module.sql.db_password
+  db_host                      = module.sql.db_host
+  subnet_cidr                  = module.network.vpc.subnets["${var.region}/outofschool"].ip_cidr_range
+  subnet_name                  = var.subnet_name
+  network_name                 = module.network.vpc.network_name
+  k3s_version                  = var.k3s_version
+  k3s_workers                  = var.k3s_workers
+  k3s_masters                  = var.k3s_masters
+  k3s_secret                   = var.k3s_secret
+  root_ca_cert_pem             = module.k3s_certs.root_ca_cert_pem
+  intermediate_cert_pem        = module.k3s_certs.intermediate_cert_pem
+  intermediate_private_key_pem = module.k3s_certs.intermediate_private_key_pem
+  server_private_key_pem       = module.k3s_certs.server_private_key_pem
+  server_cert_pem              = module.k3s_certs.server_cert_pem
+  client_private_key_pem       = module.k3s_certs.client_private_key_pem
+  client_cert_pem              = module.k3s_certs.client_cert_pem
+  cluster_ca_certificate       = base64encode(module.k3s_certs.cluster_ca_certificate)
+  client_certificate           = base64encode(module.k3s_certs.client_certificate)
+  client_key                   = base64encode(module.k3s_certs.client_key)
+  depends_on = [
+    module.k3s_certs
+  ]
 }
+
 
 module "k8s" {
   source              = "./k8s"
@@ -130,6 +146,9 @@ module "k8s" {
   enable_dns          = var.enable_dns
   ingress_ip          = module.network.ingress_ip
   dns_sa_key          = module.iam.dns_sa_key
+  depends_on = [
+    module.cluster
+  ]
 }
 
 module "secrets" {
@@ -226,37 +245,4 @@ module "dns" {
 
 module "k3s_certs" {
   source = "./k3s-certs"
-}
-
-module "cluster_new" {
-  source                       = "./cluster-new"
-  project                      = var.project
-  zone                         = var.zone
-  region                       = var.region
-  labels                       = var.labels
-  random_number                = random_integer.ri.result
-  sa_email                     = module.iam.gke_sa_email
-  admin_ips                    = var.admin_ips
-  k8s_api_hostname             = local.hostnames["k8s"]
-  credentials                  = var.credentials
-  db_username                  = module.sql.db_username
-  db_password                  = module.sql.db_password
-  db_host                      = module.sql.db_host
-  subnet_cidr                  = module.network.vpc.subnets["${var.region}/outofschool"].ip_cidr_range
-  subnet_name                  = var.subnet_name
-  network_name                 = module.network.vpc.network_name
-  k3s_version                  = var.k3s_version
-  k3s_workers                  = var.k3s_workers
-  k3s_masters                  = var.k3s_masters
-  k3s_secret                   = var.k3s_secret
-  root_ca_cert_pem             = module.k3s_certs.root_ca_cert_pem
-  intermediate_cert_pem        = module.k3s_certs.intermediate_cert_pem
-  intermediate_private_key_pem = module.k3s_certs.intermediate_private_key_pem
-  server_private_key_pem       = module.k3s_certs.server_private_key_pem
-  server_cert_pem              = module.k3s_certs.server_cert_pem
-  client_private_key_pem       = module.k3s_certs.client_private_key_pem
-  client_cert_pem              = module.k3s_certs.client_cert_pem
-  cluster_ca_certificate       = base64encode(module.k3s_certs.cluster_ca_certificate)
-  client_certificate           = base64encode(module.k3s_certs.client_certificate)
-  client_key                   = base64encode(module.k3s_certs.client_key)
 }
