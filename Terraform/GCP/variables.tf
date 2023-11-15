@@ -181,6 +181,6 @@ variable "subnet_name" {
 }
 
 variable "k3s_port" {
-  type = string
+  type    = string
   default = "6443"
 }

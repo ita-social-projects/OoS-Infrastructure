@@ -29,7 +29,7 @@ resource "google_compute_instance_template" "k3s" {
   }
 
   metadata = {
-    shutdown-script = var.shutdown
+    shutdown-script        = var.shutdown
     block-project-ssh-keys = true
     enable-oslogin         = "TRUE"
   }
