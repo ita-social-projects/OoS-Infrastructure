@@ -19,7 +19,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: ${local.cluster_ca_certificate}
-    server: https://127.0.0.1:6443
+    server: https://${var.lb_internal_address}:${var.k3s_port}
   name: default
 contexts:
 - context:

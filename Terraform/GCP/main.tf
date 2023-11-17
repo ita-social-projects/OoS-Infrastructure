@@ -78,7 +78,7 @@ module "sql" {
 }
 
 module "cluster" {
-  source                       = "./cluster-new"
+  source                       = "./cluster"
   project                      = var.project
   zone                         = var.zone
   region                       = var.region
@@ -108,6 +108,8 @@ module "cluster" {
   cluster_ca_certificate       = base64encode(module.k3s_certs.cluster_ca_certificate)
   client_certificate           = base64encode(module.k3s_certs.client_certificate)
   client_key                   = base64encode(module.k3s_certs.client_key)
+  lb_internal_address          = google_compute_address.lb_internal.address
+  lb_address                   = google_compute_address.lb.address
   depends_on = [
     module.k3s_certs
   ]
@@ -137,7 +139,7 @@ module "k8s" {
   enable_ingress_http = var.enable_ingress_http
   pull_sa_key         = module.iam.pull_sa_key
   pull_sa_email       = module.iam.pull_sa_email
-  lb_internal_address = module.cluster.lb_internal_address
+  lb_internal_address = google_compute_address.lb_internal.address
   front_hostname      = local.hostnames["front"]
   app_hostname        = local.hostnames["app"]
   auth_hostname       = local.hostnames["auth"]
@@ -245,4 +247,8 @@ module "dns" {
 
 module "k3s_certs" {
   source = "./k3s-certs"
+
+  lb_internal_address = google_compute_address.lb_internal.address
 }
+
+

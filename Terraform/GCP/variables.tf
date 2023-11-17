@@ -184,3 +184,4 @@ variable "k3s_port" {
   type    = string
   default = "6443"
 }
+

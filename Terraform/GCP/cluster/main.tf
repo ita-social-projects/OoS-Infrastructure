@@ -2,7 +2,6 @@ module "masters" {
   source     = "./nodes"
   node_role  = "master"
   node_count = var.k3s_masters
-  shutdown   = file("${path.module}/shutdown.sh")
   startup = templatefile("${path.module}/startup-master.sh", {
     ROOT_CA_PEM_CERT       = var.root_ca_cert_pem
     INTERMEDIATE_CA_PEM    = var.intermediate_cert_pem
@@ -17,8 +16,8 @@ module "masters" {
     token                  = random_id.token.hex
     random_number          = var.random_number
     external_hostname      = var.k8s_api_hostname
-    external_lb_ip_address = google_compute_address.lb.address
-    internal_lb_ip_address = google_compute_address.lb_internal.address
+    external_lb_ip_address = var.lb_address
+    internal_lb_ip_address = var.lb_internal_address
     cluster_cidr           = var.subnet_cidr
     k3s_version            = var.k3s_version
   })
@@ -78,11 +77,10 @@ module "workers" {
   source     = "./nodes"
   node_role  = "worker"
   node_count = var.k3s_workers
-  shutdown   = file("${path.module}/shutdown-worker.sh")
   startup = templatefile("${path.module}/startup-worker.sh", {
     token         = random_id.token.hex
     random_number = var.random_number
-    main_node     = google_compute_address.lb_internal.address
+    main_node     = var.lb_internal_address
     k3s_version   = var.k3s_version
   })
   random_number = var.random_number

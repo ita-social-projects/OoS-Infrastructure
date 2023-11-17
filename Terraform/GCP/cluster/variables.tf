@@ -132,4 +132,14 @@ variable "client_key" {
   type = string
 }
 
+variable "lb_address" {
+  type = string
+  default = ""
+}
+
+variable "lb_internal_address" {
+  type = string
+  default = ""
+}
+
 

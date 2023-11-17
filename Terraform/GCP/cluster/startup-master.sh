@@ -26,7 +26,6 @@ generate_custom_certs() {
   curl -sL https://github.com/k3s-io/k3s/raw/master/contrib/util/generate-custom-ca-certs.sh > generate-custom-ca-certs.sh
   chmod +x generate-custom-ca-certs.sh
   ./generate-custom-ca-certs.sh
-  ls /var/lib/rancher/k3s/server/tls
 
   # Change server and client ca-certs
   echo "${SERVER_KEY}" > /var/lib/rancher/k3s/server/tls/server-ca.key

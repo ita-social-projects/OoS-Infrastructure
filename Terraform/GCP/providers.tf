@@ -28,7 +28,7 @@ provider "google-beta" {
 }
 
 provider "kubernetes" {
-  host                   = "https://${module.cluster.lb_inet_address}:${var.k3s_port}"
+  host                   = "https://${google_compute_address.lb.address}:${var.k3s_port}"
   cluster_ca_certificate = local.cluster_ca_certificate
   client_certificate     = local.client_certificate
   client_key             = local.client_key
@@ -36,7 +36,7 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    host                   = "https://${module.cluster.lb_inet_address}:${var.k3s_port}"
+    host                   = "https://${google_compute_address.lb.address}:${var.k3s_port}"
     cluster_ca_certificate = local.cluster_ca_certificate
     client_certificate     = local.client_certificate
     client_key             = local.client_key
@@ -44,7 +44,7 @@ provider "helm" {
 }
 
 provider "kubectl" {
-  host                   = "https://${module.cluster.lb_inet_address}:${var.k3s_port}"
+  host                   = "https://${google_compute_address.lb.address}:${var.k3s_port}"
   cluster_ca_certificate = local.cluster_ca_certificate
   client_certificate     = local.client_certificate
   client_key             = local.client_key

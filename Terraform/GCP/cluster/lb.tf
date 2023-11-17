@@ -4,18 +4,6 @@ data "google_compute_subnetwork" "outofschool" {
   region  = var.region
 }
 
-resource "google_compute_address" "lb_internal" {
-  name         = "k3s-static-${var.random_number}-internal"
-  address_type = "INTERNAL"
-  purpose      = "GCE_ENDPOINT"
-  region       = var.region
-  subnetwork   = data.google_compute_subnetwork.outofschool.id
-}
-
-resource "google_compute_address" "lb" {
-  name = "k3s-static-${var.random_number}"
-}
-
 resource "google_compute_region_backend_service" "k3s" {
   provider              = google-beta
   project               = var.project
@@ -81,8 +69,8 @@ resource "google_compute_forwarding_rule" "k8s-api" {
   name                  = "k3s-api-${var.random_number}"
   backend_service       = google_compute_region_backend_service.k3s.id
   load_balancing_scheme = "EXTERNAL"
-  port_range            = "6443"
-  ip_address            = google_compute_address.lb.address
+  port_range            = var.k3s_port
+  ip_address            = var.lb_address
   ip_protocol           = "TCP"
 }
 
@@ -91,7 +79,7 @@ resource "google_compute_forwarding_rule" "k3s_api_internal" {
   region                = var.region
   load_balancing_scheme = "INTERNAL"
   allow_global_access   = true
-  ip_address            = google_compute_address.lb_internal.address
+  ip_address            = var.lb_internal_address
   backend_service       = google_compute_region_backend_service.k3s_internal.id
   ports                 = [6443]
   subnetwork            = data.google_compute_subnetwork.outofschool.self_link

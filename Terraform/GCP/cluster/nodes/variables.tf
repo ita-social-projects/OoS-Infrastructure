@@ -37,9 +37,6 @@ variable "machine_type" {
   }
 }
 
-variable "shutdown" {
-  description = "Shutdown Script"
-}
 variable "startup" {
   description = "Startup Script"
 }
