@@ -169,3 +169,19 @@ variable "enable_dns" {
   default     = false
   description = "Should we use managed hosted zone and dns challenge for Let's Encrypt"
 }
+
+variable "k3s_secret" {
+  type    = string
+  default = "kubeconfig"
+}
+
+variable "subnet_name" {
+  type    = string
+  default = "outofschool"
+}
+
+variable "k3s_port" {
+  type    = string
+  default = "6443"
+}
+

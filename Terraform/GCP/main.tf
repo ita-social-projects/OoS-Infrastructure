@@ -16,10 +16,14 @@ locals {
   }
 
   kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
+
+  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
+  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
+  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
 }
 
 data "google_secret_manager_secret_version" "kubeconfig" {
-  secret = "kubeconfig"
+  secret = var.k3s_secret
 }
 
 resource "random_integer" "ri" {
@@ -74,55 +78,43 @@ module "sql" {
 }
 
 module "cluster" {
-  source           = "./cluster"
-  project          = var.project
-  zone             = var.zone
-  region           = var.region
-  labels           = var.labels
-  random_number    = random_integer.ri.result
-  sa_email         = module.iam.gke_sa_email
-  admin_ips        = var.admin_ips
-  k8s_api_hostname = local.hostnames["k8s"]
-  credentials      = var.credentials
-  db_username      = module.sql.db_username
-  db_password      = module.sql.db_password
-  db_host          = module.sql.db_host
-  subnet_cidr      = module.network.vpc.subnets["${var.region}/outofschool"].ip_cidr_range
-  network_name     = module.network.vpc.network_name
-  k3s_version      = var.k3s_version
-  k3s_workers      = var.k3s_workers
-  k3s_masters      = var.k3s_masters
+  source                       = "./cluster"
+  project                      = var.project
+  zone                         = var.zone
+  region                       = var.region
+  labels                       = var.labels
+  random_number                = random_integer.ri.result
+  sa_email                     = module.iam.gke_sa_email
+  admin_ips                    = var.admin_ips
+  k8s_api_hostname             = local.hostnames["k8s"]
+  credentials                  = var.credentials
+  db_username                  = module.sql.db_username
+  db_password                  = module.sql.db_password
+  db_host                      = module.sql.db_host
+  subnet_cidr                  = module.network.vpc.subnets["${var.region}/outofschool"].ip_cidr_range
+  subnet_name                  = var.subnet_name
+  network_name                 = module.network.vpc.network_name
+  k3s_version                  = var.k3s_version
+  k3s_workers                  = var.k3s_workers
+  k3s_masters                  = var.k3s_masters
+  k3s_secret                   = var.k3s_secret
+  root_ca_cert_pem             = module.k3s_certs.root_ca_cert_pem
+  intermediate_cert_pem        = module.k3s_certs.intermediate_cert_pem
+  intermediate_private_key_pem = module.k3s_certs.intermediate_private_key_pem
+  server_private_key_pem       = module.k3s_certs.server_private_key_pem
+  server_cert_pem              = module.k3s_certs.server_cert_pem
+  client_private_key_pem       = module.k3s_certs.client_private_key_pem
+  client_cert_pem              = module.k3s_certs.client_cert_pem
+  cluster_ca_certificate       = base64encode(module.k3s_certs.cluster_ca_certificate)
+  client_certificate           = base64encode(module.k3s_certs.client_certificate)
+  client_key                   = base64encode(module.k3s_certs.client_key)
+  lb_internal_address          = google_compute_address.lb_internal.address
+  lb_address                   = google_compute_address.lb.address
+  depends_on = [
+    module.k3s_certs
+  ]
 }
 
-resource "time_sleep" "wait_30_seconds" {
-  depends_on = [module.cluster]
-
-  destroy_duration = "30s"
-}
-
-provider "kubernetes" {
-  host                   = "https://${module.cluster.lb_inet_address}:6443"
-  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
-  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
-  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = "https://${module.cluster.lb_inet_address}:6443"
-    cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
-    client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
-    client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
-  }
-}
-
-provider "kubectl" {
-  host                   = "https://${module.cluster.lb_inet_address}:6443"
-  cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
-  client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
-  client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
-  load_config_file       = false
-}
 
 module "k8s" {
   source              = "./k8s"
@@ -147,7 +139,7 @@ module "k8s" {
   enable_ingress_http = var.enable_ingress_http
   pull_sa_key         = module.iam.pull_sa_key
   pull_sa_email       = module.iam.pull_sa_email
-  lb_internal_address = module.cluster.lb_internal_address
+  lb_internal_address = google_compute_address.lb_internal.address
   front_hostname      = local.hostnames["front"]
   app_hostname        = local.hostnames["app"]
   auth_hostname       = local.hostnames["auth"]
@@ -157,7 +149,7 @@ module "k8s" {
   ingress_ip          = module.network.ingress_ip
   dns_sa_key          = module.iam.dns_sa_key
   depends_on = [
-    time_sleep.wait_30_seconds
+    module.cluster
   ]
 }
 
@@ -252,3 +244,11 @@ module "dns" {
     for name, subdomain in local.subdomains : subdomain if name != "k8s"
   ]
 }
+
+module "k3s_certs" {
+  source = "./k3s-certs"
+
+  lb_internal_address = google_compute_address.lb_internal.address
+}
+
+

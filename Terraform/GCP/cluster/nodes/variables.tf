@@ -37,9 +37,6 @@ variable "machine_type" {
   }
 }
 
-variable "shutdown" {
-  description = "Shutdown Script"
-}
 variable "startup" {
   description = "Startup Script"
 }
@@ -59,5 +56,9 @@ variable "node_count" {
 }
 
 variable "network_name" {
+  type = string
+}
+
+variable "subnet_name" {
   type = string
 }

@@ -37,7 +37,7 @@ resource "google_compute_ssl_policy" "custom_ssl_policy" {
 
 module "cr_lb_http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
-  version = "~> 6.2.0"
+  version = "9.3.0"
   name    = "cr-lb-${var.random_number}"
   project = var.project
 
