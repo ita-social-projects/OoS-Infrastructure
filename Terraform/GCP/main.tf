@@ -15,17 +15,12 @@ locals {
     for name, subdomain in local.subdomains : name => subdomain == "" ? var.dns_domain : "${subdomain}.${var.dns_domain}"
   }
 
-  #kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
   kubeconfig = yamldecode(module.k3s_certs.secret_data)
 
   cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
   client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
   client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
 }
-
-# data "google_secret_manager_secret_version" "kubeconfig" {
-#   secret = var.k3s_secret
-# }
 
 resource "random_integer" "ri" {
   min = 10000
