@@ -15,16 +15,17 @@ locals {
     for name, subdomain in local.subdomains : name => subdomain == "" ? var.dns_domain : "${subdomain}.${var.dns_domain}"
   }
 
-  kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
+  #kubeconfig = yamldecode(data.google_secret_manager_secret_version.kubeconfig.secret_data)
+  kubeconfig = yamldecode(module.k3s_certs.secret_data)
 
   cluster_ca_certificate = base64decode(local.kubeconfig.clusters.0.cluster.certificate-authority-data)
   client_certificate     = base64decode(local.kubeconfig.users.0.user.client-certificate-data)
   client_key             = base64decode(local.kubeconfig.users.0.user.client-key-data)
 }
 
-data "google_secret_manager_secret_version" "kubeconfig" {
-  secret = var.k3s_secret
-}
+# data "google_secret_manager_secret_version" "kubeconfig" {
+#   secret = var.k3s_secret
+# }
 
 resource "random_integer" "ri" {
   min = 10000
@@ -194,7 +195,7 @@ module "build" {
   geo_key_secret               = module.secrets.geo_key_secret
   random_number                = random_integer.ri.result
   network_id                   = module.network.vpc.network_id
-  kube_secret                  = module.secrets.kube_secret
+  kube_secret                  = var.k3s_secret
   private_ip_range             = module.network.private_ip_range
   front_hostname               = local.hostnames["front"]
   app_hostname                 = local.hostnames["app"]
@@ -248,6 +249,7 @@ module "dns" {
 module "k3s_certs" {
   source = "./k3s-certs"
 
+  project_id = var.project
   lb_internal_address = google_compute_address.lb_internal.address
 }
 

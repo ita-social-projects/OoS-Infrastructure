@@ -68,6 +68,7 @@ elasticsearch:
       xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
       xpack.security.http.ssl.truststore.password: ${password-key}
       xpack.security.http.ssl.keystore.password: ${password-key}
+      xpack.security.enrollment.enabled: true
     elasticsearch-plugins.yml: |
       plugins:
         - id: analysis-icu
