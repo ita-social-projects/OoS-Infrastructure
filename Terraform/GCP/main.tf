@@ -190,7 +190,7 @@ module "build" {
   geo_key_secret               = module.secrets.geo_key_secret
   random_number                = random_integer.ri.result
   network_id                   = module.network.vpc.network_id
-  kube_secret                  = var.k3s_secret
+  kube_secret                  = module.k3s_certs.secret_name
   private_ip_range             = module.network.private_ip_range
   front_hostname               = local.hostnames["front"]
   app_hostname                 = local.hostnames["app"]
