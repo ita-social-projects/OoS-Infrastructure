@@ -61,10 +61,12 @@ done
 # Remove label
 declare -a names
 %{for i in module.masters.names~}
-names+=${i}
+names+="${i}"
+names+=" "
 %{endfor~}
 # Iterate through the list of instances
-for name in "$${names[@]}"; do
+FS=' ' read -a list_names <<< "$${names}"
+for name in "$${list_names[@]}"; do
   echo "Proccesing instance $name"
   gcloud compute instances remove-labels $name --project ${var.project} --zone ${var.zone} --labels=startup-done
 done

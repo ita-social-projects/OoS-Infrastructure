@@ -83,21 +83,6 @@ resource "google_secret_manager_secret_version" "redis_secret" {
   secret_data = var.redis_pass
 }
 
-resource "google_secret_manager_secret" "kube_secret" {
-  secret_id = "kubeconfig"
-
-  labels = var.labels
-
-  replication {
-    auto {}
-  }
-}
-
-resource "google_secret_manager_secret_version" "kube_secret" {
-  secret      = google_secret_manager_secret.kube_secret.id
-  secret_data = var.deployer_kubeconfig
-}
-
 locals {
   api_list          = var.enable_cloud_run ? split("/", google_secret_manager_secret_version.secret_app_pass[0].name) : []
   auth_list         = var.enable_cloud_run ? split("/", google_secret_manager_secret_version.secret_auth_pass[0].name) : []

@@ -30,6 +30,16 @@ resource "helm_release" "ingress" {
   ]
 }
 
+resource "kubernetes_namespace" "ingress-nginx" {
+  metadata {
+    annotations = {
+      name = "ingress-nginx"
+    }
+    name = "ingress-nginx"
+  }
+}
+
+
 # Nginx expects `X-Request-Id` header for request tracing that is exposed as `$req_id` variable.
 # .Net Core Serilog ECS Enricher expects `Request-Id` header for this purpose.
 resource "kubectl_manifest" "custom_tracing_headers" {

@@ -54,3 +54,11 @@ output "client_certificate" {
 output "client_key" {
   value = tls_private_key.admin.private_key_pem
 }
+
+output "secret_data" {
+  value = google_secret_manager_secret_version.kube_secret.secret_data
+}
+
+output "secret_name" {
+  value = google_secret_manager_secret_version.kube_secret.name
+}

@@ -1,5 +1,5 @@
 resource "google_sql_database_instance" "storage" {
-  name                = "k3s-store-${var.random_number}"
+  name                = "k3s-state-${var.random_number}"
   database_version    = "MYSQL_8_0_26"
   region              = var.region
   deletion_protection = false

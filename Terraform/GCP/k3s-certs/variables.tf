@@ -19,3 +19,6 @@ variable "k3s_port" {
   default = "6443"
 }
 
+variable "project_id" {
+  type = string
+}
