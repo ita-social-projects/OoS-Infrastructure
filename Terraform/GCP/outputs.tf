@@ -38,6 +38,6 @@ output "image_bucket" {
 }
 
 output "introspection_secret" {
-  value     = module.k8s.introspection_secret
+  value     = module.passwords.openiddict_introspection_key
   sensitive = true
 }

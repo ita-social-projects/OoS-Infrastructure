@@ -33,3 +33,9 @@ resource "random_password" "redis_pass" {
   special          = true
   override_special = "_%@"
 }
+
+resource "random_password" "openiddict_introspection_key" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}

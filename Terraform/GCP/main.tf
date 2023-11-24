@@ -113,37 +113,38 @@ module "cluster" {
 
 
 module "k8s" {
-  source              = "./k8s"
-  project             = var.project
-  zone                = var.zone
-  admin_ips           = var.admin_ips
-  sql_root_pass       = module.passwords.sql_root_pass
-  sql_api_pass        = module.passwords.sql_api_pass
-  sql_auth_pass       = module.passwords.sql_auth_pass
-  es_admin_pass       = module.passwords.es_admin_pass
-  es_api_pass         = module.passwords.es_api_pass
-  redis_pass          = module.passwords.redis_pass
-  csi_sa_email        = module.iam.csi_sa_email
-  csi_sa_key          = module.iam.csi_sa_key
-  letsencrypt_email   = var.letsencrypt_email
-  sql_hostname        = local.hostnames["sql"]
-  phpmyadmin_hostname = local.hostnames["phpmyadmin"]
-  kibana_hostname     = local.hostnames["kibana"]
-  elastic_hostname    = local.hostnames["elastic"]
-  sql_port            = var.sql_port
-  redis_port          = var.redis_port
-  enable_ingress_http = var.enable_ingress_http
-  pull_sa_key         = module.iam.pull_sa_key
-  pull_sa_email       = module.iam.pull_sa_email
-  lb_internal_address = google_compute_address.lb_internal.address
-  front_hostname      = local.hostnames["front"]
-  app_hostname        = local.hostnames["app"]
-  auth_hostname       = local.hostnames["auth"]
-  sendgrid_key        = var.sendgrid_key
-  geo_apikey          = var.geo_apikey
-  enable_dns          = var.enable_dns
-  ingress_ip          = module.network.ingress_ip
-  dns_sa_key          = module.iam.dns_sa_key
+  source                       = "./k8s"
+  project                      = var.project
+  zone                         = var.zone
+  admin_ips                    = var.admin_ips
+  sql_root_pass                = module.passwords.sql_root_pass
+  sql_api_pass                 = module.passwords.sql_api_pass
+  sql_auth_pass                = module.passwords.sql_auth_pass
+  es_admin_pass                = module.passwords.es_admin_pass
+  es_api_pass                  = module.passwords.es_api_pass
+  redis_pass                   = module.passwords.redis_pass
+  csi_sa_email                 = module.iam.csi_sa_email
+  csi_sa_key                   = module.iam.csi_sa_key
+  letsencrypt_email            = var.letsencrypt_email
+  sql_hostname                 = local.hostnames["sql"]
+  phpmyadmin_hostname          = local.hostnames["phpmyadmin"]
+  kibana_hostname              = local.hostnames["kibana"]
+  elastic_hostname             = local.hostnames["elastic"]
+  sql_port                     = var.sql_port
+  redis_port                   = var.redis_port
+  enable_ingress_http          = var.enable_ingress_http
+  pull_sa_key                  = module.iam.pull_sa_key
+  pull_sa_email                = module.iam.pull_sa_email
+  lb_internal_address          = google_compute_address.lb_internal.address
+  front_hostname               = local.hostnames["front"]
+  app_hostname                 = local.hostnames["app"]
+  auth_hostname                = local.hostnames["auth"]
+  sendgrid_key                 = var.sendgrid_key
+  geo_apikey                   = var.geo_apikey
+  enable_dns                   = var.enable_dns
+  ingress_ip                   = module.network.ingress_ip
+  dns_sa_key                   = module.iam.dns_sa_key
+  openiddict_introspection_key = module.passwords.openiddict_introspection_key
   depends_on = [
     module.cluster
   ]
@@ -244,7 +245,7 @@ module "dns" {
 module "k3s_certs" {
   source = "./k3s-certs"
 
-  project_id = var.project
+  project_id          = var.project
   lb_internal_address = google_compute_address.lb_internal.address
 }
 

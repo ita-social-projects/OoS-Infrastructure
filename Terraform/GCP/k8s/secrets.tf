@@ -55,26 +55,6 @@ resource "kubernetes_secret" "pull" {
   }
 }
 
-# TODO: Remove when we switch to OpenIdDict
-resource "random_password" "api_secret" {
-  length           = 16
-  special          = true
-  override_special = "_%@"
-}
-
-# TODO: Remove when we switch to OpenIdDict
-resource "random_password" "client_secret" {
-  length           = 16
-  special          = true
-  override_special = "_%@"
-}
-
-resource "random_password" "introspection_secret" {
-  length           = 16
-  special          = true
-  override_special = "_%@"
-}
-
 resource "kubernetes_secret" "authserver_secrets" {
   metadata {
     name      = "authserver-secrets"
@@ -82,12 +62,8 @@ resource "kubernetes_secret" "authserver_secrets" {
   }
 
   data = {
-    Email__SendGridKey = var.sendgrid_key
-    # TODO: Remove when we switch to OpenIdDict
-    outofschoolapi__ApiSecret = random_password.api_secret.result
-    # TODO: Remove when we switch to OpenIdDict
-    "m2m.client__ClientSecret"               = random_password.client_secret.result
-    AuthorizationServer__IntrospectionSecret = random_password.introspection_secret.result
+    Email__SendGridKey                       = var.sendgrid_key
+    AuthorizationServer__IntrospectionSecret = var.openiddict_introspection_key
   }
 }
 
@@ -99,7 +75,7 @@ resource "kubernetes_secret" "webapi_secrets" {
 
   data = {
     GeoCoding__ApiKey                 = var.geo_apikey
-    AuthorizationServer__ClientSecret = random_password.introspection_secret.result
+    AuthorizationServer__ClientSecret = var.openiddict_introspection_key
   }
 }
 
