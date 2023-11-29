@@ -21,3 +21,7 @@ output "es_api_pass" {
 output "redis_pass" {
   value = random_password.redis_pass.result
 }
+
+output "openiddict_introspection_key" {
+  value = random_password.openiddict_introspection_key.result
+}

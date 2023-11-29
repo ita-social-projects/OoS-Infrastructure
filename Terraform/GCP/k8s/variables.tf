@@ -127,3 +127,7 @@ variable "dns_sa_key" {
 variable "ingress_ip" {
   type = string
 }
+
+variable "openiddict_introspection_key" {
+  type = string
+}
