@@ -1,0 +1,15 @@
+{{ if (and .Values.jobKind (eq .Values.jobKind "Job")) }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "job.fullname" . }}
+  namespace:  {{ .Release.Namespace }}
+  labels:
+    {{- include "job.labels" . | nindent 4 }}
+  {{- with .Values.jobAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ include "job.spec" . }}
+{{- end}}

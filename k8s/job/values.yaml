@@ -1,0 +1,87 @@
+# Default values for job.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+jobKind: Job
+## Only aplicable to CronJob kind ##
+schedule: "*/1 * * * *"
+startingDeadlineSeconds: 0
+concurrencyPolicy: "Forbid"
+successfulJobsHistoryLimit: 0
+failedJobsHistoryLimit: 0
+suspend: false
+## End of CronJob specific values ##
+
+command: []
+args: []
+
+backoffLimit: 3
+activeDeadlineSeconds: 120
+ttlSecondsAfterFinished: 0
+restartPolicy: "Never"
+
+jobAnnotations: {}
+podAnnotations: {}
+
+image:
+  registry: "gcr.io"
+  repository: ""
+  name: ""
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  fullTagOverride: ""
+
+configuration:
+  extraEnvironment: {}
+
+  extraEnvVarsCM: ""
+
+  extraEnvVarsSecret: ""
+
+  ## TODO: file type secret handling
+  ## List of secrets from which to take variables
+  ## - type: env
+  ##   name: my-secret     # secret name
+  ##   prefix: MY_         # optional prefix
+  ##   keys:               # secret key ref list
+  ##   - key: foo          # my-secret.foo => MY_FOO
+  ##   - key: x.y.z        # my-secret.x.y.z => MY_X_Y_Z
+  ##   - key: old-val
+  ##     envKey: new-val   # my-secret.old-val => MY_NEW_VAL
+  ##   - key: x.y.z
+  ##     upper: false      # my-secret.x.y.z => MY_x_y_z
+  secrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurity:
+  enabled: false
+  context:
+    fsGroup: 2000
+    ## e.g:
+    ## sysctls:
+    ##   - name: net.core.somaxconn
+    ##     value: "10000"
+    ##
+    sysctls: []
+
+containerSecurity:
+  enabled: false
+  context:
+    runAsUser: 1000
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000

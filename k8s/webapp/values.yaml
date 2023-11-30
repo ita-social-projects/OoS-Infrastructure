@@ -58,6 +58,10 @@ image:
   tag: ""
   fullTagOverride: ""
 
+## See job values for config
+migrations:
+  enabled: false
+
 imagePullSecrets: []
 
 storage:

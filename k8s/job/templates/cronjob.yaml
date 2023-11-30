@@ -1,0 +1,32 @@
+{{ if (and .Values.jobKind (eq .Values.jobKind "CronJob")) }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "job.fullname" . }}
+  namespace:  {{ .Release.Namespace }}
+  labels:
+    {{- include "job.labels" . | nindent 4 }}
+  {{- with .Values.jobAnnotations }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  schedule: "{{ .Values.schedule }}"
+  {{- with .Values.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ int . }}
+  {{- end }}
+  {{- with .Values.concurrencyPolicy }}
+  concurrencyPolicy: "{{ . }}"
+  {{- end }}
+  {{- with .Values.successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with .Values.failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with .Values.suspend }}
+  suspend: {{ .Values.suspend }}
+  {{- end }}
+  jobTemplate: {{ include "job.spec" . | nindent 4 }}
+{{- end}}

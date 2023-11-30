@@ -33,15 +33,6 @@ configuration:
       envKey: ConnectionStringsOverride__DefaultConnection__Password
       upper: false
   - type: env
-    name: authserver-secrets
-    keys:
-    - key: outofschoolapi__ApiSecret
-      envKey: outofschoolapi__ApiSecret
-      upper: false
-    - key: m2m.client__ClientSecret
-      envKey: m2m.client__ClientSecret
-      upper: false
-  - type: env
     name: redis-auth
     keys:
     - key: password
@@ -53,6 +44,33 @@ configuration:
     - key: apipass
       envKey: Elasticsearch__Password
       upper: false
+
+migrations:
+  enabled: true
+  jobKind: Job
+  jobAnnotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  configuration:
+    extraEnvironment:
+      DB_HOST: mysql
+      DB_USER: oos
+    secrets:
+    - type: env
+      name: mysql-api-auth
+      keys:
+      - key: IDENTITY_PASSWORD
+        envKey: DB_PASS
+  image:
+    fullTagOverride: ""
+    pullPolicy: IfNotPresent
+  serviceAccount:
+    annotations:
+      "helm.sh/hook": pre-install,pre-upgrade
+      "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    imagePullSecrets:
+    - name: outofschool-gcp-pull-secrets
+
 ingress:
   enabled: true
   className: "nginx"
