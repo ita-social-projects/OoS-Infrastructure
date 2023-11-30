@@ -70,7 +70,7 @@ spec:
           lifecycle:
             {{- toYaml .Values.lifecycleHooks | nindent 12 }}
           {{- end }}
-          env: {{ concat (list (dict "name" "PORT" "value" .Values.deploy.containerPort)) (include "library.env.tpl" . | fromYamlArray) | toYaml | nindent 12 }}
+          env: {{ concat (list (dict "name" "PORT" "value" (.Values.deploy.containerPort | quote))) (include "library.env.tpl" . | fromYamlArray) | toYaml | nindent 12 }}
           {{- include "library.envFrom.tpl" . | nindent 10 }}
           ports:
             - name: http
