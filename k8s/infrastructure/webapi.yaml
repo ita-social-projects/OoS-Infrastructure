@@ -74,6 +74,9 @@ migrations:
     fullTagOverride: ""
     pullPolicy: IfNotPresent
   serviceAccount:
+    annotations:
+      "helm.sh/hook": pre-install,pre-upgrade
+      "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
     imagePullSecrets:
     - name: outofschool-gcp-pull-secrets
 

@@ -9,7 +9,7 @@ metadata:
     {{- include "job.labels" . | nindent 4 }}
   {{- with .Values.jobAnnotations }}
   annotations:
-      {{- toYaml . | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 {{ include "job.spec" . }}
 {{- end}}
