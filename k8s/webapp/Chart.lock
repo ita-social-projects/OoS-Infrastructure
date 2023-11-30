@@ -1,0 +1,9 @@
+dependencies:
+- name: library
+  repository: file://../library
+  version: 0.1.0
+- name: job
+  repository: file://../job
+  version: 0.1.0
+digest: sha256:bacf21aa4093a69af55a33adb9e56e90a9a87f0ddcb08d26eec8208c98411f07
+generated: "2023-11-30T12:34:40.722867+02:00"

@@ -53,6 +53,30 @@ configuration:
     - key: apipass
       envKey: Elasticsearch__Password
       upper: false
+
+migrations:
+  enabled: true
+  jobKind: Job
+  jobAnnotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  configuration:
+    extraEnvironment:
+      DB_HOST: mysql
+      DB_USER: oos
+    secrets:
+    - type: env
+      name: mysql-api-auth
+      keys:
+      - key: IDENTITY_PASSWORD
+        envKey: DB_PASS
+  image:
+    fullTagOverride: ""
+    pullPolicy: IfNotPresent
+  serviceAccount:
+    imagePullSecrets:
+    - name: outofschool-gcp-pull-secrets
+
 ingress:
   enabled: true
   className: "nginx"
