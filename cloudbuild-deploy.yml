@@ -14,16 +14,18 @@ steps:
   - name: alpine/helm:3.11.3
     env:
     - KUBECONFIG=/root/.kube/config
-    args:
-    - upgrade
-    - --install
-    - --values=$_VALUES_PATH
-    - --set=image.fullTagOverride=$_IMAGE_TAG
-    - --set=ingress.hosts[0].host=$_HOST
-    - --set=ingress.tls[0].hosts[0]=$_HOST
-    - --wait
-    - $_SERVICE_NAME
-    - ./k8s/webapp
+    script: |
+      #!/usr/bin/env sh
+      helm upgrade \
+        --install \
+        --values=$_VALUES_PATH \
+        --set=image.fullTagOverride=$_IMAGE_TAG \
+        --set=ingress.hosts[0].host=$_HOST \
+        --set=ingress.tls[0].hosts[0]=$_HOST \
+        --set=migrations.image.fullTagOverride=${_REGION}-docker.pkg.dev/$PROJECT_ID/outofschool/oos-migrations:${_IMAGE_TAG##*:}
+        --wait \
+        $_SERVICE_NAME \
+        ./k8s/webapp
     volumes:
     - name: 'kube'
       path: /root/.kube
@@ -32,5 +34,6 @@ availableSecrets:
   - versionName: $_KUBE_CONFIG
     env: 'KUBECFG'
 options:
+  automapSubstitutions: true
   pool:
     name: $_POOL
