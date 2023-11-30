@@ -12,7 +12,7 @@ import os
 
 import requests
 
-from typing import TypedDict, List, Optional
+from typing import TypedDict, List, Optional, NotRequired
 
 FRONT_REPO = "ita-social-projects/OoS-Frontend"
 BACK_REPO = "ita-social-projects/OoS-Backend"
@@ -64,7 +64,7 @@ def create_message(build: GoogleCloudBuild) -> DiscordMessage:
         'color':
         1127128,
         'title':
-        "🔨 DEPLOYING",
+        f"🔨 DEPLOYING {content}",
         'description':
         f"Deployment started at {datetime.fromisoformat(build['startTime']).strftime('%A %-d %-Y, %H:%M:%S')}",
     })
@@ -84,7 +84,7 @@ def create_message(build: GoogleCloudBuild) -> DiscordMessage:
         'color':
         1027128,
         'title':
-        "✅ SUCCESS",
+        f"✅ SUCCESS {content}",
         'description':
         f"Deployment took a {(datetime.fromisoformat(build['finishTime']) - datetime.fromisoformat(build['startTime'])).seconds} seconds."
     })
@@ -98,11 +98,11 @@ def create_message(build: GoogleCloudBuild) -> DiscordMessage:
   else:
     embeds.append({
         'color': 14177041,
-        'title': f"❌ ERROR - {build['status']}",
+        'title': f"❌ ERROR {content} - {build['status']}",
         'description': "Click to see the log.",
         'url': build['logUrl']
     })
-  return {'content': content, 'embeds': embeds}
+  return {'embeds': embeds}
 
 
 def send_discord_message(webhook: str, msg: DiscordMessage) -> str:
@@ -153,7 +153,7 @@ class Timing(TypedDict):
 
 
 class DiscordMessage(TypedDict):
-  content: str
+  content: NotRequired[str]
   embeds: List[Embed]
 
 

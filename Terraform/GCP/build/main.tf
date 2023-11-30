@@ -38,6 +38,7 @@ resource "google_cloudbuild_trigger" "app_deploy" {
     _IMAGE_TAG    = "$(body.message.data.tag)"
     _HOST         = var.app_hostname
     _SERVICE_NAME = "webapi"
+    _REGION       = var.region
     _VALUES_PATH  = "./k8s/infrastructure/webapi.yaml"
   }
 
