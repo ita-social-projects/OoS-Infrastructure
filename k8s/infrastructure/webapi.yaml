@@ -33,15 +33,6 @@ configuration:
       envKey: ConnectionStringsOverride__DefaultConnection__Password
       upper: false
   - type: env
-    name: authserver-secrets
-    keys:
-    - key: outofschoolapi__ApiSecret
-      envKey: outofschoolapi__ApiSecret
-      upper: false
-    - key: m2m.client__ClientSecret
-      envKey: m2m.client__ClientSecret
-      upper: false
-  - type: env
     name: redis-auth
     keys:
     - key: password
