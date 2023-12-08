@@ -26,54 +26,5 @@ resource "kubectl_manifest" "elastic_ssl" {
   EOF
 }
 
-resource "helm_release" "elastic" {
-  name          = "elastic"
-  chart         = "../../k8s/elastic"
-  namespace     = data.kubernetes_namespace.oos.metadata[0].name
-  wait          = true
-  wait_for_jobs = true
-  # Disable running kibana preinstall hooks on further upgrades. Will be fixed when moved to ECK
-  disable_webhooks = true
-  timeout          = 1200
-  values = [
-    "${file("${path.module}/values/elastic.yaml")}"
-  ]
-
-  set {
-    name  = "kibana.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/whitelist-source-range"
-    value = join("\\,", var.admin_ips)
-  }
-
-  set {
-    name  = "elasticsearch.ingress.tls[0].hosts[0]"
-    value = var.elastic_hostname
-  }
-
-  set {
-    name  = "elasticsearch.ingress.hosts[0].host"
-    value = var.elastic_hostname
-  }
-
-  set {
-    name  = "kibana.ingress.tls[0].hosts[0]"
-    value = var.kibana_hostname
-  }
-
-  set {
-    name  = "kibana.ingress.hosts[0].host"
-    value = var.kibana_hostname
-  }
-
-  set {
-    name  = "metricbeat.secrets[0].value.user"
-    value = var.mysql_user
-  }
-
-  depends_on = [
-    kubernetes_secret.elastic_credentials,
-    kubectl_manifest.elastic_ssl,
-    helm_release.ingress
-  ]
-}
 
 

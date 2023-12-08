@@ -1,0 +1,234 @@
+# fullnameOverride -- Override the full name of resources.
+fullnameOverride: vector
+
+# Each role is created with the following workloads:
+# Agent = DaemonSet
+# Aggregator = StatefulSet
+# Stateless-Aggregator = Deployment
+role: "Agent"
+
+image:
+  repository: timberio/vector
+  pullPolicy: IfNotPresent
+  # Overrides the image tag, the default is `{image.version}-{image.base}`.
+  tag: "0.34.1-debian"
+  # Overrides the image version, the default is the Chart appVersion.
+  version: ""
+  base: "debian"
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64M
+  limits:
+    memory: 512M
+
+service:
+  ports:
+    - port: 8686
+
+env:
+  - name: "ES_ENDPOINT"
+    value: "https://elasticsearch-es-http:9200"
+  - name: "ES_USERNAME"
+    value: "elastic"
+  - name: "ES_PASSWORD"
+    valueFrom:
+      secretKeyRef:
+        name: elasticsearch-es-elastic-user
+        key: elastic
+
+extraVolumeMounts:
+  - name: elastic-certificates
+    mountPath: /usr/share/vector/elastic
+    readOnly: true
+
+extraVolumes:
+  - name: elastic-certificates
+    secret:
+      secretName: elasticsearch-es-http-certs-internal
+
+# customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
+# using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/)
+# for all options.
+customConfig:
+  data_dir: /vector-data-dir
+  api:
+    enabled: true
+    address: 127.0.0.1:8686
+    playground: false
+  sources:
+    file-syslog:
+      type: file
+      include:
+        - /var/log/syslog
+    k3s_logs:
+      type: kubernetes_logs
+  transforms:
+    remove_app_label:
+      type: remap
+      inputs:
+        - k3s_logs
+      source: |-
+        if is_string(.kubernetes.pod_labels.app) {
+          del(.kubernetes.pod_labels.app)
+        }
+    filter_structured_logs:
+      type: filter
+      inputs:
+        - remove_app_label
+      condition: includes(["ingress-nginx","rke2-ingress-nginx", "webapp"], .kubernetes.pod_labels."app.kubernetes.io/name")
+    parse_json_logs:
+      type: remap
+      # TODO: add sink for dropped events
+      drop_on_error: true
+      inputs:
+        - filter_structured_logs
+      source: |-
+        # Extract JSON message
+        structured = parse_json!(.message)
+
+        # Save original message for debug
+        .original = del(.message)
+
+        . = merge!(., structured)
+    logs_router:
+      type: route
+      inputs:
+        - parse_json_logs
+      route:
+        nginx: includes(["ingress-nginx","rke2-ingress-nginx"], .kubernetes.pod_labels."app.kubernetes.io/name")
+        serilog: .kubernetes.pod_labels."app.kubernetes.io/name" == "webapp"
+    nginx_process_logs:
+      type: remap
+      inputs:
+        - logs_router.nginx
+      # TODO: add sink for dropped events
+      drop_on_error: true
+      source: |-
+        # Leave only one possible field that contains IP
+        if .network.source_ip == "" {
+          .network.source_ip = del(.network.x_forwarded_for)
+        }
+
+        .@timestamp = del(.timestamp)
+        # {{``}} is used to escape helm templating
+        method = .http.request.method
+        url = .url.original
+        duration_sec = .http.response.duration_sec
+        status_code = .http.response.status_code
+        .message = {{`"{{ method }} request to {{ url }} finished in {{ duration_sec }} s with status {{ status_code }}" ?? ""`}}
+
+        # Coerce fields
+        .http.response.status_code = to_int!(.http.response.status_code)
+        .http.upstream.status_code = to_int!(.http.upstream.status_code)
+
+        .http.request.bytes = to_int!(.http.request.bytes)
+        .http.response.body.bytes = to_int!(.http.response.body.bytes)
+        .http.response.bytes = to_int!(.http.response.bytes)
+        .http.upstream.bytes = to_int!(.http.upstream.bytes)
+
+        .http.response.duration_sec = to_float!(.http.response.duration_sec)
+        .http.upstream.duration_sec = to_float!(.http.upstream.duration_sec)
+    serilog_parse_logs:
+      type: remap
+      # TODO: add sink for dropped events
+      drop_on_error: true
+      inputs:
+        - logs_router.serilog
+      source: |-
+        # Remove currently unnecessary fields
+        del(.host)
+        del(.process)
+        del(.service)
+        del(.labels.MessageTemplate)
+    route_output_logs:
+      type: route
+      inputs:
+        - serilog_parse_logs
+      route:
+        normal: .log.level != "Error" && !exists(.error)
+        error: .log.level == "Error" || exists(.error)
+  sinks:
+    nginx_logs:
+      type: elasticsearch
+      inputs:
+        - nginx_process_logs
+      api_version: v8
+      compression: none
+      endpoints:
+        - "${ES_ENDPOINT}"
+      mode: data_stream
+      data_stream:
+        type: vector
+        dataset: logs
+        namespace: nginx
+      pipeline: geoip-nginx
+      auth:
+        strategy: basic
+        user: "${ES_USERNAME}"
+        password: "${ES_PASSWORD}"
+      tls:
+        ca_path : "/usr/share/vector/elastic/ca.crt"
+        verify_certificate : true
+    app_logs:
+      type: elasticsearch
+      inputs:
+        - route_output_logs.normal
+      api_version: v8
+      compression: none
+      endpoints:
+        - "${ES_ENDPOINT}"
+      mode: data_stream
+      data_stream:
+        type: vector
+        dataset: logs
+        namespace: app
+      auth:
+        strategy: basic
+        user: "${ES_USERNAME}"
+        password: "${ES_PASSWORD}"
+      tls:
+        ca_path : "/usr/share/vector/elastic/ca.crt"
+        verify_certificate : true
+    error_logs:
+      type: elasticsearch
+      inputs:
+        - route_output_logs.error
+      api_version: v8
+      compression: none
+      endpoints:
+        - "${ES_ENDPOINT}"
+      mode: data_stream
+      data_stream:
+        type: vector
+        dataset: logs
+        namespace: error
+      auth:
+        strategy: basic
+        user: "${ES_USERNAME}"
+        password: "${ES_PASSWORD}"
+      tls:
+        ca_path : "/usr/share/vector/elastic/ca.crt"
+        verify_certificate : true
+    es_logs:
+      type: elasticsearch
+      inputs:
+        - remove_app_label
+        - file-syslog
+      api_version: v8
+      compression: none
+      endpoints:
+        - "${ES_ENDPOINT}"
+      mode: data_stream
+      data_stream:
+        type: vector
+        dataset: logs
+        namespace: unstructured
+      auth:
+        strategy: basic
+        user: "${ES_USERNAME}"
+        password: "${ES_PASSWORD}"
+      tls:
+        ca_path : "/usr/share/vector/elastic/ca.crt"
+        verify_certificate : true
