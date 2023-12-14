@@ -23,7 +23,7 @@ configuration:
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ConnectionStringsOverride__DefaultConnection__UserId: api
     SERVICE_BINDING_ROOT: /workspace/bindings
-    Elasticsearch__Urls__0: https://elastic-es-http:9200
+    Elasticsearch__Urls__0: https://elasticsearch-es-http:9200
   extraEnvVarsSecret: "webapi-secrets"
   secrets:
   - type: env
