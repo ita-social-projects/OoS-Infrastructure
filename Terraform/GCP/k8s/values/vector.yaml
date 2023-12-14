@@ -35,8 +35,8 @@ env:
   - name: "ES_PASSWORD"
     valueFrom:
       secretKeyRef:
-        name: elasticsearch-es-elastic-user
-        key: elastic
+        name: elastic-credentials
+        key: password
 
 extraVolumeMounts:
   - name: elastic-certificates

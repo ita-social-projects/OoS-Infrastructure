@@ -10,17 +10,66 @@ resource "kubernetes_secret" "sql_api_credentials" {
   }
 }
 
+resource "kubectl_manifest" "elastic_roles" {
+  yaml_body = <<-EOF
+kind: Secret
+apiVersion: v1
+metadata:
+  name: elastic-roles-secret
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+stringData:
+  roles.yml: |-
+    outofschool:
+      cluster:
+        - monitor
+      indices:
+        - names:
+            - workshop
+          privileges:
+            - read
+            - write
+            - delete
+            - create_index
+            - view_index_metadata
+            - manage
+          allow_restricted_indices: false
+      applications:
+        - application: kibana-.kibana
+          privileges:
+            - space_read
+          resources:
+            - space:default
+      metadata:
+        version: 2
+EOF
+}
+
 resource "kubernetes_secret" "elastic_credentials" {
   metadata {
-    name      = "elasticsearch-credentials"
+    name      = "elastic-credentials"
     namespace = data.kubernetes_namespace.oos.metadata[0].name
   }
 
   data = {
     username = "elastic"
     password = var.es_admin_pass
-    apipass  = var.es_api_pass
+    roles    = "superuser"
   }
+  type = "kubernetes.io/basic-auth"
+}
+
+resource "kubernetes_secret" "elastic_webapi_credentials" {
+  metadata {
+    name      = "webapi-es-credentials"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    username = "webapi"
+    password = var.es_api_pass
+    roles    = "outofschool"
+  }
+  type = "kubernetes.io/basic-auth"
 }
 
 resource "kubernetes_secret" "redis_credentials" {

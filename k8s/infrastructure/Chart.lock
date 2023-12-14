@@ -4,30 +4,30 @@ dependencies:
   version: v1.12.3
 - name: mysql-operator
   repository: https://mysql.github.io/mysql-operator
-  version: 2.1.0
+  version: 2.1.1
 - name: mysql-innodbcluster
   repository: https://mysql.github.io/mysql-operator
-  version: 2.1.0
+  version: 2.1.1
 - name: phpmyadmin
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.6
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 17.14.2
-- name: elasticsearch
-  repository: https://helm.elastic.co
-  version: 8.5.1
-- name: kibana
-  repository: https://helm.elastic.co
-  version: 8.5.1
 - name: vector
   repository: https://helm.vector.dev
-  version: 0.20.1
+  version: 0.29.0
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
   version: 4.7.1
 - name: outofschool
   repository: file://../webapp
-  version: 1.0.5
-digest: sha256:2d48941d2e7acf31c6785f705df599cd1bc9433ab8eada69ab50340b50b1ea02
-generated: "2023-09-02T13:13:57.741219+03:00"
+  version: 1.0.6
+- name: eck-operator
+  repository: https://helm.elastic.co
+  version: 2.10.0
+- name: eck-stack
+  repository: file://eck-stack
+  version: 0.8.0
+digest: sha256:eeea435f55862b4b56e0e2e427799cd97a517fb8512ddb19f7f3c44e125ba4ca
+generated: "2023-12-14T12:20:22.673415+02:00"
