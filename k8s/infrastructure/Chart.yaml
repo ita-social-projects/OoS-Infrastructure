@@ -39,3 +39,9 @@ dependencies:
   - name: outofschool
     version: 1.0.5
     repository: "file://../webapp"
+  - name: eck-operator-cdr
+    version: 2.10.0
+    repository: https://helm.elastic.co
+  - name: eck-stack
+    version: 0.8.0
+    repository: "file://../eck-stack"

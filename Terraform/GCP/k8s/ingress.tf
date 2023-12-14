@@ -58,3 +58,78 @@ EOF
     "metadata.annotations"
   ]
 }
+
+resource "kubectl_manifest" "ingress-elastic" {
+  yaml_body = <<-EOF
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: elasticsearch-master
+    namespace: default
+    labels:
+      app: elasticsearch
+    annotations:
+      cert-manager.io/issuer: "letsencrypt"
+      cert-manager.io/duration: 2160h0m0s
+      cert-manager.io/renew-before: 168h0m0s
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  spec:
+    ingressClassName: nginx
+    tls:
+      - hosts:
+          - ${var.elastic_hostname}
+        secretName: elastic-tls
+    rules:
+      - host: ${var.elastic_hostname}
+        http:
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+              backend:
+                service:
+                  name: elasticsearch-es-http
+                  port:
+                    number: 9200
+  EOF
+  depends_on = [
+    helm_release.ingress
+  ]
+}
+
+resource "kubectl_manifest" "ingress-kibana" {
+  yaml_body = <<-EOF
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: elastic-kibana
+    namespace: default
+    labels:
+      app: kibana
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt"
+      cert-manager.io/duration: 2160h0m0s
+      cert-manager.io/renew-before: 168h0m0s
+      nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+      nginx.ingress.kubernetes.io/whitelist-source-range: ${join("\\,", var.admin_ips)}
+  spec:
+    ingressClassName: nginx
+    tls:
+      - hosts:
+          - ${var.kibana_hostname}
+        secretName: kibana-tls-1
+    rules:
+      - host: ${var.kibana_hostname}
+        http:
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+              backend:
+                service:
+                  name: kibana-kb-http
+                  port:
+                    number: 5601
+  EOF
+  depends_on = [
+    helm_release.ingress
+  ]
+}
