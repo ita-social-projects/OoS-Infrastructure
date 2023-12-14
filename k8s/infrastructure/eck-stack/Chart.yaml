@@ -2,7 +2,7 @@ apiVersion: v2
 name: eck
 version: 0.8.0
 
-dependency:
+dependencies:
   - name: eck-elasticsearch
     version: 0.8.0
     repository: https://helm.elastic.co

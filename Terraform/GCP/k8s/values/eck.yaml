@@ -4,6 +4,12 @@ eck-elasticsearch:
   fullnameOverride: "elasticsearch"
   annotations:
     eck.k8s.elastic.co/license: "basic"
+  auth:
+    fileRealm:
+    - secretName: elastic-credentials
+    - secretName: webapi-es-credentials
+    roles:
+    - secretName: elastic-roles-secret
   nodeSets:
   - name: "elastic"
     count: 1
@@ -46,6 +52,7 @@ eck-elasticsearch:
             storage: 15G
 eck-kibana:
   enabled: true
+  version: 8.5.1
   fullnameOverride: "kibana"
   annotations:
     eck.k8s.elastic.co/license: basic
@@ -67,7 +74,3 @@ eck-kibana:
               limits:
                 cpu: "500m"
                 memory: "1256Mi"
-
-
-
-

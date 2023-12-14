@@ -59,13 +59,13 @@ EOF
   ]
 }
 
-resource "kubectl_manifest" "ingress-elastic" {
+resource "kubectl_manifest" "ingress_elastic" {
   yaml_body = <<-EOF
   apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     name: elasticsearch-master
-    namespace: default
+    namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
     labels:
       app: elasticsearch
     annotations:
@@ -73,6 +73,7 @@ resource "kubectl_manifest" "ingress-elastic" {
       cert-manager.io/duration: 2160h0m0s
       cert-manager.io/renew-before: 168h0m0s
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", var.admin_ips)}
   spec:
     ingressClassName: nginx
     tls:
@@ -96,27 +97,27 @@ resource "kubectl_manifest" "ingress-elastic" {
   ]
 }
 
-resource "kubectl_manifest" "ingress-kibana" {
+resource "kubectl_manifest" "ingress_kibana" {
   yaml_body = <<-EOF
   apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     name: elastic-kibana
-    namespace: default
+    namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
     labels:
       app: kibana
     annotations:
-      cert-manager.io/cluster-issuer: "letsencrypt"
+      cert-manager.io/issuer: "letsencrypt"
       cert-manager.io/duration: 2160h0m0s
       cert-manager.io/renew-before: 168h0m0s
       nginx.ingress.kubernetes.io/backend-protocol: HTTPS
-      nginx.ingress.kubernetes.io/whitelist-source-range: ${join("\\,", var.admin_ips)}
+      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", var.admin_ips)}
   spec:
     ingressClassName: nginx
     tls:
       - hosts:
           - ${var.kibana_hostname}
-        secretName: kibana-tls-1
+        secretName: kibana-tls
     rules:
       - host: ${var.kibana_hostname}
         http:
