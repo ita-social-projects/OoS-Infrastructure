@@ -138,7 +138,7 @@ storage:
   extraVolumes:
     - name: elastic-certs
       secret:
-        secretName: elastic-certificates
+        secretName: elasticsearch-es-http-certs-public
     - name: binding
       emptyDir: {}
 
@@ -162,6 +162,3 @@ initContainers:
         readOnly: true
       - name: binding
         mountPath: /workspace/bindings/ca-certificates
-
-
-
