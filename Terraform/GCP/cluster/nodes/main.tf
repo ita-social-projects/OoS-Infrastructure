@@ -53,9 +53,9 @@ resource "google_compute_health_check" "k3s" {
   name  = "k3s-port-hc-${var.node_role}-${var.random_number}"
 
   timeout_sec         = 5
-  check_interval_sec  = 10
+  check_interval_sec  = 30
   healthy_threshold   = 1
-  unhealthy_threshold = 3
+  unhealthy_threshold = 5
 
   ssl_health_check {
     port         = "6443"
