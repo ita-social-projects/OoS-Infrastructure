@@ -5,7 +5,14 @@ version: 0.8.0
 dependencies:
   - name: eck-elasticsearch
     version: 0.8.0
+    condition: eck-elasticsearch.enabled
     repository: https://helm.elastic.co
   - name: eck-kibana
     version: 0.8.0
+    condition: eck-kibana.enabled
     repository: https://helm.elastic.co
+  - name: eck-beats
+    version: 0.8.0
+    condition: eck-beats.enabled
+    repository: https://helm.elastic.co
+
