@@ -131,3 +131,9 @@ variable "ingress_ip" {
 variable "openiddict_introspection_key" {
   type = string
 }
+
+variable "uptime_source_ips" {
+  type        = list(string)
+  default     = []
+  description = "Google uptime check ips"
+}

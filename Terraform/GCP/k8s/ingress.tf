@@ -73,7 +73,7 @@ resource "kubectl_manifest" "ingress_elastic" {
       cert-manager.io/duration: 2160h0m0s
       cert-manager.io/renew-before: 168h0m0s
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", var.admin_ips)}
+      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", local.whitelist_ips)}
   spec:
     ingressClassName: nginx
     tls:
@@ -111,7 +111,7 @@ resource "kubectl_manifest" "ingress_kibana" {
       cert-manager.io/duration: 2160h0m0s
       cert-manager.io/renew-before: 168h0m0s
       nginx.ingress.kubernetes.io/backend-protocol: HTTPS
-      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", var.admin_ips)}
+      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", local.whitelist_ips)}
   spec:
     ingressClassName: nginx
     tls:

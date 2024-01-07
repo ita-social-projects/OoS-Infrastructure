@@ -117,6 +117,7 @@ module "k8s" {
   project                      = var.project
   zone                         = var.zone
   admin_ips                    = var.admin_ips
+  uptime_source_ips            = var.uptime_source_ips
   sql_root_pass                = module.passwords.sql_root_pass
   sql_api_pass                 = module.passwords.sql_api_pass
   sql_auth_pass                = module.passwords.sql_auth_pass
