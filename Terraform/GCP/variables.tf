@@ -185,3 +185,9 @@ variable "k3s_port" {
   default = "6443"
 }
 
+variable "uptime_source_ips" {
+  type        = list(string)
+  default     = []
+  description = "Google uptime check ips"
+}
+
