@@ -85,7 +85,7 @@ ingress:
     nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/session-cookie-hash: sha1
     nginx.ingress.kubernetes.io/session-cookie-name: REALTIMESERVERID
-    nginx.ingress.kubernetes.io/session-cookie-path: /
+    nginx.ingress.kubernetes.io/session-cookie-path: /hubs
     # TODO: Comment for now, remove in next PR if it will not be required
     # nginx.ingress.kubernetes.io/affinity-mode: persistent
     # nginx.ingress.kubernetes.io/server-snippets: |

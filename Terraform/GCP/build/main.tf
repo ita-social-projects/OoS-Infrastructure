@@ -88,7 +88,6 @@ resource "google_cloudbuild_trigger" "auth_deploy" {
     _ACTION       = "$(body.message.data.action)"
     _IMAGE_TAG    = "$(body.message.data.tag)"
     _HOST         = var.auth_hostname
-    _SENDER_EMAIL = var.sender_email
     _SERVICE_NAME = "authserver"
   }
 

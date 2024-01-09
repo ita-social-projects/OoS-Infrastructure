@@ -15,7 +15,6 @@ resource "google_cloudbuild_trigger" "backend_auth_old" {
     _REGION                 = var.region
     _SERVICE_ACCOUNT        = var.auth_sa_email
     _DB_PASS                = var.auth_secret
-    _SENDER_EMAIL           = var.sender_email
     _SENDGRID_KEY           = var.sendgrid_key_secret
     _SQL_PORT               = var.sql_port
   }

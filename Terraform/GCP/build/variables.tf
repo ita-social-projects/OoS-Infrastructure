@@ -34,10 +34,6 @@ variable "redis_secret" {
   type = string
 }
 
-variable "sender_email" {
-  type = string
-}
-
 variable "sendgrid_key_secret" {
   type = string
 }

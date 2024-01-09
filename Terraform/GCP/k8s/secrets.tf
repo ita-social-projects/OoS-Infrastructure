@@ -113,6 +113,7 @@ resource "kubernetes_secret" "authserver_secrets" {
   data = {
     Email__SendGridKey                       = var.sendgrid_key
     AuthorizationServer__IntrospectionSecret = var.openiddict_introspection_key
+    Email__AddressFrom                       = var.sender_email
   }
 }
 
@@ -123,6 +124,8 @@ resource "kubernetes_secret" "webapi_secrets" {
   }
 
   data = {
+    Email__SendGridKey                = var.sendgrid_key
+    Email__AddressFrom                = var.sender_email
     GeoCoding__ApiKey                 = var.geo_apikey
     AuthorizationServer__ClientSecret = var.openiddict_introspection_key
   }
