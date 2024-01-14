@@ -44,3 +44,17 @@ resource "helm_release" "vector" {
     "${file("${path.module}/values/vector.yaml")}"
   ]
 }
+resource "kubectl_manifest" "metricbeat_ilm" {
+  yaml_body = <<-EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: metricbeat-ilm-policy
+  labels:
+    k8s-app: metricbeat
+data:
+  metricbeat-ilm-policy.json: >-
+    ${base64encode(file("${path.module}/config/metricbeat-ilm-policy.json"))}
+type: Opaque
+EOF
+}
