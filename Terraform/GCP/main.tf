@@ -146,6 +146,7 @@ module "k8s" {
   ingress_ip                   = module.network.ingress_ip
   dns_sa_key                   = module.iam.dns_sa_key
   openiddict_introspection_key = module.passwords.openiddict_introspection_key
+  sender_email                 = var.sender_email
   depends_on = [
     module.cluster
   ]
@@ -181,7 +182,6 @@ module "build" {
   es_api_pass_secret           = module.secrets.es_api_secret
   redis_hostname               = local.hostnames["redis"]
   redis_secret                 = module.secrets.redis_secret
-  sender_email                 = var.sender_email
   sendgrid_key_secret          = module.secrets.sendgrid_key_secret
   bucket                       = module.storage.image_bucket
   github_front_secret          = module.secrets.github_front_secret

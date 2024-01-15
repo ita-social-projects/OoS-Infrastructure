@@ -137,3 +137,8 @@ variable "uptime_source_ips" {
   default     = []
   description = "Google uptime check ips"
 }
+
+variable "sender_email" {
+  type = string
+}
+

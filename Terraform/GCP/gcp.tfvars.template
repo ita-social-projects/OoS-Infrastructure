@@ -37,4 +37,5 @@ enable_cloud_run=false
 # without the dot (.) in the end!
 dns_domain="example.com"
 enable_dns=false
-uptime_source_ips = []
+uptime_source_ips=["127.0.0.1"]
+
