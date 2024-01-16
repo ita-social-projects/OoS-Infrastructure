@@ -141,3 +141,4 @@ variable "uptime_source_ips" {
 variable "sender_email" {
   type = string
 }
+

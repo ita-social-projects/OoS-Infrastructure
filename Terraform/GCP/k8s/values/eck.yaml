@@ -86,11 +86,13 @@ eck-beats:
       name: elasticsearch
     kibanaRef:
       name: kibana
-    output.file:
-      path: "/tmp/metricbeat"
-      filename: metricbeat
     config:
       # Since filebeat is used in the default values, this needs to be removed with an empty list.
+      setup.ilm:
+        enabled: true
+        policy_name: metricbeat
+        overwrite: true
+        policy_file: "metricbeat-ilm-policy.json"
       filebeat.inputs: []
       metricbeat:
         autodiscover:
@@ -164,6 +166,10 @@ eck-beats:
               name: dockersock
             - mountPath: /hostfs/proc
               name: proc
+            - name: ilm-policy
+              mountPath: /usr/share/metricbeat/metricbeat-ilm-policy.json
+              subPath: metricbeat-ilm-policy.json
+              readOnly: true
             env:
             - name: NODE_NAME
               valueFrom:
@@ -184,6 +190,9 @@ eck-beats:
           - hostPath:
               path: /proc
             name: proc
+          - name: ilm-policy
+            secret:
+              secretName: metricbeat-ilm-policy
 
   clusterRole:
     # permissions needed for metricbeat
