@@ -26,7 +26,7 @@ resource "google_cloudfunctions2_function" "function" {
   build_config {
     runtime     = "python311"
     entry_point = "subscribe"
-    docker_repository = "projects/gcp101292-pozashkillya/locations/europe-west1/repositories/gcf-artifacts"
+    docker_repository = "projects/${var.project}/locations/${var.region}/repositories/gcf-artifacts"
     source {
       storage_source {
         bucket = var.gcf_bucket
