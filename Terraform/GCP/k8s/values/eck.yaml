@@ -71,7 +71,7 @@ eck-kibana:
           - name: kibana
             env:
               - name: NODE_OPTIONS
-                value: "--max-old-space-size=2048"
+                value: "--max-old-space-size=1256"
             resources:
               requests:
                 cpu: "200m"
