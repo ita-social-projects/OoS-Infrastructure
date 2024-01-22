@@ -33,6 +33,9 @@ eck-elasticsearch:
             bin/elasticsearch-plugin install --batch mapper-murmur3
         containers:
         - name: elasticsearch
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms768m -Xmx768m
           resources:
             requests:
               cpu: "200m"
@@ -58,6 +61,8 @@ eck-kibana:
     eck.k8s.elastic.co/license: basic
   spec:
     count: 1
+    config:
+      monitoring.kibana.collection.enabled: false
     elasticsearchRef:
       name: "elasticsearch"
     podTemplate:
@@ -144,6 +149,36 @@ eck-beats:
           - pod
           - container
           - volume
+        - module: elasticsearch
+          metricsets:
+            - ccr
+            - cluster_stats
+            - enrich
+            - index
+            - index_recovery
+            - index_summary
+            - ml_job
+            - node_stats
+            - shard
+          period: 10s
+          hosts: ["https://elasticsearch-es-http.default.svc:9200"]
+          username: ${MONITORED_ES_USERNAME}
+          password: ${MONITORED_ES_PASSWORD}
+          ssl:
+            certificate_authorities:
+            - /mnt/elastic-internal/elasticsearch-certs/ca.crt
+          xpack.enabled: true
+        - module: kibana
+          metricsets:
+            - stats
+          period: 10s
+          hosts: ["https://kibana-kb-http.default.svc:5601"]
+          username: ${MONITORED_KB_USERNAME}
+          password: ${MONITORED_KB_PASSWORD}
+          ssl:
+            certificate_authorities:
+              - /mnt/elastic-internal/kibana-certs/ca.crt
+          xpack.enabled: true
       processors:
       - add_cloud_metadata: {}
       - add_host_metadata: {}
@@ -175,6 +210,20 @@ eck-beats:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: MONITORED_ES_USERNAME
+              value: default-eck-stack-eck-beats-beat-user
+            - name: MONITORED_ES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eck-stack-eck-beats-beat-user
+                  key: default-eck-stack-eck-beats-beat-user
+            - name: MONITORED_KB_USERNAME
+              value: default-eck-stack-eck-beats-beat-kb-user
+            - name: MONITORED_KB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eck-stack-eck-beats-beat-kb-user
+                  key: default-eck-stack-eck-beats-beat-kb-user
           dnsPolicy: ClusterFirstWithHostNet
           hostNetwork: true # Allows to provide richer host metadata
           securityContext:
@@ -193,7 +242,6 @@ eck-beats:
           - name: ilm-policy
             secret:
               secretName: metricbeat-ilm-policy
-
   clusterRole:
     # permissions needed for metricbeat
     # source: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-module-kubernetes.html
