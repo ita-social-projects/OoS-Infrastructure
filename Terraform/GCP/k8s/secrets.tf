@@ -178,3 +178,12 @@ resource "kubernetes_secret" "dns_gcp_credentials" {
   ]
 }
 
+resource "kubernetes_secret" "metricbeat-ilm-policy" {
+  metadata {
+    name      = "metricbeat-ilm-policy"
+  }
+  data = {
+    "metricbeat-ilm-policy.json" = file("${path.module}/config/metricbeat-ilm-policy.json")
+  }
+}
+
