@@ -201,6 +201,7 @@ module "build" {
   gcf_sa_email                 = module.iam.gcf_sa_email
   discord_notification_webhook = var.discord_notification_webhook
   enable_cloud_run             = var.enable_cloud_run
+  build_sa_id                  = module.iam.build_sa_id
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run

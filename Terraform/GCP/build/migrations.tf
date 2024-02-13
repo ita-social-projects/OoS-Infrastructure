@@ -12,5 +12,6 @@ resource "google_cloudbuild_trigger" "migrations" {
     _REGION = var.region
   }
 
-  filename = "cloudbuild-migration.yml"
+  filename        = "cloudbuild-migration.yml"
+  service_account = var.build_sa_id
 }
