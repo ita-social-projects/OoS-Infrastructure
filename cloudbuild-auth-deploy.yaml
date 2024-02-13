@@ -32,5 +32,6 @@ availableSecrets:
   - versionName: $_KUBE_CONFIG
     env: 'KUBECFG'
 options:
+  logging: CLOUD_LOGGING_ONLY
   pool:
     name: $_POOL
