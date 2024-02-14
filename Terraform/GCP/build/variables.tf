@@ -125,3 +125,7 @@ variable "discord_notification_webhook" {
 variable "enable_cloud_run" {
   type = bool
 }
+
+variable "build_sa_id" {
+  type = string
+}

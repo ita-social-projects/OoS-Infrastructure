@@ -37,3 +37,7 @@ output "gcf_sa_email" {
 output "dns_sa_key" {
   value = var.enable_dns ? google_service_account_key.dns[0].private_key : ""
 }
+
+output "build_sa_id" {
+  value = google_service_account.build.id
+}

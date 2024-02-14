@@ -17,7 +17,8 @@ resource "google_cloudbuild_trigger" "frontend" {
     _REGION        = var.region
   }
 
-  filename = "cloudbuild.yaml"
+  filename        = "cloudbuild.yaml"
+  service_account = var.build_sa_id
 }
 
 resource "google_cloudbuild_trigger" "frontend_deploy" {
@@ -49,5 +50,6 @@ resource "google_cloudbuild_trigger" "frontend_deploy" {
     revision  = "refs/heads/main"
     repo_type = "GITHUB"
   }
-  filter = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-frontend:.*$\")"
+  filter          = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-frontend:.*$\")"
+  service_account = var.build_sa_id
 }
