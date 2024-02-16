@@ -230,6 +230,7 @@ lifecycleHooks: {}
 ## https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 livenessProbe:
   enabled: false
+  port: http
   path: "/"
   initialDelaySeconds: 10
   timeoutSeconds: 1
@@ -245,6 +246,7 @@ livenessProbe:
 ##
 readinessProbe:
   enabled: false
+  port: http
   path: "/"
   initialDelaySeconds: 10
   timeoutSeconds: 1

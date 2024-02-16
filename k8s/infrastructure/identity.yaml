@@ -38,6 +38,7 @@ deploy:
 configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
+    ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
     ConnectionStringsOverride__DefaultConnection__UserId: oos
   extraEnvVarsSecret: "authserver-secrets"
   secrets:
@@ -93,6 +94,7 @@ autoscaling:
 
 readinessProbe:
   enabled: true
+  port: 9000
   path: "/healthz/ready"
   initialDelaySeconds: 30
   timeoutSeconds: 2
