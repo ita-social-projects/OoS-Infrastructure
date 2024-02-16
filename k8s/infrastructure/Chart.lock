@@ -4,10 +4,10 @@ dependencies:
   version: v1.12.3
 - name: mysql-operator
   repository: https://mysql.github.io/mysql-operator
-  version: 2.1.1
+  version: 2.1.2
 - name: mysql-innodbcluster
   repository: https://mysql.github.io/mysql-operator
-  version: 2.1.1
+  version: 2.1.2
 - name: phpmyadmin
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.6
@@ -22,12 +22,12 @@ dependencies:
   version: 4.7.1
 - name: outofschool
   repository: file://../webapp
-  version: 1.0.6
+  version: 1.0.7
 - name: eck-operator
   repository: https://helm.elastic.co
   version: 2.10.0
 - name: eck-stack
   repository: file://eck-stack
   version: 0.8.0
-digest: sha256:eeea435f55862b4b56e0e2e427799cd97a517fb8512ddb19f7f3c44e125ba4ca
-generated: "2023-12-14T12:20:22.673415+02:00"
+digest: sha256:32f5b02f761d09a4a19a75aeef7e7694d9713919675f4878171c1de884a3aa31
+generated: "2024-02-16T16:05:13.584808+02:00"
