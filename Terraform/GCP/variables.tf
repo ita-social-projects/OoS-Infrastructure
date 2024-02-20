@@ -191,3 +191,7 @@ variable "uptime_source_ips" {
   description = "Google uptime check ips"
 }
 
+variable "gcp_monitoring_discord_webhook" {
+  type = string
+}
+

@@ -11,10 +11,13 @@ locals {
   notification = {
     display_name = "Discord"
     type         = "pubsub"
-    labels       = { type = "pubsub" }
+    labels = {
+      topic : "${module.pubsub.id}"
+      fallback_channel : true # The id of this channel will be included in the "fallback_channels_ids" output.type = "pubsub" }
+    }
   }
   topic_name = "monitoring-notification"
-  file_name  = "discord-notification.zip"
+  file_name  = "gcp-notification.zip"
 }
 
 module "uptime-check" {
@@ -69,28 +72,49 @@ resource "google_storage_bucket_object" "source" {
   source = "../../helpers/${local.file_name}"
 }
 
-module "cloud-functions_example_cloud_function2_pubsub_trigger" {
-  source  = "GoogleCloudPlatform/cloud-functions/google"
-  version = "0.4.1"
+resource "google_cloudfunctions2_function" "uptime" {
+  name        = "gcp-uptime-discord-notification"
+  location    = var.region
+  description = "Discord gcp monitoring notification"
 
-  project_id        = var.project
-  function_name     = "gcp-uptime-notification"
-  function_location = var.region
-  runtime           = "python38"
-  entrypoint        = "cloud_event"
-  storage_source = {
-    bucket     = google_storage_bucket.bucket.name
-    object     = google_storage_bucket_object.source.name
-    generation = null
+  build_config {
+    runtime           = "python38"
+    entry_point       = "cloud_event"
+    docker_repository = "projects/${var.project}/locations/${var.region}/repositories/gcf-artifacts"
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.source.name
+      }
+    }
   }
-  event_trigger = {
+
+  service_config {
+    max_instance_count             = 3
+    available_memory               = "128Mi"
+    timeout_seconds                = 60
+    ingress_settings               = "ALLOW_INTERNAL_ONLY"
+    all_traffic_on_latest_revision = true
+    environment_variables = {
+      WEBHOOK_URL = var.gcp_monitoring_discord_webhook
+    }
+  }
+
+  event_trigger {
     trigger_region        = var.region
     event_type            = "google.cloud.pubsub.topic.v1.messagePublished"
     service_account_email = null
     pubsub_topic          = module.pubsub.id
     retry_policy          = "RETRY_POLICY_RETRY"
-    event_filters         = null
   }
 }
+
+resource "google_pubsub_topic_iam_member" "member" {
+  project = var.project
+  topic   = module.pubsub.id
+  role    = "roles/pubsub.publisher"
+  member  = "serviceAccount:service-${var.project}@gcp-sa-monitoring-notification.iam.gserviceaccount.com"
+}
+
 
 
