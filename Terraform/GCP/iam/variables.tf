@@ -30,6 +30,6 @@ variable "enable_dns" {
 }
 
 variable "pubsub_id" {
-  type = string
-  description  = "Pubsub id for role publishing"
+  type        = string
+  description = "Pubsub id for role publishing"
 }

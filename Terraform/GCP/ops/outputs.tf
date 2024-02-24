@@ -1,3 +1,3 @@
 output "pubsub" {
-    value = module.pubsub
+  value = module.pubsub
 }
