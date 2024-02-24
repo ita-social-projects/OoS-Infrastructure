@@ -6,6 +6,12 @@ locals {
       regions = ["EUROPE", "ASIA_PACIFIC", "SOUTH_AMERICA", "USA_IOWA"]
       path    = "/_cluster/health"
     }
+    Kibana = {
+      host    = "kibana.oos.dmytrominochkin.cloud"
+      period  = "60s"
+      regions = ["EUROPE", "ASIA_PACIFIC", "SOUTH_AMERICA", "USA_IOWA"]
+      path    = "/api/task_manager/_health"
+    }
   }
 
   notification = {
@@ -32,8 +38,8 @@ module "uptime-check" {
   selected_regions          = each.value.regions
   path                      = each.value.path
   auth_info = {
-    username = "elastic"
-    password = ""
+    username = "remote_monitoring_user"
+    password = var.eck_password
   }
 
   monitored_resource = {

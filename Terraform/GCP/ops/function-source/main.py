@@ -18,6 +18,10 @@ def send_discord_message(msg) -> str:
 def hello_pubsub(cloud_event: CloudEvent) -> None:
   msg = base64.b64decode(cloud_event.data["message"]["data"]).decode()
   decoded_payload = json.loads(msg)
-  text = decoded_payload["incident"]["policy_name"]
-  print('GCP Alerting! Message: ' + text)
-  send_discord_message('GCP Alerting! Message: ' + text)
+  summary = decoded_payload["incident"]["summary"]
+  state = decoded_payload["incident"]["state"]
+  if state == "closed":
+    sbl = '✅'
+  else:
+    sbl = '❌'
+  send_discord_message('GCP Alerting!' + sbl +' State: ' + state + 'Summary: ' + summary)

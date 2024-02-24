@@ -37,6 +37,7 @@ module "network" {
 module "ops" {
   source             = "./ops"
   discord_webhook    = var.gcp_monitoring_discord_webhook
+  eck_password       = module.secrets.remote_monitoring_eck_secret
   gcf_bucket         = module.storage.gcf_bucket
   network_id         = module.network.vpc.network_id
   notification_email = var.letsencrypt_email
@@ -171,6 +172,7 @@ module "secrets" {
   geo_apikey                 = var.geo_apikey
   deployer_kubeconfig        = module.k8s.deployer_kubeconfig
   enable_cloud_run           = var.enable_cloud_run
+  eck_password               = var.eck_password
 }
 
 module "build" {
