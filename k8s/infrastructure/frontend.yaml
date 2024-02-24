@@ -51,6 +51,7 @@ autoscaling:
 
 readinessProbe:
   enabled: false
+  port: http
   path: "/"
   initialDelaySeconds: 20
   timeoutSeconds: 1

@@ -70,7 +70,7 @@ spec:
           lifecycle:
             {{- toYaml .Values.lifecycleHooks | nindent 12 }}
           {{- end }}
-          env: {{ concat (list (dict "name" "PORT" "value" (.Values.deploy.containerPort | quote))) (include "library.env.tpl" . | fromYamlArray) | toYaml | nindent 12 }}
+          env: {{ concat (list (dict "name" "PORT" "value" (toString .Values.deploy.containerPort))) (include "library.env.tpl" . | fromYamlArray) | toYaml | nindent 12 }}
           {{- include "library.envFrom.tpl" . | nindent 10 }}
           ports:
             - name: http
@@ -78,7 +78,7 @@ spec:
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              port: http
+              port: {{ .Values.livenessProbe.port }}
               path: {{ .Values.livenessProbe.path }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -92,7 +92,7 @@ spec:
           {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              port: http
+              port: {{ .Values.readinessProbe.port }}
               path: {{ .Values.readinessProbe.path }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}

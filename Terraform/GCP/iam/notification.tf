@@ -1,3 +1,6 @@
+data "google_project" "project" {
+}
+
 resource "google_service_account" "notification" {
   account_id   = "discord-notification-${var.random_number}"
   display_name = "Service account for Discord GCF"

@@ -21,7 +21,8 @@ resource "google_cloudbuild_trigger" "backend_api" {
     _REGION        = var.region
   }
 
-  filename = "cloudbuild-app.yml"
+  filename        = "cloudbuild-app.yml"
+  service_account = var.build_sa_id
 }
 
 resource "google_cloudbuild_trigger" "app_deploy" {
@@ -54,7 +55,8 @@ resource "google_cloudbuild_trigger" "app_deploy" {
     revision  = "refs/heads/main"
     repo_type = "GITHUB"
   }
-  filter = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-api:.*$\")"
+  filter          = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-api:.*$\")"
+  service_account = var.build_sa_id
 }
 
 resource "google_cloudbuild_trigger" "backend_auth" {
@@ -72,7 +74,8 @@ resource "google_cloudbuild_trigger" "backend_auth" {
     _REGION = var.region
   }
 
-  filename = "cloudbuild-auth.yml"
+  filename        = "cloudbuild-auth.yml"
+  service_account = var.build_sa_id
 }
 
 resource "google_cloudbuild_trigger" "auth_deploy" {
@@ -103,5 +106,6 @@ resource "google_cloudbuild_trigger" "auth_deploy" {
     revision  = "refs/heads/main"
     repo_type = "GITHUB"
   }
-  filter = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-auth:.*$\")"
+  filter          = "_ACTION.matches(\"INSERT\") && _IMAGE_TAG.matches(\"^.*oos-auth:.*$\")"
+  service_account = var.build_sa_id
 }

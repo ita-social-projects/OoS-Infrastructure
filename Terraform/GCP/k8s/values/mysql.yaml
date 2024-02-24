@@ -29,7 +29,7 @@ backupProfiles:
   dumpInstance:
     dumpOptions:
       excludeTables:
-      - outofschool.PersistedGrants
+      - outofschool.statisticreportdata
     storage:
       persistentVolumeClaim:
         claimName: mysql-backup-pvc
