@@ -1,0 +1,31 @@
+# https://github.com/elastic/cloud-on-k8s/blob/91d66392368d546cfacf9d67f5bcebbb55bdc5cd/deploy/eck-operator/values.yaml
+
+nameOverride: "elastic-operator"
+
+kubeAPIServerIP: "10.43.0.1"
+
+# replicaCount is the number of operator pods to run.
+replicaCount: 1
+
+# managedNamespaces is the set of namespaces that the operator manages. Leave empty to manage all namespaces.
+managedNamespaces: ["team-eck"]
+
+# createClusterScopedResources determines whether cluster-scoped resources (ClusterRoles, ClusterRoleBindings) should be created.
+createClusterScopedResources: true
+
+refs:
+  # enforceRBAC specifies whether RBAC should be enforced for cross-namespace associations between resources.
+  enforceRBAC: true
+
+webhook:
+  enabled: true
+  namespaceSelector:
+    matchExpressions:
+      - key: "eck.k8s.elastic.co/tenant"
+        operator: In
+        values: ["team-eck"]
+
+softMultiTenancy:
+  # enabled determines whether the operator is installed with soft multi-tenancy extensions.
+  # This requires network policies to be enabled on the Kubernetes cluster.
+  enabled: true
