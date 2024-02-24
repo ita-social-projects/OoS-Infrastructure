@@ -36,10 +36,13 @@ module "network" {
 
 module "ops" {
   source             = "./ops"
-  project            = var.project
-  random_number      = random_integer.ri.result
+  discord_webhook    = var.gcp_monitoring_discord_webhook
+  gcf_bucket         = module.storage.gcf_bucket
   network_id         = module.network.vpc.network_id
   notification_email = var.letsencrypt_email
+  project            = var.project
+  random_number      = random_integer.ri.result
+  region             = var.region
 }
 
 module "storage" {

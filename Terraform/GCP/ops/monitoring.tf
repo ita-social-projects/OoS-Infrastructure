@@ -16,8 +16,8 @@ locals {
       fallback_channel : true # The id of this channel will be included in the "fallback_channels_ids" output.type = "pubsub" }
     }
   }
-  topic_name = "monitoring-notification"
-  file_name  = "gcp-notification.zip"
+  topic_name = "uptime-notification"
+  file_name  = "uptime-notification.zip"
 }
 
 module "uptime-check" {
@@ -57,19 +57,10 @@ module "pubsub" {
   }
 }
 
-resource "google_storage_bucket" "bucket" {
-  name                        = "gcf-v2-${var.project}-notification-channel"
-  location                    = var.region
-  storage_class               = "REGIONAL"
-  uniform_bucket_level_access = true
-  project                     = var.project
-
-}
-
 resource "google_storage_bucket_object" "source" {
-  name   = local.cluster_ca_certificate
-  bucket = google_storage_bucket.bucket.name
-  source = "../../helpers/${local.file_name}"
+  name   = "function-uptime-notification-${data.archive_file.main.output_sha}.zip"
+  bucket = var.gcf_bucket
+  source = "${path.module}/${local.file_name}"
 }
 
 resource "google_cloudfunctions2_function" "uptime" {
@@ -83,7 +74,7 @@ resource "google_cloudfunctions2_function" "uptime" {
     docker_repository = "projects/${var.project}/locations/${var.region}/repositories/gcf-artifacts"
     source {
       storage_source {
-        bucket = google_storage_bucket.bucket.name
+        bucket = var.gcf_bucket
         object = google_storage_bucket_object.source.name
       }
     }
@@ -96,7 +87,7 @@ resource "google_cloudfunctions2_function" "uptime" {
     ingress_settings               = "ALLOW_INTERNAL_ONLY"
     all_traffic_on_latest_revision = true
     environment_variables = {
-      WEBHOOK_URL = var.gcp_monitoring_discord_webhook
+      WEBHOOK_URL = var.discord_webhook
     }
   }
 
@@ -105,7 +96,8 @@ resource "google_cloudfunctions2_function" "uptime" {
     event_type            = "google.cloud.pubsub.topic.v1.messagePublished"
     service_account_email = null
     pubsub_topic          = module.pubsub.id
-    retry_policy          = "RETRY_POLICY_RETRY"
+    retry_policy          = "RETRY_POLICY_DO_NOT_RETRY"
+    # retry_policy   = "RETRY_POLICY_RETRY"
   }
 }
 
@@ -114,6 +106,20 @@ resource "google_pubsub_topic_iam_member" "member" {
   topic   = module.pubsub.id
   role    = "roles/pubsub.publisher"
   member  = "serviceAccount:service-${var.project}@gcp-sa-monitoring-notification.iam.gserviceaccount.com"
+}
+
+data "archive_file" "main" {
+  type = "zip"
+
+  source {
+    content  = file("${path.module}/function-source/main.py")
+    filename = "main.py"
+  }
+  source {
+    content  = file("${path.module}/function-source/requirements.txt")
+    filename = "requirements.txt"
+  }
+  output_path = "${path.module}/${local.file_name}"
 }
 
 

@@ -14,3 +14,16 @@ variable "random_number" {
 variable "notification_email" {
   type = string
 }
+
+variable "gcf_bucket" {
+  type = string
+}
+
+variable "discord_webhook" {
+  type = string
+}
+
+variable "region" {
+  type        = string
+  description = "Region to create the resources in"
+}
