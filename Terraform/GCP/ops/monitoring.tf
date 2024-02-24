@@ -101,13 +101,6 @@ resource "google_cloudfunctions2_function" "uptime" {
   }
 }
 
-resource "google_pubsub_topic_iam_member" "member" {
-  project = var.project
-  topic   = module.pubsub.id
-  role    = "roles/pubsub.publisher"
-  member  = "serviceAccount:service-${var.project}@gcp-sa-monitoring-notification.iam.gserviceaccount.com"
-}
-
 data "archive_file" "main" {
   type = "zip"
 

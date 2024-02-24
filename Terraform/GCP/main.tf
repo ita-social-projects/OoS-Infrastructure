@@ -60,6 +60,7 @@ module "iam" {
   logs_bucket        = module.storage.logs_bucket
   devops             = var.devops
   enable_dns         = var.enable_dns
+  pubsub_id          = module.ops.pubsub.id
 }
 
 module "passwords" {
