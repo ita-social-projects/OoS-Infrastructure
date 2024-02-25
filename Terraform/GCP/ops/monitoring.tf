@@ -19,7 +19,7 @@ locals {
     type         = "pubsub"
     labels = {
       topic : "${module.pubsub.id}"
-      fallback_channel : true # The id of this channel will be included in the "fallback_channels_ids" output.type = "pubsub" }
+      #fallback_channel : true # The id of this channel will be included in the "fallback_channels_ids" output.type = "pubsub" }
     }
   }
   topic_name = "uptime-notification"
@@ -32,7 +32,7 @@ module "uptime-check" {
   version  = "~> 0.4"
 
   project_id                = var.project
-  uptime_check_display_name = "${each.key} Uptime check"
+  uptime_check_display_name = "${each.key} uptime check"
   protocol                  = "HTTPS"
   period                    = each.value.period
   selected_regions          = each.value.regions
@@ -75,9 +75,8 @@ resource "google_cloudfunctions2_function" "uptime" {
   description = "Discord gcp monitoring notification"
 
   build_config {
-    runtime           = "python38"
-    entry_point       = "cloud_event"
-    docker_repository = "projects/${var.project}/locations/${var.region}/repositories/gcf-artifacts"
+    runtime           = "python312"
+    entry_point       = "pubsub_event"
     source {
       storage_source {
         bucket = var.gcf_bucket

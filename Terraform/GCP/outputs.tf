@@ -41,3 +41,7 @@ output "introspection_secret" {
   value     = module.passwords.openiddict_introspection_key
   sensitive = true
 }
+
+output "gcf_bucket" {
+  value = module.storage.gcf_bucket
+}
