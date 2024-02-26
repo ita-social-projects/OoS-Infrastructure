@@ -39,5 +39,5 @@ dns_domain="example.com"
 enable_dns=false
 uptime_source_ips=["127.0.0.1"]
 gcp_monitoring_discord_webhook = "https://discord.gg"
-eck_password = "secret"
+eck_rmon_password = "secret"
 

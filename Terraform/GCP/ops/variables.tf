@@ -28,7 +28,8 @@ variable "region" {
   description = "Region to create the resources in"
 }
 
-variable "eck_password" {
+variable "eck_rmon_password" {
   type = string
   description = "Password for eck remote_monitoring_user"
 }
+

@@ -50,7 +50,7 @@ variable "enable_cloud_run" {
   type = bool
 }
 
-variable "eck_password" {
+variable "eck_rmon_password" {
   type = string
   description = "Password for eck remote_monitoring_user"
 }

@@ -12,6 +12,6 @@ resource "google_secret_manager_secret" "eck" {
 
 resource "google_secret_manager_secret_version" "eck" {
   secret      = google_secret_manager_secret.eck.id
-  secret_data = var.eck_password
+  secret_data = var.eck_rmon_password
 }
 

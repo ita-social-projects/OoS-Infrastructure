@@ -39,7 +39,7 @@ module "uptime-check" {
   path                      = each.value.path
   auth_info = {
     username = "remote_monitoring_user"
-    password = var.eck_password
+    password = var.eck_rmon_password
   }
 
   monitored_resource = {
