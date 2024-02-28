@@ -38,7 +38,7 @@ module "uptime-check" {
   selected_regions          = each.value.regions
   path                      = each.value.path
   auth_info = {
-    username = "remote_monitoring_user"
+    username = "remote_monitoring_agent"
     password = var.eck_rmon_password
   }
 
@@ -77,6 +77,7 @@ resource "google_cloudfunctions2_function" "uptime" {
   build_config {
     runtime           = "python312"
     entry_point       = "pubsub_event"
+    docker_repository = "projects/${var.project}/locations/${var.region}/repositories/gcf-artifacts"
     source {
       storage_source {
         bucket = var.gcf_bucket

@@ -33,8 +33,3 @@ output "github_back_secret" {
 output "github_token_secret" {
   value = google_secret_manager_secret_version.github_token_secret.name
 }
-
-output "remote_monitoring_eck_secret" {
-  value = google_secret_manager_secret_version.eck.secret_data
-}
-

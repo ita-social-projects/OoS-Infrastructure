@@ -37,7 +37,7 @@ module "network" {
 module "ops" {
   source             = "./ops"
   discord_webhook    = var.gcp_monitoring_discord_webhook
-  eck_rmon_password  = module.secrets.remote_monitoring_eck_secret
+  eck_rmon_password  = module.passwords.es_user_rmon_password
   gcf_bucket         = module.storage.gcf_bucket
   network_id         = module.network.vpc.network_id
   notification_email = var.letsencrypt_email
@@ -152,6 +152,7 @@ module "k8s" {
   dns_sa_key                   = module.iam.dns_sa_key
   openiddict_introspection_key = module.passwords.openiddict_introspection_key
   sender_email                 = var.sender_email
+  es_user_rmon_password        = module.passwords.es_user_rmon_password
   depends_on = [
     module.cluster
   ]
@@ -172,7 +173,6 @@ module "secrets" {
   geo_apikey                 = var.geo_apikey
   deployer_kubeconfig        = module.k8s.deployer_kubeconfig
   enable_cloud_run           = var.enable_cloud_run
-  eck_rmon_password          = var.eck_rmon_password
 }
 
 module "build" {

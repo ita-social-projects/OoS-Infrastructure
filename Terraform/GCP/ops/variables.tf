@@ -29,7 +29,7 @@ variable "region" {
 }
 
 variable "eck_rmon_password" {
-  type = string
+  type        = string
   description = "Password for eck remote_monitoring_user"
 }
 

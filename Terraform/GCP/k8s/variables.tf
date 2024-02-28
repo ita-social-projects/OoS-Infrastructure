@@ -142,3 +142,7 @@ variable "sender_email" {
   type = string
 }
 
+variable "es_user_rmon_password" {
+  type = string
+}
+

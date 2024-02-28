@@ -49,8 +49,3 @@ variable "deployer_kubeconfig" {
 variable "enable_cloud_run" {
   type = bool
 }
-
-variable "eck_rmon_password" {
-  type = string
-  description = "Password for eck remote_monitoring_user"
-}

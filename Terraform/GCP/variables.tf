@@ -195,8 +195,3 @@ variable "gcp_monitoring_discord_webhook" {
   type = string
 }
 
-variable "eck_rmon_password" {
-  type = string
-  description = "Password for eck remote_monitoring_user"
-}
-

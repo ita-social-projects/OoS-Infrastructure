@@ -39,3 +39,9 @@ resource "random_password" "openiddict_introspection_key" {
   special          = true
   override_special = "_%@"
 }
+
+resource "random_password" "es_user_rmon_password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
