@@ -178,3 +178,18 @@ resource "kubernetes_secret" "dns_gcp_credentials" {
   ]
 }
 
+resource "kubernetes_secret" "remote_monitoring_user" {
+  metadata {
+    name      = "elastic-user-rmon"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    username = "remote_monitoring_agent"
+    password = var.es_user_rmon_password
+    roles    = "remote_monitoring_agent"
+  }
+  type = "kubernetes.io/basic-auth"
+}
+
+

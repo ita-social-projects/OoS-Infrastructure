@@ -25,3 +25,10 @@ output "redis_pass" {
 output "openiddict_introspection_key" {
   value = random_password.openiddict_introspection_key.result
 }
+
+output "es_user_rmon_password" {
+  value = random_password.es_user_rmon_password.result
+}
+
+
+

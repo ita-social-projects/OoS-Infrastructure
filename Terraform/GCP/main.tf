@@ -36,10 +36,14 @@ module "network" {
 
 module "ops" {
   source             = "./ops"
-  project            = var.project
-  random_number      = random_integer.ri.result
+  discord_webhook    = var.gcp_monitoring_discord_webhook
+  eck_rmon_password  = module.passwords.es_user_rmon_password
+  gcf_bucket         = module.storage.gcf_bucket
   network_id         = module.network.vpc.network_id
   notification_email = var.letsencrypt_email
+  project            = var.project
+  random_number      = random_integer.ri.result
+  region             = var.region
 }
 
 module "storage" {
@@ -57,6 +61,7 @@ module "iam" {
   logs_bucket        = module.storage.logs_bucket
   devops             = var.devops
   enable_dns         = var.enable_dns
+  pubsub_id          = module.ops.pubsub.id
 }
 
 module "passwords" {
@@ -147,6 +152,7 @@ module "k8s" {
   dns_sa_key                   = module.iam.dns_sa_key
   openiddict_introspection_key = module.passwords.openiddict_introspection_key
   sender_email                 = var.sender_email
+  es_user_rmon_password        = module.passwords.es_user_rmon_password
   depends_on = [
     module.cluster
   ]

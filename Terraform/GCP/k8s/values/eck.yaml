@@ -8,6 +8,7 @@ eck-elasticsearch:
     fileRealm:
     - secretName: elastic-credentials
     - secretName: webapi-es-credentials
+    - secretName: elastic-user-rmon
     roles:
     - secretName: elastic-roles-secret
   nodeSets:
