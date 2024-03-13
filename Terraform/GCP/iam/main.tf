@@ -33,12 +33,6 @@ resource "google_service_account_iam_member" "front_acc_user" {
   member             = "serviceAccount:${google_service_account.build.email}"
 }
 
-resource "google_project_iam_member" "run_admin" {
-  role    = "roles/run.admin"
-  member  = "serviceAccount:${google_service_account.build.email}"
-  project = var.project
-}
-
 resource "google_project_iam_member" "secret_access" {
   role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${google_service_account.build.email}"
