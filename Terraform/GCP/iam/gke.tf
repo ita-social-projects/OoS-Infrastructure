@@ -28,8 +28,8 @@ data "google_iam_role" "gke_compute" {
 
 # TODO: Check if needed for GCP CCM
 resource "google_project_iam_custom_role" "gke_compute" {
-  role_id     = "gcp_compute_admin_custom_role"
-  title       = "Custom Compute Admin"
+  role_id     = "gcp_compute_full_access_custom_role"
+  title       = "Custom Compute Full Access"
   description = "Role with filtered resourcemanager.projects.get & resourcemanager.projects.list for Prisma Cloud Exception"
   permissions = [
     for p in data.google_iam_role.gke_compute.included_permissions :
@@ -53,8 +53,8 @@ data "google_iam_role" "gke_lb" {
 }
 
 resource "google_project_iam_custom_role" "gke_lb" {
-  role_id     = "gcp_compute_loadbalancer_admin_custom_role"
-  title       = "Custom Compute Loadbalancer Admin"
+  role_id     = "gcp_compute_loadbalancer_full_access_custom_role"
+  title       = "Custom Compute Loadbalancer Full Access"
   description = "Role with filtered resourcemanager.projects.get & resourcemanager.projects.list for Prisma Cloud Exception"
   permissions = [
     for p in data.google_iam_role.gke_lb.included_permissions : p if length(regexall("resourcemanager.projects.*", p)) == 0
