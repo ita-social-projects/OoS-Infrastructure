@@ -99,10 +99,11 @@ eck-beats:
         policy_name: metricbeat
         overwrite: true
         policy_file: "metricbeat-ilm-policy.json"
-      setup.template.settings:
-        index.number_of_replicas: 0
+      #  Then you use 1 node for es
+      setup.template:
+        settings.index.number_of_replicas: 0
       # Sets the memory queue to buffer up to 4096 events
-      # Forward events to the output if 512 events are available or the oldes available event has been wainitg for 5 s in queue
+      # Forward events to the output if 2048 events are available or the oldes available event has been wainitg for 5 s in queue
       queue.mem:
         events: 4096
         flush.min_events: 2048
