@@ -20,8 +20,8 @@ data "google_iam_role" "compute_storage" {
 }
 
 resource "google_project_iam_custom_role" "csi_storage" {
-  role_id     = "gcp_compute_storage_admin_custom_role"
-  title       = "Custom Compute Storage Admin"
+  role_id     = "gcp_compute_storage_full_access_custom_role"
+  title       = "Custom Compute Storage Full Access"
   description = "Role with filtered resourcemanager.projects.get & resourcemanager.projects.list for Prisma Cloud Exception"
   permissions = [
     for p in data.google_iam_role.compute_storage.included_permissions : p if length(regexall("resourcemanager.projects.*", p)) == 0
