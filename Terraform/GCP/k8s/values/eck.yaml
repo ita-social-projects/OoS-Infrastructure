@@ -108,6 +108,11 @@ eck-beats:
         events: 4096
         flush.min_events: 2048
         flush.tomeout: 5s
+      monitoring:
+        enabled: true
+      # If You use 1 node for es
+      setup.template:
+        settings.index.number_of_replicas: 0
       filebeat.inputs: []
       metricbeat:
         autodiscover:
