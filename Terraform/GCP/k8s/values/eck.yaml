@@ -99,9 +99,9 @@ eck-beats:
         policy_name: metricbeat
         overwrite: true
         policy_file: "metricbeat-ilm-policy.json"
-      #  Then you use 1 node for es
-      setup.template:
-        settings.index.number_of_replicas: 0
+      #  Then you use single node for ECK cluster there are not replicas
+      setup.template.settings:
+        index.number_of_replicas: 0
       # Sets the memory queue to buffer up to 4096 events
       # Forward events to the output if 2048 events are available or the oldes available event has been wainitg for 5 s in queue
       queue.mem:
@@ -110,9 +110,6 @@ eck-beats:
         flush.tomeout: 5s
       monitoring:
         enabled: true
-      # If You use 1 node for es
-      setup.template:
-        settings.index.number_of_replicas: 0
       filebeat.inputs: []
       metricbeat:
         autodiscover:
@@ -195,22 +192,29 @@ eck-beats:
             certificate_authorities:
               - /mnt/elastic-internal/kibana-certs/ca.crt
           xpack.enabled: true
-          - module: mysql
-            enabled: true
-            metricsets: ["status"]
-            hosts: ["${MYSQL_HOST}"]
-            username: "${MYSQL_USER}"
-            password: "${MYSQL_PASSWORD}"
-          - module: redis
-            metricsets: ["info", "keyspace"]
-            enabled: true
-            period: 15s
-            processors:
-              - include_fields:
-                  fields: ["beat", "metricset", "redis.info.stats"]
-            Redis hosts
-            hosts: ["${REDIS_HOST}"]
-            password: "${REDIS_PASSWORD}"
+        - module: nginx
+          #metricsets: ["stubstatus"]
+          enabled: true
+          period: 10s
+          # Nginx hosts
+          hosts: ["http://ingress-ingress-nginx-defaultbackend.ingress-nginx.svc"]
+          # Path to server status. Default nginx_status
+          server_status_path: "nginx_status"
+        - module: mysql
+          enabled: true
+          metricsets: ["status"]
+          hosts: ["${MYSQL_HOST}"]
+          username: "${MYSQL_USER}"
+          password: "${MYSQL_PASSWORD}"
+        - module: redis
+          metricsets: ["info", "keyspace"]
+          enabled: true
+          period: 15s
+          processors:
+            - include_fields:
+                fields: ["beat", "metricset", "redis.info.stats"]
+          hosts: ["${REDIS_HOST}"]
+          password: "${REDIS_PASSWORD}"
       processors:
       - add_cloud_metadata: {}
       - add_host_metadata: {}
@@ -275,14 +279,6 @@ eck-beats:
                 secretKeyRef:
                   name: mysql-privsecrets
                   key: clusterAdminPassword
-            - module: nginx
-              metricsets: ["stubstatus"]
-              enabled: true
-              period: 10s
-              # Nginx hosts
-              hosts: ["http://ingress-ingress-nginx-defaultbackend.default.svc"]
-              # Path to server status. Default nginx_status
-              server_status_path: "nginx_status"
           dnsPolicy: ClusterFirstWithHostNet
           hostNetwork: true # Allows to provide richer host metadata
           securityContext:
