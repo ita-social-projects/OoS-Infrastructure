@@ -192,14 +192,14 @@ eck-beats:
             certificate_authorities:
               - /mnt/elastic-internal/kibana-certs/ca.crt
           xpack.enabled: true
-        - module: nginx
-          #metricsets: ["stubstatus"]
-          enabled: true
-          period: 10s
-          # Nginx hosts
-          hosts: ["http://ingress-ingress-nginx-defaultbackend.ingress-nginx.svc"]
-          # Path to server status. Default nginx_status
-          server_status_path: "nginx_status"
+        # - module: nginx
+        #   #metricsets: ["stubstatus"]
+        #   enabled: true
+        #   period: 10s
+        #   # Nginx hosts
+        #   hosts: ["http://ingress-ingress-nginx-defaultbackend.ingress-nginx.svc"]
+        #   # Path to server status. Default nginx_status
+        #   server_status_path: "nginx_status"
         - module: mysql
           enabled: true
           metricsets: ["status"]
@@ -207,12 +207,8 @@ eck-beats:
           username: "${MYSQL_USER}"
           password: "${MYSQL_PASSWORD}"
         - module: redis
-          metricsets: ["info", "keyspace"]
           enabled: true
           period: 15s
-          processors:
-            - include_fields:
-                fields: ["beat", "metricset", "redis.info.stats"]
           hosts: ["${REDIS_HOST}"]
           password: "${REDIS_PASSWORD}"
       processors:
@@ -272,13 +268,13 @@ eck-beats:
             - name: "MYSQL_USER"
               valueFrom:
                 secretKeyRef:
-                  name: mysql-privsecrets
-                  key: clusterAdminUsername
+                  name: mysql-user-agent
+                  key: user
             - name: "MYSQL_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  name: mysql-privsecrets
-                  key: clusterAdminPassword
+                  name: mysql-user-agent
+                  key: password
           dnsPolicy: ClusterFirstWithHostNet
           hostNetwork: true # Allows to provide richer host metadata
           securityContext:
