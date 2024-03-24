@@ -192,4 +192,18 @@ resource "kubernetes_secret" "remote_monitoring_user" {
   type = "kubernetes.io/basic-auth"
 }
 
+resource "random_password" "mysql_user_agent" {
+  length  = 32
+  special = false
+}
 
+resource "kubernetes_secret" "mysql_user_agent" {
+  metadata {
+    name      = "mysql-user-agent"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+  data = {
+    user     = "user_agent"
+    password = random_password.mysql_user_agent.result
+  }
+}
