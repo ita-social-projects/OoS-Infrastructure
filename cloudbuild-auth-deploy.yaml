@@ -17,7 +17,7 @@ steps:
     args:
     - upgrade
     - --install
-    - --history-max 5
+    - --history-max=5
     - --values=./k8s/infrastructure/identity.yaml
     - --set=image.fullTagOverride=$_IMAGE_TAG
     - --set=ingress.hosts[0].host=$_HOST
