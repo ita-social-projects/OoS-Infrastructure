@@ -5,6 +5,7 @@ resource "helm_release" "eck_operator" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  max_history = 5
   values = [
     "${file("${path.module}/values/operator.yaml")}"
   ]
@@ -17,6 +18,7 @@ resource "helm_release" "eck_stack" {
   wait          = true
   wait_for_jobs = true
   timeout       = 600
+  max_history = 5
   values = [
     "${file("${path.module}/values/eck.yaml")}"
   ]
@@ -40,6 +42,7 @@ resource "helm_release" "vector" {
   wait_for_jobs    = true
   disable_webhooks = true
   timeout          = 600
+  max_history = 5
   values = [
     "${file("${path.module}/values/vector.yaml")}"
   ]

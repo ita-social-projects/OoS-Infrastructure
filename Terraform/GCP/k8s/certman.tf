@@ -5,6 +5,7 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  max_history      = 5
   values = [
     "${file("${path.module}/../../../k8s/infrastructure/cert-manager.yaml")}"
   ]

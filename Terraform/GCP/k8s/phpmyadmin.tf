@@ -4,6 +4,7 @@ resource "helm_release" "phpmyadmin" {
   namespace     = data.kubernetes_namespace.oos.metadata[0].name
   wait          = true
   wait_for_jobs = true
+  max_history   = 5
   values = [
     "${file("${path.module}/values/phpmyadmin.yaml")}"
   ]
