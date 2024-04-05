@@ -48,6 +48,7 @@ resource "google_sql_database" "storage" {
 
 resource "google_sql_user" "default" {
   name       = "k3s"
+  host       = "%"
   instance   = google_sql_database_instance.storage.name
   password   = random_id.storage_password.hex
   depends_on = [google_sql_database_instance.storage]

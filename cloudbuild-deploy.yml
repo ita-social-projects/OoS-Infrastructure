@@ -18,6 +18,7 @@ steps:
       #!/usr/bin/env sh
       helm upgrade \
         --install \
+        --history-max 5 \
         --values=$_VALUES_PATH \
         --set=image.fullTagOverride=$_IMAGE_TAG \
         --set=ingress.hosts[0].host=$_HOST \

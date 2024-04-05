@@ -5,6 +5,7 @@ resource "helm_release" "ingress" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  max_history      = 5
   values = [
     "${file("${path.module}/values/ingress.yaml")}"
   ]
