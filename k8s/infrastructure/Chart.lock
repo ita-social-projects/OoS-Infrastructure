@@ -10,16 +10,16 @@ dependencies:
   version: 2.1.2
 - name: phpmyadmin
   repository: https://charts.bitnami.com/bitnami
-  version: 11.1.6
+  version: 16.0.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 17.14.2
+  version: 19.1.2
 - name: vector
   repository: https://helm.vector.dev
-  version: 0.29.0
+  version: 0.32.1
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
-  version: 4.7.1
+  version: 4.10.0
 - name: outofschool
   repository: file://../webapp
   version: 1.0.7
@@ -28,6 +28,6 @@ dependencies:
   version: 2.10.0
 - name: eck-stack
   repository: file://eck-stack
-  version: 0.8.0
-digest: sha256:32f5b02f761d09a4a19a75aeef7e7694d9713919675f4878171c1de884a3aa31
-generated: "2024-02-16T16:05:13.584808+02:00"
+  version: 0.10.0
+digest: sha256:970533d3b71c2d80f4a935d811b0652969ba50f99b85101b91cdac38a05ef368
+generated: "2024-04-23T15:09:19.505689+03:00"
