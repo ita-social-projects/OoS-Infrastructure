@@ -1,6 +1,6 @@
 resource "google_sql_database_instance" "storage" {
   name                = "k3s-state-${var.random_number}"
-  database_version    = "MYSQL_8_0_26"
+  database_version    = "MYSQL_8_0_31"
   region              = var.region
   deletion_protection = false
 
@@ -9,6 +9,7 @@ resource "google_sql_database_instance" "storage" {
     availability_type = "ZONAL"
     disk_type         = "PD_HDD"
     disk_autoresize   = true
+    edition           = "ENTERPRISE"
 
     ip_configuration {
       ipv4_enabled    = "false"
@@ -16,8 +17,14 @@ resource "google_sql_database_instance" "storage" {
     }
 
     backup_configuration {
-      enabled    = false
-      start_time = "01:00"
+      enabled    = true
+      start_time = "03:00"
+      location   = var.region
+
+      backup_retention_settings {
+        retained_backups = 7
+        retention_unit   = "COUNT"
+      }
     }
 
     maintenance_window {

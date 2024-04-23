@@ -1,0 +1,12 @@
+dependencies:
+- name: eck-elasticsearch
+  repository: https://helm.elastic.co
+  version: 0.10.0
+- name: eck-kibana
+  repository: https://helm.elastic.co
+  version: 0.10.0
+- name: eck-beats
+  repository: https://helm.elastic.co
+  version: 0.10.0
+digest: sha256:e576d6280a9de5557e0b8857ed6daa7595bc4a01a54f11ac3d5880553f232826
+generated: "2024-04-23T15:08:59.631107+03:00"
