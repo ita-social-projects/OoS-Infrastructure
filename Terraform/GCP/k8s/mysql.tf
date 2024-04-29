@@ -42,3 +42,33 @@ resource "helm_release" "mysql" {
     kubernetes_persistent_volume_claim.backup_pvc
   ]
 }
+
+resource "kubectl_manifest" "cm" {
+  yaml_body = data.template_file.initdb.rendered
+}
+
+data "template_file" "initdb" {
+  template = file("${path.module}/config/cm_initdb.yml")
+
+  vars = {
+    user_password = random_password.mysql_user_agent.result
+  }
+}
+
+resource "helm_release" "initdb_job" {
+  name          = "mysql-initdb-job"
+  chart         = "../../k8s/job"
+  namespace     = data.kubernetes_namespace.oos.metadata[0].name
+  wait          = true
+  wait_for_jobs = true
+  timeout       = 60
+  max_history   = 3
+  values = [
+    "${file("${path.module}/values/initdb-job.yaml")}"
+  ]
+  depends_on = [
+    helm_release.mysql_operator,
+    resource.helm_release.mysql,
+    resource.kubectl_manifest.cm,
+  ]
+}

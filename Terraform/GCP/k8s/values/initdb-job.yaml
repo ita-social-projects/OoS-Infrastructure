@@ -1,0 +1,75 @@
+# Default values for job.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+jobKind: Job
+
+backoffLimit: 3
+activeDeadlineSeconds: 120
+ttlSecondsAfterFinished: 0
+restartPolicy: "Never"
+
+image:
+  registry: "container-registry.oracle.com"
+  repository: "mysql"
+  name: "community-server"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "8.1.0"
+  fullTagOverride: ""
+
+command:
+  - bash
+  - '-c'
+  - mysql -uroot -p$rootPassword -hmysql-instances mysql < /tmp/initdb.sql
+
+configuration:
+  extraEnvironment: {}
+
+  extraEnvVarsCM: ""
+
+  extraEnvVarsSecret: "mysql-cluster-secret"
+
+  secrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurity:
+  enabled: false
+  context:
+    fsGroup: 2000
+    ## e.g:
+    ## sysctls:
+    ##   - name: net.core.somaxconn
+    ##     value: "10000"
+    ##
+    sysctls: []
+
+containerSecurity:
+  enabled: false
+  context:
+    runAsUser: 1000
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+extraVolumeMounts:
+  - name: mysql-initdb
+    mountPath: /tmp
+
+extraVolumes:
+  - name: mysql-initdb
+    configMap:
+      name: mysql-initdb-config

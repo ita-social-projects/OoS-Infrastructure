@@ -47,6 +47,9 @@ spec:
           env: {{ toYaml . | nindent 12 }}
           {{- end }}
           {{- include "library.envFrom.tpl" . | nindent 10 }}
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts: {{ toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
       {{- end }}
@@ -55,5 +58,8 @@ spec:
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.extraVolumes }}
+      volumes: {{ toYaml . | nindent 8 }}
       {{- end }}
 {{- end -}}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  initdb.sql: |
+    CREATE USER 'agent_monitoring'@'%' IDENTIFIED BY '${user_password}';

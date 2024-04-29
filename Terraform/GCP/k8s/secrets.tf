@@ -203,7 +203,7 @@ resource "kubernetes_secret" "mysql_user_agent" {
     namespace = data.kubernetes_namespace.oos.metadata[0].name
   }
   data = {
-    user     = "user_agent"
+    user     = "agent_monitoring"
     password = random_password.mysql_user_agent.result
   }
 }
