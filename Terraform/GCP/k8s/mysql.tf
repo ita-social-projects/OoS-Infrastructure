@@ -53,6 +53,7 @@ data "template_file" "initdb" {
   template = file("${path.module}/manifests/cm_initdb.yaml")
 
   vars = {
+    user_name     = var.mysql_agent_name
     user_password = random_password.mysql_user_agent.result
   }
 }
