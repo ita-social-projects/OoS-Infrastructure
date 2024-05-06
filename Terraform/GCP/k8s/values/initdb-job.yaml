@@ -23,7 +23,7 @@ image:
 command:
   - bash
   - '-c'
-  - mysql -uroot -p$rootPassword -hmysql-instances mysql < /tmp/initdb.sql
+  - mysql -uroot -p$rootPassword -h mysql mysql < /tmp/initdb.sql
 
 configuration:
   extraEnvironment: {}
