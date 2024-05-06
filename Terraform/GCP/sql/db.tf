@@ -1,6 +1,6 @@
 resource "google_sql_database_instance" "storage" {
   name                = "k3s-state-${var.random_number}"
-  database_version    = "MYSQL_8_0_26"
+  database_version    = "MYSQL_8_0_31"
   region              = var.region
   deletion_protection = false
 
@@ -16,8 +16,8 @@ resource "google_sql_database_instance" "storage" {
     }
 
     backup_configuration {
-      enabled    = false
-      start_time = "01:00"
+      enabled    = true
+      start_time = "03:00"
     }
 
     maintenance_window {
