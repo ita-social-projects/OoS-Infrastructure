@@ -1,9 +1,10 @@
 resource "helm_release" "phpmyadmin" {
   name          = "phpmyadmin"
-  chart         = "../../k8s/infrastructure/charts/phpmyadmin-11.1.6.tgz"
+  chart         = "../../k8s/infrastructure/charts/phpmyadmin-16.0.1.tgz"
   namespace     = data.kubernetes_namespace.oos.metadata[0].name
   wait          = true
   wait_for_jobs = true
+  max_history   = 3
   values = [
     "${file("${path.module}/values/phpmyadmin.yaml")}"
   ]

@@ -28,7 +28,6 @@ controller:
 defaultBackend:
   enabled: true
   autoscaling:
-    # TODO: wait till the bug fix will be updated as a chart of HPA
-    enabled: false
+    enabled: true
     minReplicas: 1
     maxReplicas: 2

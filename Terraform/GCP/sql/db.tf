@@ -9,6 +9,7 @@ resource "google_sql_database_instance" "storage" {
     availability_type = "ZONAL"
     disk_type         = "PD_HDD"
     disk_autoresize   = true
+    edition           = "ENTERPRISE"
 
     ip_configuration {
       ipv4_enabled    = "false"
@@ -18,6 +19,12 @@ resource "google_sql_database_instance" "storage" {
     backup_configuration {
       enabled    = true
       start_time = "03:00"
+      location   = var.region
+
+      backup_retention_settings {
+        retained_backups = 7
+        retention_unit   = "COUNT"
+      }
     }
 
     maintenance_window {
@@ -48,6 +55,7 @@ resource "google_sql_database" "storage" {
 
 resource "google_sql_user" "default" {
   name       = "k3s"
+  host       = "%"
   instance   = google_sql_database_instance.storage.name
   password   = random_id.storage_password.hex
   depends_on = [google_sql_database_instance.storage]

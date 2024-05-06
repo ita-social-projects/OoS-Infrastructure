@@ -5,6 +5,7 @@ resource "helm_release" "eck_operator" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  max_history      = 3
   values = [
     "${file("${path.module}/values/operator.yaml")}"
   ]
@@ -17,6 +18,7 @@ resource "helm_release" "eck_stack" {
   wait          = true
   wait_for_jobs = true
   timeout       = 600
+  max_history   = 3
   values = [
     "${file("${path.module}/values/eck.yaml")}"
   ]
@@ -34,16 +36,18 @@ resource "helm_release" "eck_stack" {
 
 resource "helm_release" "vector" {
   name             = "vector"
-  chart            = "../../k8s/infrastructure/charts/vector-0.29.0.tgz"
+  chart            = "../../k8s/infrastructure/charts/vector-0.32.1.tgz"
   namespace        = data.kubernetes_namespace.oos.metadata[0].name
   wait             = true
   wait_for_jobs    = true
   disable_webhooks = true
   timeout          = 600
+  max_history      = 3
   values = [
     "${file("${path.module}/values/vector.yaml")}"
   ]
 }
+
 resource "kubectl_manifest" "metricbeat_ilm" {
   yaml_body = <<-EOF
 apiVersion: v1

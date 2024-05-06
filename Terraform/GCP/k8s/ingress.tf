@@ -1,10 +1,11 @@
 resource "helm_release" "ingress" {
   name             = "ingress"
-  chart            = "../../k8s/infrastructure/charts/ingress-nginx-4.7.1.tgz"
+  chart            = "../../k8s/infrastructure/charts/ingress-nginx-4.10.0.tgz"
   namespace        = "ingress-nginx"
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  max_history      = 3
   values = [
     "${file("${path.module}/values/ingress.yaml")}"
   ]

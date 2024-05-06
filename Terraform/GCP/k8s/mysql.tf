@@ -5,6 +5,7 @@ resource "helm_release" "mysql_operator" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  max_history      = 3
 }
 
 resource "kubernetes_persistent_volume_claim" "backup_pvc" {
@@ -29,6 +30,7 @@ resource "helm_release" "mysql" {
   namespace     = data.kubernetes_namespace.oos.metadata[0].name
   wait          = true
   wait_for_jobs = true
+  max_history   = 3
   values = [
     "${file("${path.module}/values/mysql.yaml")}"
   ]

@@ -11,12 +11,13 @@ steps:
     volumes:
     - name: 'kube'
       path: /root/.kube
-  - name: alpine/helm:3.11.3
+  - name: alpine/helm:3.14.4
     env:
     - KUBECONFIG=/root/.kube/config
     args:
     - upgrade
     - --install
+    - --history-max=3
     - --values=./k8s/infrastructure/identity.yaml
     - --set=image.fullTagOverride=$_IMAGE_TAG
     - --set=ingress.hosts[0].host=$_HOST
