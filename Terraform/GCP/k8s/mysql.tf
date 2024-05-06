@@ -48,7 +48,7 @@ resource "kubectl_manifest" "cm" {
 }
 
 data "template_file" "initdb" {
-  template = file("${path.module}/config/cm_initdb.yml")
+  template = file("${path.module}/manifests/cm_initdb.yaml")
 
   vars = {
     user_password = random_password.mysql_user_agent.result
