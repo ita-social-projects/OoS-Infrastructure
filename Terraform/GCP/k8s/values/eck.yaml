@@ -40,7 +40,7 @@ eck-elasticsearch:
           resources:
             requests:
               cpu: "200m"
-              memory: "512Mi"
+              memory: "1376Mi"
             limits:
               cpu: "500m"
               memory: "1768Mi"
@@ -99,6 +99,17 @@ eck-beats:
         policy_name: metricbeat
         overwrite: true
         policy_file: "metricbeat-ilm-policy.json"
+      #  Then you use single node for ECK cluster there are not replicas
+      setup.template.settings:
+        index.number_of_replicas: 0
+      # Sets the memory queue to buffer up to 4096 events
+      # Forward events to the output if 2048 events are available or the oldes available event has been wainitg for 5 s in queue
+      queue.mem:
+        events: 4096
+        flush.min_events: 2048
+        flush.tomeout: 5s
+      monitoring:
+        enabled: true
       filebeat.inputs: []
       metricbeat:
         autodiscover:
@@ -118,6 +129,7 @@ eck-beats:
           - network
           - process
           - process_summary
+          - uptime
           process:
             include_top_n:
               by_cpu: 5
@@ -180,6 +192,25 @@ eck-beats:
             certificate_authorities:
               - /mnt/elastic-internal/kibana-certs/ca.crt
           xpack.enabled: true
+        # - module: nginx
+        #   #metricsets: ["stubstatus"]
+        #   enabled: true
+        #   period: 10s
+        #   # Nginx hosts
+        #   hosts: ["http://ingress-ingress-nginx-defaultbackend.ingress-nginx.svc"]
+        #   # Path to server status. Default nginx_status
+        #   server_status_path: "nginx_status"
+        - module: mysql
+          enabled: true
+          metricsets: ["status"]
+          hosts: ["${MYSQL_HOST}"]
+          username: "${MYSQL_USER}"
+          password: "${MYSQL_PASSWORD}"
+        - module: redis
+          enabled: true
+          period: 15s
+          hosts: ["${REDIS_HOST}"]
+          password: "${REDIS_PASSWORD}"
       processors:
       - add_cloud_metadata: {}
       - add_host_metadata: {}
@@ -225,6 +256,25 @@ eck-beats:
                 secretKeyRef:
                   name: eck-stack-eck-beats-beat-kb-user
                   key: default-eck-stack-eck-beats-beat-kb-user
+            - name: "MYSQL_HOST"
+              value: "tcp(mysql.default.svc:3306)/"
+            - name: "REDIS_HOST"
+              value: "redis-master.default.svc:6379"
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: redis-auth
+                  key: password
+            - name: "MYSQL_USER"
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-user-agent
+                  key: user
+            - name: "MYSQL_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-user-agent
+                  key: password
           dnsPolicy: ClusterFirstWithHostNet
           hostNetwork: true # Allows to provide richer host metadata
           securityContext:

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  initdb.sql: |
+    CREATE USER '${user_name}'@'%' IDENTIFIED BY '${user_password}';
+    GRANT SELECT, REPLICATION CLIENT, SHOW DATABASES, SUPER, PROCESS, EXECUTE ON *.* TO '${user_name}'@'%';
+    GRANT CREATE, INSERT ON mysql.* TO '${user_name}'@'%';

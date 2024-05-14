@@ -30,7 +30,8 @@ resource "helm_release" "eck_stack" {
     helm_release.eck_operator,
     kubectl_manifest.elastic_roles,
     kubernetes_secret.elastic_credentials,
-    kubernetes_secret.elastic_webapi_credentials
+    kubernetes_secret.elastic_webapi_credentials,
+    resource.helm_release.initdb_job,
   ]
 }
 
