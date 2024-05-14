@@ -46,16 +46,13 @@ resource "helm_release" "mysql" {
 }
 
 resource "kubectl_manifest" "cm" {
-  yaml_body = data.template_file.initdb.rendered
-}
-
-data "template_file" "initdb" {
-  template = file("${path.module}/manifests/cm_initdb.yaml")
-
-  vars = {
-    user_name     = var.mysql_agent_name
-    user_password = random_password.mysql_user_agent.result
-  }
+  yaml_body = templatefile(
+    "${path.module}/manifests/cm_initdb.yaml",
+    {
+      user_name     = var.mysql_agent_name,
+      user_password = random_password.mysql_user_agent.result
+    }
+  )
 }
 
 resource "helm_release" "initdb_job" {
