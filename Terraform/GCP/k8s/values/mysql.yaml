@@ -14,11 +14,27 @@ podSpec:
   - name: mysql
     resources:
       requests:
-        memory: "512Mi"
+        memory: "1Gi"
         # cpu: "1800m"
       limits:
         memory: "1Gi"
         # cpu: "3600m"
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: statefulset.kubernetes.io/pod-name
+              operator: In
+              values:
+                - elasticsearch-es-elastic-0
+            - key: common.k8s.elastic.co/type
+              operator: In
+              values:
+                - kibana
+          topologyKey: kubernetes.io/hostname
 datadirVolumeClaimTemplate:
   storageClassName: standard
   resources:

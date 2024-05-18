@@ -44,6 +44,22 @@ eck-elasticsearch:
             limits:
               cpu: "500m"
               memory: "1768Mi"
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: statefulset.kubernetes.io/pod-name
+                    operator: In
+                    values:
+                      - mysql-0
+                  - key: common.k8s.elastic.co/type
+                    operator: In
+                    values:
+                      - kibana
+                topologyKey: kubernetes.io/hostname
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data
@@ -80,6 +96,19 @@ eck-kibana:
               limits:
                 cpu: "500m"
                 memory: "1256Mi"
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: "statefulset.kubernetes.io/pod-name"
+                      operator: In
+                      values:
+                        - elasticsearch-es-elastic-0
+                        - mysql-0
+                  topologyKey: kubernetes.io/hostname
 eck-beats:
   enabled: true
   name: metricbeat
@@ -275,6 +304,12 @@ eck-beats:
                 secretKeyRef:
                   name: mysql-user-agent
                   key: password
+            resources:
+              limits:
+                memory: 200Mi
+              requests:
+                cpu: 100m
+                memory: 100Mi
           dnsPolicy: ClusterFirstWithHostNet
           hostNetwork: true # Allows to provide richer host metadata
           securityContext:
