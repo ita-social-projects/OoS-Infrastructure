@@ -306,6 +306,7 @@ eck-beats:
                   key: password
             resources:
               limits:
+                cpu: 200m
                 memory: 200Mi
               requests:
                 cpu: 100m
@@ -385,3 +386,55 @@ eck-beats:
       kind: ClusterRole
       name: metricbeat
       apiGroup: rbac.authorization.k8s.io
+
+eck-apm-server:
+  enabled: true
+  version: 8.5.1
+  count: 1
+  elasticsearchRef:
+    name: elasticsearch
+  kibanaRef:
+    name: kibana
+  secureSettings:
+  - secretName: elastic-credentials
+  config:
+    output:
+      elasticsearch:
+        hosts: ["https://elasticsearch-es-http.default.svc:9200"]
+        username: "${username}"
+        password: "${password}"
+        protocol: "https"
+        ssl.certificate_authorities: ["/usr/share/apm-server/config/elasticsearch-ca/tls.crt"]
+  podTemplate:
+    spec:
+      containers:
+      - name: apm-server
+        volumeMounts:
+        - mountPath: /usr/share/apm-server/config/elasticsearch-ca
+          name: elasticsearch-ca
+          readOnly: true
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "statefulset.kubernetes.io/pod-name"
+                  operator: In
+                  values:
+                    - mysql-0
+              topologyKey: "kubernetes.io/hostname"
+      volumes:
+      - name: elasticsearch-ca
+        secret:
+          defaultMode: 420
+          optional: false
+          secretName: elasticsearch-es-http-ca-internal # This is the secret that holds the Elasticsearch CA cert
