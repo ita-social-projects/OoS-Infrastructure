@@ -37,9 +37,11 @@ deploy:
 
 configuration:
   extraEnvironment:
+    DOTNET_gcServer: "0"
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
     ConnectionStringsOverride__DefaultConnection__UserId: oos
+    ElasticApm__ServiceVersion: $(AppDefaults__Version)
   extraEnvVarsSecret: "authserver-secrets"
   secrets:
   - type: env
@@ -47,6 +49,12 @@ configuration:
     keys:
     - key: IDENTITY_PASSWORD
       envKey: ConnectionStringsOverride__DefaultConnection__Password
+      upper: false
+  - type: env
+    name: eck-stack-eck-apm-server-apm-token
+    keys:
+    - key: secret-token
+      envKey: ElasticApm__SecretToken
       upper: false
 ingress:
   enabled: true
