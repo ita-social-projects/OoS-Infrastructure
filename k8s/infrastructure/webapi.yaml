@@ -155,3 +155,18 @@ initContainers:
         readOnly: true
       - name: binding
         mountPath: /workspace/bindings/ca-certificates
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: "statefulset.kubernetes.io/pod-name"
+            operator: In
+            values:
+              - elasticsearch-es-elastic-0
+              - mysql-0
+        topologyKey: kubernetes.io/hostname
+
