@@ -20,11 +20,13 @@ deploy:
 
 configuration:
   extraEnvironment:
+    DOTNET_gcServer: "0"
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
     ConnectionStringsOverride__DefaultConnection__UserId: api
     SERVICE_BINDING_ROOT: /workspace/bindings
     Elasticsearch__Urls__0: https://elasticsearch-es-http:9200
+    ElasticApm__ServiceVersion: $(AppDefaults__Version)
   extraEnvVarsSecret: "webapi-secrets"
   secrets:
   - type: env
@@ -44,6 +46,12 @@ configuration:
     keys:
     - key: password
       envKey: Elasticsearch__Password
+      upper: false
+  - type: env
+    name: eck-stack-eck-apm-server-apm-token
+    keys:
+    - key: secret-token
+      envKey: ElasticApm__SecretToken
       upper: false
 
 migrations:
@@ -144,7 +152,7 @@ storage:
 
 initContainers:
   - name: init-myservice
-    image: busybox:1.28
+    image: busybox:1.36
     command:
       - sh
       - -c
