@@ -53,7 +53,7 @@ eck-elasticsearch:
         storageClassName: "standard"
         resources:
           requests:
-            storage: 15G
+            storage: 30G
 eck-kibana:
   enabled: true
   version: 8.5.1
