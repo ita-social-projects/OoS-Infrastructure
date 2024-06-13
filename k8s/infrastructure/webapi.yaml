@@ -140,15 +140,21 @@ storage:
     - name: elastic-certs
       secret:
         secretName: elasticsearch-es-http-certs-public
+    - name: apm-certs
+      secret:
+        secretName: eck-stack-eck-apm-server-apm-http-certs-public
     - name: binding
       emptyDir: {}
 
   extraVolumeMounts:
-      - name: elastic-certs
-        mountPath: "/workspace/elastic/certs"
-        readOnly: true
-      - name: binding
-        mountPath: /workspace/bindings/ca-certificates
+    - name: elastic-certs
+      mountPath: "/workspace/elastic/certs"
+      readOnly: true
+    - name: apm-certs
+      mountPath: "/workspace/apm/certs"
+      readOnly: true
+    - name: binding
+      mountPath: /workspace/bindings/ca-certificates
 
 initContainers:
   - name: init-myservice
@@ -156,10 +162,13 @@ initContainers:
     command:
       - sh
       - -c
-      - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/elastic/certs/*.crt /workspace/bindings/ca-certificates"
+      - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/elastic/certs/*.crt /workspace/bindings/ca-certificates; cp /workspace/apm/certs/*.crt /workspace/bindings/ca-certificates"
     volumeMounts:
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
+        readOnly: true
+      - name: apm-certs
+        mountPath: "/workspace/apm/certs"
         readOnly: true
       - name: binding
         mountPath: /workspace/bindings/ca-certificates

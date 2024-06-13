@@ -45,3 +45,9 @@ resource "random_password" "es_user_rmon_password" {
   special          = true
   override_special = "_%@"
 }
+
+resource "random_password" "es_dev_qc_password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}

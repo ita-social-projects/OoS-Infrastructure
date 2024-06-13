@@ -146,6 +146,10 @@ variable "es_user_rmon_password" {
   type = string
 }
 
+variable "es_dev_qc_password" {
+  type = string
+}
+
 variable "mysql_agent_name" {
   description = "Mysql user for metricbeat monitoring"
   type        = string
