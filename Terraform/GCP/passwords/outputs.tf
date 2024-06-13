@@ -30,5 +30,6 @@ output "es_user_rmon_password" {
   value = random_password.es_user_rmon_password.result
 }
 
-
-
+output "es_dev_qc_password" {
+  value = random_password.es_dev_qc_password.result
+}

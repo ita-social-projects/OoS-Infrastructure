@@ -153,6 +153,7 @@ module "k8s" {
   openiddict_introspection_key = module.passwords.openiddict_introspection_key
   sender_email                 = var.sender_email
   es_user_rmon_password        = module.passwords.es_user_rmon_password
+  es_dev_qc_password           = module.passwords.es_dev_qc_password
   depends_on = [
     module.cluster
   ]

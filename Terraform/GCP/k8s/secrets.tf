@@ -33,6 +33,19 @@ stringData:
             - view_index_metadata
             - manage
           allow_restricted_indices: false
+      metadata:
+        version: 2
+    devqcaccess:
+      indices:
+        - names:
+            - logs-apm*
+            - metrics-apm*
+            - traces-apm*
+            - workshop
+          privileges:
+            - read
+            - view_index_metadata
+          allow_restricted_indices: false
       applications:
         - application: kibana-.kibana
           privileges:
@@ -68,6 +81,20 @@ resource "kubernetes_secret" "elastic_webapi_credentials" {
     username = "webapi"
     password = var.es_api_pass
     roles    = "outofschool"
+  }
+  type = "kubernetes.io/basic-auth"
+}
+
+resource "kubernetes_secret" "elastic_devqc_credentials" {
+  metadata {
+    name      = "devqc-es-credentials"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+
+  data = {
+    username = "devqc"
+    password = var.es_dev_qc_password
+    roles    = "devqcaccess"
   }
   type = "kubernetes.io/basic-auth"
 }

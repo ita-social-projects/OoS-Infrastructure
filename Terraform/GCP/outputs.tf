@@ -45,3 +45,8 @@ output "introspection_secret" {
 output "gcf_bucket" {
   value = module.storage.gcf_bucket
 }
+
+output "es_dev_qc_password" {
+  value     = module.passwords.es_dev_qc_password
+  sensitive = true
+}
