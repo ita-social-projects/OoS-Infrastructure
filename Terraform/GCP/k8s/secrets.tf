@@ -36,7 +36,19 @@ stringData:
       metadata:
         version: 2
     devqcaccess:
+      cluster:
+        - monitor
       indices:
+        - names:
+            - devqc-*
+          privileges:
+            - read
+            - write
+            - delete
+            - create_index
+            - view_index_metadata
+            - manage
+          allow_restricted_indices: false
         - names:
             - logs-apm*
             - metrics-apm*
