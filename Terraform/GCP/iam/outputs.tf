@@ -41,3 +41,7 @@ output "dns_sa_key" {
 output "build_sa_id" {
   value = google_service_account.build.id
 }
+
+output "webapi_sa_key" {
+  value = google_service_account_key.app.private_key
+}

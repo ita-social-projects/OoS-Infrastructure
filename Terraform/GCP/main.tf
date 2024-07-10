@@ -154,6 +154,8 @@ module "k8s" {
   sender_email                 = var.sender_email
   es_user_rmon_password        = module.passwords.es_user_rmon_password
   es_dev_qc_password           = module.passwords.es_dev_qc_password
+  webapi_sa_key                = module.iam.webapi_sa_key
+  images_bucket                = module.storage.image_bucket
   depends_on = [
     module.cluster
   ]
