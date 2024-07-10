@@ -246,3 +246,13 @@ resource "kubernetes_secret" "mysql_user_agent" {
     password = random_password.mysql_user_agent.result
   }
 }
+
+resource "kubernetes_secret" "webapi_gcp_credentials" {
+  metadata {
+    name      = "webapi-gcp-sa"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+  }
+  data = {
+    "key.json" = base64decode(var.webapi_sa_key)
+  }
+}

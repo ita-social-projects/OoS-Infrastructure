@@ -28,6 +28,7 @@ configuration:
     Elasticsearch__Urls__0: https://elasticsearch-es-http:9200
     ElasticApm__ServiceVersion: $(AppDefaults__Version)
   extraEnvVarsSecret: "webapi-secrets"
+  extraEnvVarsCM: "webapi-configmap"
   secrets:
   - type: env
     name: mysql-api-auth
@@ -143,6 +144,9 @@ storage:
     - name: apm-certs
       secret:
         secretName: eck-stack-eck-apm-server-apm-http-certs-public
+    - name: gcp-sa
+      secret:
+        secretName: webapi-gcp-sa
     - name: binding
       emptyDir: {}
 
@@ -152,6 +156,9 @@ storage:
       readOnly: true
     - name: apm-certs
       mountPath: "/workspace/apm/certs"
+      readOnly: true
+    - name: gcp-sa
+      mountPath: "/workspace/gcp"
       readOnly: true
     - name: binding
       mountPath: /workspace/bindings/ca-certificates

@@ -156,3 +156,9 @@ variable "mysql_agent_name" {
   default     = "agent_monitoring"
 }
 
+variable "images_bucket" {
+  type = string
+}
+
+variable "webapi_sa_key" {
+}
