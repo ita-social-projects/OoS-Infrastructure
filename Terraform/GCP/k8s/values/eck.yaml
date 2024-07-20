@@ -17,6 +17,8 @@ eck-elasticsearch:
     count: 1
     config:
       node.store.allow_mmap: false
+      path.repo:
+        - /usr/share/elasticsearch/data/backup
     podTemplate:
       spec:
         initContainers:
