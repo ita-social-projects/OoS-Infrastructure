@@ -1,4 +1,4 @@
-# Move Elastic Indexes between different Elastic search deployments.
+# Move Elastic Indexes between different Elasticsearch deployments.
 
 1. Add to ElasticSearch config repo for backup:
     config:
@@ -43,7 +43,7 @@ https://kibana.oos.dmytrominochkin.cloud/app/management/data/snapshot_restore/sn
 
 You should see the snapshot.
 
-10. Click snapshot and restore.
+10. Click snapshot and then restore it.
 
 
 
