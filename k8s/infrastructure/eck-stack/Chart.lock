@@ -1,12 +1,15 @@
 dependencies:
 - name: eck-elasticsearch
   repository: https://helm.elastic.co
-  version: 0.10.0
+  version: 0.11.0
 - name: eck-kibana
   repository: https://helm.elastic.co
-  version: 0.10.0
+  version: 0.11.0
 - name: eck-beats
   repository: https://helm.elastic.co
-  version: 0.10.0
-digest: sha256:e576d6280a9de5557e0b8857ed6daa7595bc4a01a54f11ac3d5880553f232826
-generated: "2024-04-23T15:08:59.631107+03:00"
+  version: 0.11.0
+- name: eck-apm-server
+  repository: https://helm.elastic.co
+  version: 0.11.0
+digest: sha256:6104a2a3ec8e1170b41dce3def91d9fbdef727646925b84b603ece913ec70490
+generated: "2024-07-20T10:11:38.68339+03:00"
