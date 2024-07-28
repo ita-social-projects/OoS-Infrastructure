@@ -1,0 +1,33 @@
+dependencies:
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.12.3
+- name: mysql-operator
+  repository: https://mysql.github.io/mysql-operator
+  version: 2.1.4
+- name: mysql-innodbcluster
+  repository: https://mysql.github.io/mysql-operator
+  version: 2.1.4
+- name: phpmyadmin
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.0.1
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 19.1.2
+- name: vector
+  repository: https://helm.vector.dev
+  version: 0.32.1
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 4.10.0
+- name: outofschool
+  repository: file://../webapp
+  version: 1.0.7
+- name: eck-operator
+  repository: https://helm.elastic.co
+  version: 2.13.0
+- name: eck-stack
+  repository: file://eck-stack
+  version: 0.11.0
+digest: sha256:24c437e7a4322d78e138df915d1334b58090ec40ca1298d361fe7a324704f29d
+generated: "2024-07-27T20:52:48.983827+03:00"

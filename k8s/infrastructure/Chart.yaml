@@ -13,10 +13,10 @@ dependencies:
     version: v1.12.3
     repository: https://charts.jetstack.io
   - name: mysql-operator
-    version: 2.1.2
+    version: 2.1.4
     repository: https://mysql.github.io/mysql-operator
   - name: mysql-innodbcluster
-    version: 2.1.2
+    version: 2.1.4
     repository: https://mysql.github.io/mysql-operator
   - name: phpmyadmin
     version: 16.0.1
