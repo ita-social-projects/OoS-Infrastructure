@@ -11,7 +11,7 @@ image:
   repository: timberio/vector
   pullPolicy: IfNotPresent
   # Overrides the image tag, the default is `{image.version}-{image.base}`.
-  tag: "0.34.1-debian"
+  tag: "0.40.0-debian"
   # Overrides the image version, the default is the Chart appVersion.
   version: ""
   base: "debian"
@@ -80,8 +80,8 @@ customConfig:
       condition: includes(["ingress-nginx","rke2-ingress-nginx", "webapp"], .kubernetes.pod_labels."app.kubernetes.io/name")
     parse_json_logs:
       type: remap
-      # TODO: add sink for dropped events
       drop_on_error: true
+      reroute_dropped: true # send to sink parse_json_logs_dropped
       inputs:
         - filter_structured_logs
       source: |-
@@ -103,8 +103,8 @@ customConfig:
       type: remap
       inputs:
         - logs_router.nginx
-      # TODO: add sink for dropped events
       drop_on_error: true
+      reroute_dropped: true # send to sink nginx_logs_dropped
       source: |-
         # Leave only one possible field that contains IP
         if .network.source_ip == "" {
@@ -132,7 +132,6 @@ customConfig:
         .http.upstream.duration_sec = to_float!(.http.upstream.duration_sec)
     serilog_parse_logs:
       type: remap
-      # TODO: add sink for dropped events
       drop_on_error: true
       inputs:
         - logs_router.serilog
@@ -225,6 +224,46 @@ customConfig:
         type: vector
         dataset: logs
         namespace: unstructured
+      auth:
+        strategy: basic
+        user: "${ES_USERNAME}"
+        password: "${ES_PASSWORD}"
+      tls:
+        ca_path : "/usr/share/vector/elastic/ca.crt"
+        verify_certificate : true
+    nginx_logs_dropped:
+      type: elasticsearch
+      inputs:
+        - nginx_process_logs.dropped
+      api_version: v8
+      compression: none
+      endpoints:
+        - "${ES_ENDPOINT}"
+      mode: data_stream
+      data_stream:
+        type: vector
+        dataset: logs
+        namespace: nginx-dropped
+      auth:
+        strategy: basic
+        user: "${ES_USERNAME}"
+        password: "${ES_PASSWORD}"
+      tls:
+        ca_path : "/usr/share/vector/elastic/ca.crt"
+        verify_certificate : true
+    parse_json_logs_dropped:
+      type: elasticsearch
+      inputs:
+        - parse_json_logs.dropped
+      api_version: v8
+      compression: none
+      endpoints:
+        - "${ES_ENDPOINT}"
+      mode: data_stream
+      data_stream:
+        type: vector
+        dataset: logs
+        namespace: parse-json-logs-dropped
       auth:
         strategy: basic
         user: "${ES_USERNAME}"
