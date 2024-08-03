@@ -17,7 +17,7 @@ image:
   name: "community-server"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "8.1.0"
+  tag: "8.4.1"
   fullTagOverride: ""
 
 command:
