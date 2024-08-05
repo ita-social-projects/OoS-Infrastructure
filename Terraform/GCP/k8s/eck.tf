@@ -1,7 +1,7 @@
 resource "helm_release" "eck_operator" {
   name             = "eck-operator"
   namespace        = "eck-operator"
-  chart            = "../../k8s/infrastructure/charts/eck-operator-2.10.0.tgz"
+  chart            = "../../k8s/infrastructure/charts/eck-operator-2.13.0.tgz"
   create_namespace = true
   wait             = true
   wait_for_jobs    = true

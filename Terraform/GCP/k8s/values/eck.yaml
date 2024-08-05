@@ -1,6 +1,6 @@
 eck-elasticsearch:
   enabled: true
-  version: 8.5.1
+  version: 8.14.3
   fullnameOverride: "elasticsearch"
   annotations:
     eck.k8s.elastic.co/license: "basic"
@@ -17,6 +17,8 @@ eck-elasticsearch:
     count: 1
     config:
       node.store.allow_mmap: false
+      path.repo:
+        - /usr/share/elasticsearch/data/backup
     podTemplate:
       spec:
         initContainers:
@@ -44,7 +46,7 @@ eck-elasticsearch:
               memory: "1376Mi"
             limits:
               cpu: "500m"
-              memory: "1768Mi"
+              memory: "1536Mi"
         affinity:
           podAntiAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
@@ -73,7 +75,7 @@ eck-elasticsearch:
             storage: 30G
 eck-kibana:
   enabled: true
-  version: 8.5.1
+  version: 8.14.3
   fullnameOverride: "kibana"
   annotations:
     eck.k8s.elastic.co/license: basic
@@ -117,7 +119,7 @@ eck-beats:
     eck.k8s.elastic.co/license: "basic"
   spec:
     type: metricbeat
-    version: 8.5.1
+    version: 8.14.3
     elasticsearchRef:
       name: elasticsearch
     kibanaRef:
@@ -390,7 +392,7 @@ eck-beats:
 
 eck-apm-server:
   enabled: true
-  version: 8.5.1
+  version: 8.14.3
   count: 1
   elasticsearchRef:
     name: elasticsearch
