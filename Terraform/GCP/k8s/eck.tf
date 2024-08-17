@@ -63,3 +63,53 @@ data:
 type: Opaque
 EOF
 }
+
+
+
+resource "kubectl_manifest" "policy" {
+  for_each = toset(local.list_policy_files)
+  yaml_body = <<-EOF
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: elastic-policy-${each.value}
+spec:
+  template:
+    spec:
+      containers:
+      - name: curl
+        image: alpine/curl
+        command:
+          - sh
+          - -c
+          - |
+            echo ${local.script} | base64 -d > script.sh
+            chmod +x script.sh
+            sh script.sh
+            echo "${each.value}"
+        env:
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: elastic-credentials
+              key: username
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: elastic-credentials
+              key: password
+      restartPolicy: Never
+  backoffLimit: 4
+EOF
+}
+
+locals {
+  script = base64encode(file("k8s/config/load_elastic_policy.sh"))
+  list_policy_files = endpoint : [
+    "geoip-nginx-pipeline",
+    "vector-geoip-mappings",
+    "vector-logs-ilm",
+    "vector-logs-settings",
+    "vector-logs-template",
+  ]
+}

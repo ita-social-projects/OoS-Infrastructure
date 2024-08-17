@@ -1,0 +1,21 @@
+PUT _component_template/vector-geoip-mappings
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "network": {
+          "properties": {
+            "geo": {
+              "properties": {
+                "location": { "type": "geo_point" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Mappings for geo_point location field"
+  }
+}
