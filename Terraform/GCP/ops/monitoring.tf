@@ -37,6 +37,7 @@ module "uptime-check" {
   period                    = each.value.period
   selected_regions          = each.value.regions
   path                      = each.value.path
+  timeout                   = "60s"
   auth_info = {
     username = "remote_monitoring_agent"
     password = var.eck_rmon_password
@@ -49,6 +50,8 @@ module "uptime-check" {
       "host"       = each.value.host
     }
   }
+
+  accepted_response_status_classes = ["STATUS_CLASS_2XX"]
 
   notification_channels = [local.notification]
 }

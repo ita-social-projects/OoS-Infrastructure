@@ -45,7 +45,7 @@ eck-elasticsearch:
               cpu: "200m"
               memory: "1376Mi"
             limits:
-              cpu: "500m"
+              cpu: "1"
               memory: "1536Mi"
         affinity:
           podAntiAffinity:
