@@ -1,3 +1,25 @@
+locals {
+  es_deploy_script = "load-elastic-deployment.sh"
+
+  es_endpoints_list = [
+    "_ingest/pipeline/geoip-nginx",
+    "_component_template/vector-geoip-mappings",
+    "_ilm/policy/vector-logs-ilm",
+    "_component_template/vector-logs-settings",
+    "_index_template/vector-logs-template",
+  ]
+
+  # Create files list based on local.es_endpoints_list:
+  #  - geoip-nginx.json
+  #  - vector-geoip-mappings.json
+  #  - vector-logs-ilm.json
+  #  - vector-logs-settings.json
+  #  - vector-logs-template.json
+  es_deploy_files = [
+    for name in local.es_endpoints_list:  "${basename(name)}.json"
+  ]
+}
+
 resource "helm_release" "eck_operator" {
   name             = "eck-operator"
   namespace        = "eck-operator"
@@ -64,15 +86,31 @@ type: Opaque
 EOF
 }
 
+resource "kubernetes_config_map_v1" "files" {
+  metadata {
+    name = "es-deployment-files"
+  }
 
+  data = merge({
+    # Elasticsearch Deployment json files
+    for name in local.es_deploy_files :
+      name => file("${path.module}/config/${name}")
+  },
+  {
+    # bash script
+    "${local.es_deploy_script}" = templatefile("${path.module}/config/${local.es_deploy_script}",{
+      file_list = local.es_deploy_files,
+    }),
+  }
+)
+}
 
 resource "kubectl_manifest" "policy" {
-  for_each = toset(local.list_policy_files)
   yaml_body = <<-EOF
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: elastic-policy-${each.value}
+  name: elastic-policy-test
 spec:
   template:
     spec:
@@ -83,10 +121,7 @@ spec:
           - sh
           - -c
           - |
-            echo ${local.script} | base64 -d > script.sh
-            chmod +x script.sh
-            sh script.sh
-            echo "${each.value}"
+            sh /script/${local.es_deploy_script}
         env:
         - name: USERNAME
           valueFrom:
@@ -98,18 +133,15 @@ spec:
             secretKeyRef:
               name: elastic-credentials
               key: password
+        volumeMounts:
+        - name: files
+          mountPath: /script
       restartPolicy: Never
+      volumes:
+      - name: files
+        configMap:
+          name: es-deployment-files
   backoffLimit: 4
 EOF
 }
 
-locals {
-  script = base64encode(file("k8s/config/load_elastic_policy.sh"))
-  list_policy_files = endpoint : [
-    "geoip-nginx-pipeline",
-    "vector-geoip-mappings",
-    "vector-logs-ilm",
-    "vector-logs-settings",
-    "vector-logs-template",
-  ]
-}

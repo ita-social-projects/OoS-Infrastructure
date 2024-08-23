@@ -1,4 +1,3 @@
-PUT _ingest/pipeline/geoip-nginx
 {
   "description" : "Add GeoIP info to Nginx logs",
   "processors" : [

@@ -1,4 +1,3 @@
-PUT _ilm/policy/vector-logs-ilm
 {
   "policy": {
     "phases": {
