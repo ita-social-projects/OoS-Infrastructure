@@ -1,14 +1,13 @@
 locals {
   subdomains = {
     k8s        = var.k8s_api_subdomain
-    sql        = var.sql_subdomain,
     phpmyadmin = var.phpmyadmin_subdomain
     kibana     = var.kibana_subdomain
     elastic    = var.elastic_subdomain
-    redis      = var.redis_subdomain
     auth       = var.auth_subdomain
     app        = var.app_subdomain
     front      = var.front_subdomain
+    sso        = var.sso_subdomain
   }
 
   hostnames = {
@@ -132,12 +131,9 @@ module "k8s" {
   csi_sa_email                 = module.iam.csi_sa_email
   csi_sa_key                   = module.iam.csi_sa_key
   letsencrypt_email            = var.letsencrypt_email
-  sql_hostname                 = local.hostnames["sql"]
   phpmyadmin_hostname          = local.hostnames["phpmyadmin"]
   kibana_hostname              = local.hostnames["kibana"]
   elastic_hostname             = local.hostnames["elastic"]
-  sql_port                     = var.sql_port
-  redis_port                   = var.redis_port
   enable_ingress_http          = var.enable_ingress_http
   pull_sa_key                  = module.iam.pull_sa_key
   pull_sa_email                = module.iam.pull_sa_email
@@ -156,6 +152,11 @@ module "k8s" {
   es_dev_qc_password           = module.passwords.es_dev_qc_password
   webapi_sa_key                = module.iam.webapi_sa_key
   images_bucket                = module.storage.image_bucket
+  oauth2_github_client_id      = var.oauth2_github_client_id
+  oauth2_github_client_secret  = var.oauth2_github_client_secret
+  oauth2_github_org            = var.oauth2_github_org
+  oauth2_github_teams          = var.oauth2_github_teams
+  sso_hostname                 = local.hostnames["sso"]
   depends_on = [
     module.cluster
   ]
@@ -168,7 +169,6 @@ module "secrets" {
   es_api_pass                = module.passwords.es_api_pass
   redis_pass                 = module.passwords.redis_pass
   labels                     = var.labels
-  sql_hostname               = local.hostnames["sql"]
   sendgrid_key               = var.sendgrid_key
   github_front_deploy_base64 = var.github_front_deploy_base64
   github_back_deploy_base64  = var.github_back_deploy_base64
@@ -189,15 +189,12 @@ module "build" {
   api_secret                   = module.secrets.sql_api_secret
   auth_secret                  = module.secrets.sql_auth_secret
   es_api_pass_secret           = module.secrets.es_api_secret
-  redis_hostname               = local.hostnames["redis"]
   redis_secret                 = module.secrets.redis_secret
   sendgrid_key_secret          = module.secrets.sendgrid_key_secret
   bucket                       = module.storage.image_bucket
   github_front_secret          = module.secrets.github_front_secret
   github_back_secret           = module.secrets.github_back_secret
   github_token_secret          = module.secrets.github_token_secret
-  sql_port                     = var.sql_port
-  redis_port                   = var.redis_port
   geo_key_secret               = module.secrets.geo_key_secret
   random_number                = random_integer.ri.result
   network_id                   = module.network.vpc.network_id

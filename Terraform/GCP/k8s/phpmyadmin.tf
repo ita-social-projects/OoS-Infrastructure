@@ -9,8 +9,16 @@ resource "helm_release" "phpmyadmin" {
     "${file("${path.module}/values/phpmyadmin.yaml")}"
   ]
   set {
-    name  = "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/whitelist-source-range"
-    value = join("\\,", var.admin_ips)
+    name  = "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-response-headers"
+    value = "Authorization"
+  }
+  set {
+    name  = "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin"
+    value = "https://${var.sso_hostname}/oauth2/sign_in?rd=https://$http_host$request_uri"
+  }
+  set {
+    name  = "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"
+    value = "https://${var.sso_hostname}/oauth2/auth"
   }
   set {
     name  = "ingress.hostname"

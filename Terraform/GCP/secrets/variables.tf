@@ -19,10 +19,6 @@ variable "labels" {
   description = "A mapping of labels to assign to the resources."
 }
 
-variable "sql_hostname" {
-  type = string
-}
-
 variable "sendgrid_key" {
   type = string
 }

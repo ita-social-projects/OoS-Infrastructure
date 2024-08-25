@@ -49,11 +49,6 @@ variable "letsencrypt_email" {
   description = "E-mail of letsencrypt user"
 }
 
-variable "sql_hostname" {
-  type        = string
-  description = "Hostname for application database"
-}
-
 variable "phpmyadmin_hostname" {
   type        = string
   description = "Hostname for PHPMyAdmin"
@@ -69,12 +64,9 @@ variable "elastic_hostname" {
   description = "Hostname for Elastic"
 }
 
-variable "sql_port" {
-  type = number
-}
-
-variable "redis_port" {
-  type = number
+variable "sso_hostname" {
+  type        = string
+  description = "Hostname for SSO/OAuth2"
 }
 
 variable "enable_ingress_http" {
@@ -161,4 +153,20 @@ variable "images_bucket" {
 }
 
 variable "webapi_sa_key" {
+}
+
+variable "oauth2_github_client_id" {
+  type = string
+}
+
+variable "oauth2_github_client_secret" {
+  type = string
+}
+
+variable "oauth2_github_org" {
+  type = string
+}
+
+variable "oauth2_github_teams" {
+  type = list(string)
 }

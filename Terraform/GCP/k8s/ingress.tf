@@ -9,14 +9,7 @@ resource "helm_release" "ingress" {
   values = [
     "${file("${path.module}/values/ingress.yaml")}"
   ]
-  set {
-    name  = "tcp.${var.sql_port}"
-    value = "default/mysql:3306"
-  }
-  set {
-    name  = "tcp.${var.redis_port}"
-    value = "default/redis-master:6379"
-  }
+
   set {
     name  = "controller.service.enableHttp"
     value = var.enable_ingress_http
@@ -25,6 +18,7 @@ resource "helm_release" "ingress" {
     name  = "controller.service.loadBalancerIP"
     value = var.ingress_ip
   }
+
   depends_on = [
     helm_release.cert_manager,
     kubectl_manifest.custom_tracing_headers
@@ -112,7 +106,9 @@ resource "kubectl_manifest" "ingress_kibana" {
       cert-manager.io/duration: 2160h0m0s
       cert-manager.io/renew-before: 168h0m0s
       nginx.ingress.kubernetes.io/backend-protocol: HTTPS
-      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", local.whitelist_ips)}
+      nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+      nginx.ingress.kubernetes.io/auth-signin: https://${var.sso_hostname}/oauth2/sign_in?rd=https://$http_host$request_uri
+      nginx.ingress.kubernetes.io/auth-url: https://${var.sso_hostname}/oauth2/auth
   spec:
     ingressClassName: nginx
     tls:

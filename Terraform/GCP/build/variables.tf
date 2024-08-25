@@ -26,10 +26,6 @@ variable "es_api_pass_secret" {
   type = string
 }
 
-variable "redis_hostname" {
-  type = string
-}
-
 variable "redis_secret" {
   type = string
 }
@@ -67,14 +63,6 @@ variable "github_back_secret" {
 
 variable "github_token_secret" {
   type = string
-}
-
-variable "sql_port" {
-  type = number
-}
-
-variable "redis_port" {
-  type = number
 }
 
 variable "geo_key_secret" {
