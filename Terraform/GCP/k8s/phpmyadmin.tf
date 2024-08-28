@@ -14,7 +14,7 @@ resource "helm_release" "phpmyadmin" {
   }
   set {
     name  = "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin"
-    value = "https://${var.sso_hostname}/oauth2/sign_in?rd=https://$http_host$request_uri"
+    value = "https://${var.sso_hostname}/oauth2/sign_in?rd=https%3A%2F%2F$http_host$escaped_request_uri"
   }
   set {
     name  = "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"

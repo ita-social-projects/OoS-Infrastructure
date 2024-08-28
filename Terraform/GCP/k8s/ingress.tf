@@ -107,7 +107,7 @@ resource "kubectl_manifest" "ingress_kibana" {
       cert-manager.io/renew-before: 168h0m0s
       nginx.ingress.kubernetes.io/backend-protocol: HTTPS
       nginx.ingress.kubernetes.io/auth-response-headers: Authorization
-      nginx.ingress.kubernetes.io/auth-signin: https://${var.sso_hostname}/oauth2/sign_in?rd=https://$http_host$request_uri
+      nginx.ingress.kubernetes.io/auth-signin: https://${var.sso_hostname}/oauth2/sign_in?rd=https%3A%2F%2F$http_host$escaped_request_uri
       nginx.ingress.kubernetes.io/auth-url: https://${var.sso_hostname}/oauth2/auth
   spec:
     ingressClassName: nginx
@@ -129,5 +129,42 @@ resource "kubectl_manifest" "ingress_kibana" {
   EOF
   depends_on = [
     helm_release.ingress
+  ]
+}
+
+# Healthceck does not need auth but needs whitelist
+resource "kubectl_manifest" "ingress_kibana_health" {
+  yaml_body = <<-EOF
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: elastic-kibana-health
+    namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+    labels:
+      app: kibana
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+      nginx.ingress.kubernetes.io/whitelist-source-range: ${join(",", local.whitelist_ips)}
+  spec:
+    ingressClassName: nginx
+    tls:
+      - hosts:
+          - ${var.kibana_hostname}
+        secretName: kibana-tls
+    rules:
+      - host: ${var.kibana_hostname}
+        http:
+          paths:
+            - path: /api/task_manager/_health
+              pathType: ImplementationSpecific
+              backend:
+                service:
+                  name: kibana-kb-http
+                  port:
+                    number: 5601
+  EOF
+  depends_on = [
+    helm_release.ingress,
+    kubectl_manifest.ingress_kibana
   ]
 }
