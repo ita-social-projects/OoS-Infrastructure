@@ -64,11 +64,6 @@ variable "letsencrypt_email" {
   description = "E-mail of letsencrypt user"
 }
 
-variable "sql_subdomain" {
-  type        = string
-  description = "subdomain for application database"
-}
-
 variable "k8s_api_subdomain" {
   type        = string
   description = "subdomain for K8S API"
@@ -89,9 +84,9 @@ variable "elastic_subdomain" {
   description = "subdomain for Elastic"
 }
 
-variable "redis_subdomain" {
+variable "sso_subdomain" {
   type        = string
-  description = "subdomain for Redis"
+  description = "subdomain for SSO/OAuth2"
 }
 
 variable "sender_email" {
@@ -117,14 +112,6 @@ variable "github_back_deploy_base64" {
 variable "github_access_token" {
   type        = string
   description = "Github Access Token to create releases"
-}
-
-variable "sql_port" {
-  type = number
-}
-
-variable "redis_port" {
-  type = number
 }
 
 variable "enable_cloud_run" {
@@ -195,3 +182,18 @@ variable "gcp_monitoring_discord_webhook" {
   type = string
 }
 
+variable "oauth2_github_client_id" {
+  type = string
+}
+
+variable "oauth2_github_client_secret" {
+  type = string
+}
+
+variable "oauth2_github_org" {
+  type = string
+}
+
+variable "oauth2_github_teams" {
+  type = list(string)
+}
