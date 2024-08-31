@@ -1,5 +1,6 @@
 locals {
   es_deploy_script = "load-elastic-deployment.sh"
+  es_deploy_template = "deploy-elastic-template.sh"
 
   es_endpoints_list = [
     "_ingest/pipeline/geoip-nginx",
@@ -98,8 +99,8 @@ resource "kubernetes_config_map_v1" "files" {
   },
   {
     # bash script
-    "${local.es_deploy_script}" = templatefile("${path.module}/config/${local.es_deploy_script}",{
-      file_list = local.es_deploy_files,
+    "${local.es_deploy_script}" = templatefile("${path.module}/config/${local.es_deploy_template}",{
+      array = local.es_endpoints_list
     }),
   }
 )
@@ -116,12 +117,12 @@ spec:
     spec:
       containers:
       - name: curl
-        image: alpine/curl
+        image: gcr.io/gcp-runtimes/ubuntu_20_0_4
         command:
-          - sh
+          - /bin/bash
           - -c
           - |
-            sh /script/${local.es_deploy_script}
+            bash /script/${local.es_deploy_script}
         env:
         - name: USERNAME
           valueFrom:
@@ -133,6 +134,10 @@ spec:
             secretKeyRef:
               name: elastic-credentials
               key: password
+        - name: ES_ENDPOINT
+          value: "elasticsearch-es-http"
+        - name: ES_PORT
+          value: "9200"
         volumeMounts:
         - name: files
           mountPath: /script
@@ -140,7 +145,7 @@ spec:
       volumes:
       - name: files
         configMap:
-          name: es-deployment-files
+          name: ${kubernetes_config_map_v1.files.metadata[0].name}
   backoffLimit: 4
 EOF
 }
