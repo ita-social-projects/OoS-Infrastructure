@@ -16,7 +16,9 @@ resource "google_cloudbuild_trigger" "backend_auth_old" {
     _SERVICE_ACCOUNT        = var.auth_sa_email
     _DB_PASS                = var.auth_secret
     _SENDGRID_KEY           = var.sendgrid_key_secret
-    _SQL_PORT               = var.sql_port
+    _SQL_PORT               = 0
+    # TODO: If we return to Cloud Run think about a better way to expose SQL
+    # _SQL_PORT               = var.sql_port
   }
 
   filename = "cloudbuild-auth-old.yml"
@@ -41,11 +43,15 @@ resource "google_cloudbuild_trigger" "backend_api_old" {
     _DB_PASS                = var.api_secret
     _ES_PASSWORD            = var.es_api_pass_secret
     _BUCKET                 = var.bucket
-    _REDIS_HOST             = var.redis_hostname
     _REDIS_PASS             = var.redis_secret
-    _REDIS_PORT             = var.redis_port
-    _SQL_PORT               = var.sql_port
-    _GEO_KEY                = var.geo_key_secret
+    _REDIS_HOST             = ""
+    _REDIS_PORT             = 0
+    _SQL_PORT               = 0
+    # TODO: If we return to Cloud Run think about a better way to expose SQL & Redis
+    # _REDIS_HOST             = var.redis_hostname
+    # _REDIS_PORT             = var.redis_port
+    # _SQL_PORT               = var.sql_port
+    _GEO_KEY = var.geo_key_secret
   }
 
   filename = "cloudbuild-app-old.yml"

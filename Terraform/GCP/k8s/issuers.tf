@@ -81,11 +81,11 @@ spec:
         dnsNames:
         - ${var.kibana_hostname}
         - ${var.elastic_hostname}
-        - ${var.sql_hostname}
         - ${var.phpmyadmin_hostname}
         - ${var.front_hostname}
         - ${var.app_hostname}
         - ${var.auth_hostname}
+        - ${var.sso_hostname}
 EOF
   dns_solver  = <<-EOF
 apiVersion: cert-manager.io/v1
@@ -110,10 +110,10 @@ spec:
         dnsNames:
         - ${var.kibana_hostname}
         - ${var.elastic_hostname}
-        - ${var.sql_hostname}
         - ${var.phpmyadmin_hostname}
         - ${var.front_hostname}
         - ${var.app_hostname}
         - ${var.auth_hostname}
+        - ${var.sso_hostname}
 EOF
 }
