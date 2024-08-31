@@ -1,25 +1,25 @@
-# Load Elasticsearch deployments/policies
+# Load Elasticsearch templates/policies
 
-1. Got to script folder
-```
+1. Goto to script folder
+```bash
 cd Terraform/GCP/k8s/config
 ```
 2. Setting up environment variables
 
-Example for 'development' environment
-```
+Example for `development` environment
+```bash
 export ES_ENDPOINT=https://elastic.oos.dmytrominochkin.cloud
 export USERNAME=$(kubectl get secret elastic-credentials --namespace default -o jsonpath='{.data.username}' | base64 -d)
 export PASSWORD=$(kubectl get secret elastic-credentials --namespace default -o jsonpath='{.data.password}' | base64 -d)
 ```
-3. Create endpoints array inside script file `vi deploy-elastic-script.sh`
+3. Create endpoints array inside script file `vi load-elastic-script.sh`
 Example
-```
+```vi
 endpoints=(
   "_ilm/policy/vector-logs-ilm"
 )
 ```
-4. Create deployment files. Name should be got from endpoints array
+4. Create template/policy file. Name should be got from endpoints array
 Example
 ```
 cat <<EOF > vector-logs-ilm.json
@@ -49,7 +49,8 @@ cat <<EOF > vector-logs-ilm.json
     }
   }
 }
-EOT
+EOF
+```
 
 5. Run the script
 ```bash

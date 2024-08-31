@@ -1,6 +1,6 @@
 locals {
-  es_deploy_script   = "load-elastic-deployment.sh"
-  es_deploy_template = "deploy-elastic-template.sh"
+  es_deploy_script   = "load-elastic-script.sh"
+  es_deploy_template = "load-elastic-template.sh"
 
   es_endpoints_list = [
     "_ilm/policy/vector-logs-ilm",
@@ -89,7 +89,7 @@ EOF
 
 resource "kubernetes_config_map_v1" "files" {
   metadata {
-    name = "es-deployment-files"
+    name = "es-templates-files"
   }
 
   data = merge({
