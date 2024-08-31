@@ -3,22 +3,19 @@ locals {
   es_deploy_template = "deploy-elastic-template.sh"
 
   es_endpoints_list = [
-    "_ingest/pipeline/geoip-nginx",
-    "_component_template/vector-geoip-mappings",
     "_ilm/policy/vector-logs-ilm",
     "_component_template/vector-logs-settings",
+    "_component_template/vector-geoip-mappings",
     "_index_template/vector-logs-template",
+    "_ingest/pipeline/geoip-nginx",
   ]
 
-  # Create files list based on local.es_endpoints_list:
-  #  - geoip-nginx.json
-  #  - vector-geoip-mappings.json
-  #  - vector-logs-ilm.json
-  #  - vector-logs-settings.json
-  #  - vector-logs-template.json
+  # Create files list based on es_endpoints_list:
   es_deploy_files = [
     for name in local.es_endpoints_list:  "${basename(name)}.json"
   ]
+
+  mount_path = "/script"
 }
 
 resource "helm_release" "eck_operator" {
@@ -117,12 +114,12 @@ spec:
     spec:
       containers:
       - name: curl
-        image: gcr.io/gcp-runtimes/ubuntu_20_0_4
+        image: ubuntu
         command:
           - /bin/bash
           - -c
           - |
-            bash /script/${local.es_deploy_script}
+            bash /${local.mount_path}/${local.es_deploy_script}
         env:
         - name: USERNAME
           valueFrom:
@@ -138,9 +135,11 @@ spec:
           value: "elasticsearch-es-http"
         - name: ES_PORT
           value: "9200"
+        - name: MOUNT_PATH
+          value: "${local.mount_path}"
         volumeMounts:
         - name: files
-          mountPath: /script
+          mountPath: "${local.mount_path}"
       restartPolicy: Never
       volumes:
       - name: files

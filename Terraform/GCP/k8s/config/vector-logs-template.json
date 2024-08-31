@@ -1,27 +1,14 @@
 {
-  "index_templates": [
-    {
-      "name": "vector-logs-template",
-      "index_template": {
-        "index_patterns": [
-          "vector-logs-nginx*",
-          "vector-logs-app*",
-          "vector-logs-error*",
-          "vector-logs-unstructured*"
-        ],
-        "composed_of": [
-          "vector-logs-settings",
-          "vector-geoip-mappings"
-        ],
-        "priority": 500,
-        "_meta": {
-          "description": "Template for Vector logs"
-        },
-        "data_stream": {
-          "hidden": false,
-          "allow_custom_routing": false
-        }
-      }
-    }
-  ]
+  "index_patterns": [
+    "vector-logs-nginx*",
+    "vector-logs-app*",
+    "vector-logs-error*",
+    "vector-logs-unstructured*"
+  ],
+  "data_stream": { },
+  "composed_of": [ "vector-logs-settings", "vector-geoip-mappings" ],
+  "priority": 500,
+  "_meta": {
+    "description": "Template for Vector logs"
+  }
 }
