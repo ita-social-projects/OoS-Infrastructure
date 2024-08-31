@@ -1,11 +1,9 @@
 #!/bin/bash
 
-
-
-
-echo Run the following
-
-#curl -X GET -H 'Content-Type: application/json' -u $USERNAME:$PASSWORD -k https://elasticsearch-es-http:9200/_ilm/policy/vector-logs-ilm
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
 # Declare endpoints
 endpoints=(
@@ -13,7 +11,7 @@ endpoints=(
   "_component_template/vector-logs-settings"
   "_component_template/vector-geoip-mappings"
   "_index_template/vector-logs-template"
-  "ingest/pipeline/geoip-nginx"
+  "_ingest/pipeline/geoip-nginx"
 )
 
 # Checking jq is installed
@@ -28,29 +26,44 @@ if ! command -v curl &> /dev/null; then
   exit 1
 fi
 
-echo "Starting elasticsearch deployment..."
+echo "Starting loading script..."
 
 for s in ${endpoints[@]}; do
-  echo "--------------------------------"
-  echo Starting elasticsearch deployment $s...
+  printf '%.0s-' {1..64}; echo
+  echo Starting loading elasticsearch template/policy: $s
   # Get endpoint
-  output=$(curl -X GET -H 'Content-Type: application/json' \
-    -u $USERNAME:$PASSWORD -k https://$ES_ENDPOINT:$ES_PORT/$s)
+  output=$(curl --silent -X GET -H 'Content-Type: application/json' \
+    -u $USERNAME:$PASSWORD -k $ES_ENDPOINT/$s)
 
   echo -e "Get endpoint output: \n"
+  result_get=$(echo $output | jq -r '.error // empty')
 
-  echo "Updating endpoint: \n"
+  echo $output | jq .
+
+  if [[ -z "$result_get" ]]; then
+    echo -e "Updating elasticsearch template/policy: $s \n"
+  else
+    echo -e "Creating elasticsearch template/policy: $s \n"
+  fi
+
   load_file=$(basename $s)
 
-  echo -e "Listing deploument file: $load_file.json \n"
-  cat $MOUNT_PATH/$load_file.json
+  echo -e "Output elasticsearch template/policy file: $load_file.json \n"
+  cat $load_file.json | jq .
 
-  output=$(curl -X PUT -H 'Content-Type: application/json' \
-    -u $USERNAME:$PASSWORD -k https://$ES_ENDPOINT:$ES_PORT/$s \
-    -d @$MOUNT_PATH/$load_file.json)
+  output=$(curl --silent -X PUT -H 'Content-Type: application/json' \
+    -u $USERNAME:$PASSWORD -k $ES_ENDPOINT/$s \
+    -d @$load_file.json)
 
   echo -e "Update endpoint output: \n"
-  echo $output | jq .
+  result_put=$(echo $output | jq -r '.acknowledged')
+
+  if [ "$result_put" = "true" ]; then
+    echo -e "\e[32mOK\e[0m"  # Green color for "OK"
+    echo $output | jq .
+  else
+    echo -e "\e[31m${output}\e[0m"  # Red color for the value of output
+  fi
 done
 
 

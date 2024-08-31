@@ -16,26 +16,44 @@ declare -ra es_endpoints_list=(${
   ])
 })
 
+echo "Starting loading script..."
+
 for s in "$${es_endpoints_list[@]}"; do
-  echo "--------------------------------"
-  echo Starting elasticsearch deployment "$${s}"...
+
+  echo ---------- Starting loading elasticsearch template/policy: "$${s}" ----------
   # Get endpoint
-  output=$(curl -X GET -H 'Content-Type: application/json' \
+  output=$(curl --silent -X GET -H 'Content-Type: application/json' \
     -u $USERNAME:$PASSWORD -k https://$ES_ENDPOINT:$ES_PORT/"$${s}")
 
   echo -e "Get endpoint output: \n"
+  result_get=$(echo $output | jq -r '.error // empty')
 
-  echo "Updating endpoint: \n"
-  policy_file=$(basename "$${s}")
+  echo $output | jq .
 
-  echo -e "Listing deploument file: $${policy_file}.json \n"
-  cat $MOUNT_PATH/$policy_file.json
+    if [[ -z "$result_get" ]]; then
+    echo -e "Updating elasticsearch template/policy: $s \n"
+  else
+    echo -e "Creating elasticsearch template/policy: $s \n"
+  fi
 
-  output=$(curl -X PUT -H 'Content-Type: application/json' \
+  load_file=$(basename "$${s}")
+
+  echo -e "Output elasticsearch template/policy file: $load_file.json \n"
+  cat $MOUNT_PATH/$load_file.json | jq .
+
+  output=$(curl --silent -X PUT -H 'Content-Type: application/json' \
     -u $USERNAME:$PASSWORD -k https://$ES_ENDPOINT:$ES_PORT/"$${s}" \
-    -d @$MOUNT_PATH/$policy_file.json)
+    -d @$MOUNT_PATH/$load_file.json)
 
   echo -e "Update endpoint output: \n"
-  echo $output | jq .
+  result_put=$(echo $output | jq -r '.acknowledged')
+
+  if [ "$result_put" = "true" ]; then
+    echo -e "\e[32mOK\e[0m"  # Green color for "OK"
+    echo $output | jq .
+  else
+    echo -e "\e[31mERROR\e[0m"  # Red color for "ERROR"
+    echo $output | jq .
+  fi
 done
 
