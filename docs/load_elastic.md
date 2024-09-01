@@ -54,8 +54,6 @@ EOF
 
 5. Run the script
 ```bash
-./deploy-elastic-script.sh
+./load-elastic-script.sh
 ```
-
-
 

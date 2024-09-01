@@ -30,7 +30,7 @@ for s in "$${es_endpoints_list[@]}"; do
 
   echo $output | jq .
 
-    if [[ -z "$result_get" ]]; then
+  if [[ -z "$result_get" ]]; then
     echo -e "Updating elasticsearch template/policy: $s \n"
   else
     echo -e "Creating elasticsearch template/policy: $s \n"
