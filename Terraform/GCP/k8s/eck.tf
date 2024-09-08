@@ -8,6 +8,7 @@ locals {
     "_component_template/vector-geoip-mappings",
     "_index_template/vector-logs-template",
     "_ingest/pipeline/geoip-nginx",
+    "_ilm/policy/.monitoring-8-ilm-policy",
   ]
 
   # Create files list based on es_endpoints_list:
@@ -111,7 +112,7 @@ resource "kubectl_manifest" "policy" {
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: elastic-policy-test
+  name: load-elastic-policy
 spec:
   template:
     spec:
