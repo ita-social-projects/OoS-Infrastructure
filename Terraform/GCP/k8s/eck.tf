@@ -107,12 +107,21 @@ resource "kubernetes_config_map_v1" "files" {
   )
 }
 
+resource "random_id" "suff" {
+  keepers = {
+    # Generate a new suffix for new list
+    for k in local.es_endpoints_list: k => k
+  }
+  byte_length = 4
+}
+
 resource "kubectl_manifest" "policy" {
+force_new = true
   yaml_body = <<-EOF
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: load-elastic-policy
+  name: load-elastic-policy-${lower(random_id.suff.id)}
 spec:
   template:
     spec:
@@ -153,7 +162,8 @@ spec:
 EOF
 
   depends_on = [
-    kubernetes_config_map_v1.files
+    kubernetes_config_map_v1.files,
+    random_id.suff,
   ]
 }
 
