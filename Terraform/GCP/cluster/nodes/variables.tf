@@ -34,6 +34,8 @@ variable "machine_type" {
     "n1standard1" = "n1-standard-1" #1vCPU 3.75GB RAM
     "n1standard2" = "n1-standard-2" #2vCPU 7.5GB RAM
     "n1standard4" = "n1-standard-4" #4vCPU 15GB RAM
+    "custom6144"  = "custom-1-6144" #1vCPU 6 RAM
+    "custom6656"  = "custom-1-6656" #1vCPU 6,5 RAM 
   }
 }
 
