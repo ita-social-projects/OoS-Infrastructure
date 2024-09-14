@@ -20,7 +20,7 @@ echo "Starting loading script..."
 
 for s in "$${es_endpoints_list[@]}"; do
 
-  echo ---------- Starting loading elasticsearch template/policy: "$${s}" ----------
+  echo ---------- Starting loading Elasticsearch template/policy: "$${s}" ----------
   # Get endpoint
   output=$(curl --silent -X GET -H 'Content-Type: application/json' \
     -u $USERNAME:$PASSWORD -k https://$ES_ENDPOINT:$ES_PORT/"$${s}")
@@ -31,14 +31,14 @@ for s in "$${es_endpoints_list[@]}"; do
   echo $output | jq .
 
   if [[ -z "$result_get" ]]; then
-    echo -e "Updating elasticsearch template/policy: $s \n"
+    echo -e "Updating Elasticsearch template/policy: $s \n"
   else
-    echo -e "Creating elasticsearch template/policy: $s \n"
+    echo -e "Creating Elasticsearch template/policy: $s \n"
   fi
 
   load_file=$(basename "$${s}")
 
-  echo -e "Output elasticsearch template/policy file: $load_file.json \n"
+  echo -e "Output Elasticsearch template/policy file: $load_file.json \n"
   cat $MOUNT_PATH/$load_file.json | jq .
 
   output=$(curl --silent -X PUT -H 'Content-Type: application/json' \

@@ -14,41 +14,41 @@ endpoints=(
   "_ingest/pipeline/geoip-nginx"
 )
 
-# Checking jq is installed
-if ! command -v jq &> /dev/null; then
-  echo "jq is not installed. Please install it and try again."
-  exit 1
-fi
+# Function to check if a command exists
+check_command() {
+  if ! command -v "$1" &> /dev/null; then
+    echo "$1 is not installed. Please install it and try again."
+    exit 1
+  fi
+}
 
-# Checking curl is installed
-if ! command -v curl &> /dev/null; then
-  echo "curl is not installed. Please install it and try again."
-  exit 1
-fi
+# Checking required commands
+check_command jq
+check_command curl
 
 echo "Starting loading script..."
 
 for s in ${endpoints[@]}; do
   printf '%.0s-' {1..64}; echo
-  echo Starting loading elasticsearch template/policy: $s
+  echo Starting loading Elasticsearch template/policy: $s
+
   # Get endpoint
   output=$(curl --silent -X GET -H 'Content-Type: application/json' \
     -u $USERNAME:$PASSWORD -k $ES_ENDPOINT/$s)
 
   echo -e "Get endpoint output: \n"
   result_get=$(echo $output | jq -r '.error // empty')
-
   echo $output | jq .
 
   if [[ -z "$result_get" ]]; then
-    echo -e "Updating elasticsearch template/policy: $s \n"
+    echo -e "Updating Elasticsearch template/policy: $s \n"
   else
-    echo -e "Creating elasticsearch template/policy: $s \n"
+    echo -e "Creating Elasticsearch template/policy: $s \n"
   fi
 
   load_file=$(basename $s)
 
-  echo -e "Output elasticsearch template/policy file: $load_file.json \n"
+  echo -e "Output Elasticsearch template/policy file: $load_file.json \n"
   cat $load_file.json | jq .
 
   output=$(curl --silent -X PUT -H 'Content-Type: application/json' \
