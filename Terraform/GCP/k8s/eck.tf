@@ -102,7 +102,7 @@ resource "kubernetes_config_map_v1" "files" {
   }
 
   data = merge({
-    # Elasticsearch Deployment json files
+    # Elasticsearch template/policy json files
     for name in local.es_deploy_files :
     name => file("${path.module}/config/${name}")
     },
