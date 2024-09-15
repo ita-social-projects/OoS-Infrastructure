@@ -3,12 +3,20 @@ locals {
   es_deploy_template = "load-elastic-template.sh"
 
   es_endpoints_list = [
+    # Vector template/policies
     "_ilm/policy/vector-logs-ilm",
     "_component_template/vector-logs-settings",
     "_component_template/vector-geoip-mappings",
     "_index_template/vector-logs-template",
+
+    # GEO IP policies
     "_ingest/pipeline/geoip-nginx",
+
+    # Cluster monitoring policies
     "_ilm/policy/.monitoring-8-ilm-policy",
+
+    # APM policies
+    "_ilm/policy/traces-apm.traces-default_policy"
   ]
 
   # Create files list based on es_endpoints_list:
