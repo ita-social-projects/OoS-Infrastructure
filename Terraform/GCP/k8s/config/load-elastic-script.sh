@@ -12,6 +12,26 @@ endpoints=(
   "_component_template/vector-geoip-mappings"
   "_index_template/vector-logs-template"
   "_ingest/pipeline/geoip-nginx"
+  "_ilm/policy/.monitoring-8-ilm-policy"
+  # APM policies configuration
+  # "_ilm/policy/logs-apm.app_logs-default_policy"
+  # "_ilm/policy/logs-apm.error_logs-default_policy"
+  # "_ilm/policy/metrics-apm.app_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.internal_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_destination_10m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_destination_1m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_destination_60m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_summary_10m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_summary_1m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_summary_60m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_transaction_10m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_transaction_1m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.service_transaction_60m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.transaction_10m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.transaction_1m_metrics-default_policy"
+  # "_ilm/policy/metrics-apm.transaction_60m_metrics-default_policy"
+  # "_ilm/policy/traces-apm.rum_traces-default_policy"
+  # "_ilm/policy/traces-apm.traces-default_policy"
 )
 
 # Function to check if a command exists
