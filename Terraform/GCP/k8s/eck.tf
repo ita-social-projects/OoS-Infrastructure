@@ -16,7 +16,7 @@ locals {
     "_ilm/policy/.monitoring-8-ilm-policy",
 
     # APM policies
-    "_ilm/policy/traces-apm.traces-default_policy"
+    "_ilm/policy/traces-apm.traces-default_policy",
   ]
 
   # Create files list based on es_endpoints_list:
