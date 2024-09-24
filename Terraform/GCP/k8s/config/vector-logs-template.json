@@ -1,0 +1,14 @@
+{
+  "index_patterns": [
+    "vector-logs-nginx*",
+    "vector-logs-app*",
+    "vector-logs-error*",
+    "vector-logs-unstructured*"
+  ],
+  "data_stream": { },
+  "composed_of": [ "vector-logs-settings", "vector-geoip-mappings" ],
+  "priority": 500,
+  "_meta": {
+    "description": "Template for Vector logs"
+  }
+}
