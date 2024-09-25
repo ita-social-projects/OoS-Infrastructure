@@ -1,7 +1,7 @@
 resource "helm_release" "ingress" {
   name             = "ingress"
   chart            = "../../k8s/infrastructure/charts/ingress-nginx-4.10.0.tgz"
-  namespace        = "ingress-nginx"
+  namespace        = kubernetes_namespace.ingress_nginx.metadata[0].name
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
@@ -25,7 +25,7 @@ resource "helm_release" "ingress" {
   ]
 }
 
-resource "kubernetes_namespace" "ingress-nginx" {
+resource "kubernetes_namespace" "ingress_nginx" {
   metadata {
     annotations = {
       name = "ingress-nginx"
@@ -45,7 +45,7 @@ data:
 kind: ConfigMap
 metadata:
   name: custom-headers
-  namespace: ingress-nginx
+  namespace: ${kubernetes_namespace.ingress_nginx.metadata[0].name}
 EOF
 
   ignore_fields = [

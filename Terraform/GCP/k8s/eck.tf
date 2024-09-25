@@ -77,6 +77,7 @@ resource "helm_release" "vector" {
     "${file("${path.module}/values/vector.yaml")}"
   ]
   depends_on = [
+    helm_release.eck_stack,
     kubectl_manifest.policy
   ]
 }
@@ -172,6 +173,7 @@ EOF
   depends_on = [
     kubernetes_config_map_v1.files,
     random_id.suff,
+    helm_release.eck_stack
   ]
 }
 

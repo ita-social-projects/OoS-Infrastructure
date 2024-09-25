@@ -1,6 +1,6 @@
-resource "google_sql_database_instance" "storage" {
-  name                = "k3s-state-${var.random_number}"
-  database_version    = "MYSQL_8_0_31"
+resource "google_sql_database_instance" "state" {
+  name                = "k3s-state-psql-${var.random_number}"
+  database_version    = "POSTGRES_15"
   region              = var.region
   deletion_protection = false
 
@@ -10,6 +10,11 @@ resource "google_sql_database_instance" "storage" {
     disk_type         = "PD_HDD"
     disk_autoresize   = true
     edition           = "ENTERPRISE"
+
+    database_flags {
+      name  = "max_connections"
+      value = "100"
+    }
 
     ip_configuration {
       ipv4_enabled    = "false"
@@ -38,25 +43,24 @@ resource "google_sql_database_instance" "storage" {
   }
 }
 
-resource "random_id" "storage_password" {
+resource "random_id" "state_password" {
   keepers = {
-    name = google_sql_database_instance.storage.name
+    name = google_sql_database_instance.state.name
   }
 
   byte_length = 8
-  depends_on  = [google_sql_database_instance.storage]
+  depends_on  = [google_sql_database_instance.state]
 }
 
-resource "google_sql_database" "storage" {
+resource "google_sql_database" "state" {
   name       = "k3s"
-  instance   = google_sql_database_instance.storage.name
-  depends_on = [google_sql_database_instance.storage]
+  instance   = google_sql_database_instance.state.name
+  depends_on = [google_sql_database_instance.state]
 }
 
-resource "google_sql_user" "default" {
+resource "google_sql_user" "state" {
   name       = "k3s"
-  host       = "%"
-  instance   = google_sql_database_instance.storage.name
-  password   = random_id.storage_password.hex
-  depends_on = [google_sql_database_instance.storage]
+  instance   = google_sql_database_instance.state.name
+  password   = random_id.state_password.hex
+  depends_on = [google_sql_database_instance.state]
 }

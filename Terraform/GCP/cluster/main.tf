@@ -44,7 +44,6 @@ resource "null_resource" "wait_for_instances" {
     command = <<EOF
 LABELED_INSTANCES=0
 RUNNING_INSTANCES=0
-gcloud auth activate-service-account --key-file="${var.credentials}"
 while [ "$LABELED_INSTANCES" -ne "${length(module.masters.names)}" ]
 do
   sleep 5
