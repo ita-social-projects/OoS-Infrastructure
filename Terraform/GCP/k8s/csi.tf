@@ -46,7 +46,8 @@ resource "kubectl_manifest" "gcp_cis" {
   )
   yaml_body = element(data.kubectl_file_documents.csi_manifests.documents, count.index)
   depends_on = [
-    kubernetes_secret.csi_gcp_credentials
+    kubernetes_secret.csi_gcp_credentials,
+    kubectl_manifest.admin_binding
   ]
 
   ignore_fields = [
