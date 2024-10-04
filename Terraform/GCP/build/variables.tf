@@ -117,3 +117,7 @@ variable "enable_cloud_run" {
 variable "build_sa_id" {
   type = string
 }
+
+variable "staging_domain" {
+  type = string
+}

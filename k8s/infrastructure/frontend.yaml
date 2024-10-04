@@ -30,10 +30,17 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
+    - host: "replace_me_staging"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls:
   - secretName: frontend-tls
     hosts:
     - replace_me
+  - secretName: frontend-staging-tls
+    hosts:
+    - replace_me_staging
 resources:
   limits:
     cpu: 500m
