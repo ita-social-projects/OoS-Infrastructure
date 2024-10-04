@@ -111,7 +111,7 @@ ingress:
   - secretName: webapi-tls
     hosts:
     - replace_me
-  - secretName: webapi-staging-tls
+  - secretName: oos-staging-tls
     hosts:
     - replace_me_staging
 

@@ -79,7 +79,7 @@ ingress:
   - secretName: authserver-tls
     hosts:
     - replace_me
-  - secretName: authserver-staging-tls
+  - secretName: oos-staging-tls
     hosts:
     - replace_me_staging
 
