@@ -157,6 +157,7 @@ module "k8s" {
   oauth2_github_org            = var.oauth2_github_org
   oauth2_github_teams          = var.oauth2_github_teams
   sso_hostname                 = local.hostnames["sso"]
+  staging_domain               = var.staging_domain
   depends_on = [
     module.cluster
   ]
@@ -208,6 +209,7 @@ module "build" {
   discord_notification_webhook = var.discord_notification_webhook
   enable_cloud_run             = var.enable_cloud_run
   build_sa_id                  = module.iam.build_sa_id
+  staging_domain               = var.staging_domain
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run

@@ -22,6 +22,8 @@ steps:
     - --set=image.fullTagOverride=$_IMAGE_TAG
     - --set=ingress.hosts[0].host=$_HOST
     - --set=ingress.tls[0].hosts[0]=$_HOST
+    - --set=ingress.hosts[1].host=$_STAGING_HOST
+    - --set=ingress.tls[1].hosts[0]=$_STAGING_HOST
     - --wait
     - $_SERVICE_NAME
     - ./k8s/webapp
