@@ -38,7 +38,7 @@ ingress:
   - secretName: frontend-tls
     hosts:
     - replace_me
-  - secretName: frontend-staging-tls
+  - secretName: oos-staging-tls
     hosts:
     - replace_me_staging
 resources:
