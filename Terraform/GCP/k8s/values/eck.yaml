@@ -163,6 +163,7 @@ eck-beats:
           - process
           - process_summary
           - uptime
+          - filesystem
           process:
             include_top_n:
               by_cpu: 5
@@ -172,15 +173,10 @@ eck-beats:
         - module: system
           period: 1m
           metricsets:
-          - filesystem
-          - fsstat
+            - fsstat
           processors:
-          - drop_event:
-              when:
-                regexp:
-                  system:
-                    filesystem:
-                      mount_point: ^/(sys|cgroup|proc|dev|etc|host|lib)($|/)
+          - drop_event.when.regexp:
+              system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib|snap)($|/)'
         - module: kubernetes
           period: 30s
           node: ${NODE_NAME}
