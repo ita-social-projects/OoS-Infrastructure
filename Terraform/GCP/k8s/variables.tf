@@ -170,3 +170,7 @@ variable "oauth2_github_org" {
 variable "oauth2_github_teams" {
   type = list(string)
 }
+
+variable "staging_domain" {
+  type = string
+}

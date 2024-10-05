@@ -38,6 +38,7 @@ resource "google_cloudbuild_trigger" "app_deploy" {
     _ACTION       = "$(body.message.data.action)"
     _IMAGE_TAG    = "$(body.message.data.tag)"
     _HOST         = var.app_hostname
+    _STAGING_HOST = var.staging_domain
     _SERVICE_NAME = "webapi"
     _REGION       = var.region
     _VALUES_PATH  = "./k8s/infrastructure/webapi.yaml"
@@ -91,6 +92,7 @@ resource "google_cloudbuild_trigger" "auth_deploy" {
     _ACTION       = "$(body.message.data.action)"
     _IMAGE_TAG    = "$(body.message.data.tag)"
     _HOST         = var.auth_hostname
+    _STAGING_HOST = var.staging_domain
     _SERVICE_NAME = "authserver"
   }
 

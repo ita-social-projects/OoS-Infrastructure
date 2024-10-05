@@ -40,3 +40,4 @@ oauth2_github_client_secret="secret"
 oauth2_github_org="acme"
 oauth2_github_teams=["team1", "team2"]
 sso_subdomain="sso"
+staging_domain="site.ua"

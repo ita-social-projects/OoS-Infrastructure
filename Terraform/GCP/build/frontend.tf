@@ -11,8 +11,8 @@ resource "google_cloudbuild_trigger" "frontend" {
 
   substitutions = {
     _SERVICE_NAME  = "frontend"
-    _STS_SERVER    = "https://${var.auth_hostname}"
-    _API_SERVER    = "https://${var.app_hostname}"
+    _STS_SERVER    = "https://${var.staging_domain}/auth"
+    _API_SERVER    = "https://${var.staging_domain}/web"
     _GITHUB_DEPLOY = var.github_front_secret
     _REGION        = var.region
   }
@@ -34,6 +34,7 @@ resource "google_cloudbuild_trigger" "frontend_deploy" {
     _ACTION       = "$(body.message.data.action)"
     _IMAGE_TAG    = "$(body.message.data.tag)"
     _HOST         = var.front_hostname
+    _STAGING_HOST = var.staging_domain
     _VALUES_PATH  = "./k8s/infrastructure/frontend.yaml"
     _SERVICE_NAME = "frontend"
   }

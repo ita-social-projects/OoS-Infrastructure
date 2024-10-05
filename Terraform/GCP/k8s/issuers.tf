@@ -57,11 +57,7 @@ resource "kubectl_manifest" "letsencrypt_issuer" {
   depends_on = [
     helm_release.cert_manager
   ]
-  yaml_body = var.enable_dns ? local.dns_solver : local.http_solver
-}
-
-locals {
-  http_solver = <<-EOF
+  yaml_body = <<-EOF
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -74,32 +70,7 @@ spec:
       name: letsencrypt
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
-    - http01:
-        ingress:
-          class: nginx
-      selector:
-        dnsNames:
-        - ${var.kibana_hostname}
-        - ${var.elastic_hostname}
-        - ${var.phpmyadmin_hostname}
-        - ${var.front_hostname}
-        - ${var.app_hostname}
-        - ${var.auth_hostname}
-        - ${var.sso_hostname}
-EOF
-  dns_solver  = <<-EOF
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: letsencrypt
-  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
-spec:
-  acme:
-    email: ${var.letsencrypt_email}
-    privateKeySecretRef:
-      name: letsencrypt
-    server: https://acme-v02.api.letsencrypt.org/directory
-    solvers:
+    %{if var.enable_dns}
     - dns01:
         cloudDNS:
           project: ${var.project}
@@ -115,5 +86,21 @@ spec:
         - ${var.app_hostname}
         - ${var.auth_hostname}
         - ${var.sso_hostname}
+    %{endif}
+    - http01:
+        ingress:
+          class: nginx
+      selector:
+        dnsNames:
+        - ${var.staging_domain}
+        %{if !var.enable_dns}
+        - ${var.kibana_hostname}
+        - ${var.elastic_hostname}
+        - ${var.phpmyadmin_hostname}
+        - ${var.front_hostname}
+        - ${var.app_hostname}
+        - ${var.auth_hostname}
+        - ${var.sso_hostname}
+        %{endif}
 EOF
 }
