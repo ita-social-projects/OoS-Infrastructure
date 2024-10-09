@@ -63,19 +63,13 @@ customConfig:
     address: 127.0.0.1:8686
     playground: false
   sources:
-    file-syslog:
-      type: file
-      include:
-        - /var/log/syslog
     k3s_logs:
       type: kubernetes_logs
     journald:
       type: journald
-      include_matches:
-        _SYSTEMD_UNIT:
-          - sshd.service
-          - ntpd.service
-          - k3s.service
+      extra_args:
+        - -D
+        - /var/log/journal
   transforms:
     kibana_server_logs_filter:
       type: filter
@@ -239,8 +233,7 @@ customConfig:
       type: elasticsearch
       inputs:
         - remove_app_label
-        - file-syslog
-        #- journald
+        - journald
       api_version: v8
       compression: none
       endpoints:
@@ -327,25 +320,5 @@ customConfig:
       credentials_path: /usr/share/vector/gcp-sa/gcp101292-pozashkillya-550166623be9.json
       encoding:
         codec: json
-    journald_logs:
-      type: elasticsearch
-      inputs:
-        - journald
-      api_version: v8
-      compression: none
-      endpoints:
-        - "${ES_ENDPOINT}"
-      mode: data_stream
-      data_stream:
-        type: vector
-        dataset: logs
-        namespace: vector-logs-parse-journald
-      auth:
-        strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
-      tls:
-        ca_path : "/usr/share/vector/elastic/ca.crt"
-        verify_certificate : true
 
 
