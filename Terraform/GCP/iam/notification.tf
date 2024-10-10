@@ -13,7 +13,21 @@ resource "google_project_iam_member" "pubsub" {
 }
 
 resource "google_project_iam_member" "eventarc" {
-  role    = "roles/eventarc.eventReceiver"
+  for_each = toset(local.discord_sa_roles)
+  role    = each.value
   member  = "serviceAccount:${google_service_account.notification.email}"
   project = var.project
+}
+
+resource "google_service_account_key" "notification" {
+  service_account_id = google_service_account.notification.name
+}
+
+resource "kubernetes_secret_v1" "notification" {
+  metadata {
+    name = var.discord_notification_secret_name
+  }
+  data = {
+    "credentials.json" = base64decode(google_service_account_key.notification.private_key)
+  }
 }

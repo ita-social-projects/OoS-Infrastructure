@@ -33,3 +33,8 @@ variable "pubsub_id" {
   type        = string
   description = "Pubsub id for role publishing"
 }
+
+variable "discord_notification_secret_name" {
+  type = string
+  default = "discord-notification"
+}

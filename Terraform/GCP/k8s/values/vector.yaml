@@ -42,16 +42,16 @@ extraVolumeMounts:
   - name: elastic-certificates
     mountPath: /usr/share/vector/elastic
     readOnly: true
-  - name: test-discord-notification
+  - name: discord-notification
     mountPath: /usr/share/vector/gcp-sa
 
 extraVolumes:
   - name: elastic-certificates
     secret:
       secretName: elasticsearch-es-http-certs-internal
-  - name: test-discord-notification
+  - name: discord-notification
     secret:
-      secretName: test-discord-notification
+      secretName: "discord-notification"
 
 # customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
 # using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/)
@@ -316,8 +316,8 @@ customConfig:
         - kibana_server_logs
       endpoint: https://pubsub.googleapis.com
       project: gcp101292-pozashkillya
-      topic: uptime-notification
-      credentials_path: /usr/share/vector/gcp-sa/gcp101292-pozashkillya-550166623be9.json
+      topic: kibana-notification
+      credentials_path: /usr/share/vector/gcp-sa/credentials.json
       encoding:
         codec: json
 
