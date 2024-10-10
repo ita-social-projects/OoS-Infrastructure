@@ -174,3 +174,8 @@ variable "oauth2_github_teams" {
 variable "staging_domain" {
   type = string
 }
+
+variable "discord_notification_secret_name" {
+  type    = string
+  default = "discord-notification"
+}
