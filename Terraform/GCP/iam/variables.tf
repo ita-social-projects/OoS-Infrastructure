@@ -35,6 +35,6 @@ variable "pubsub_id" {
 }
 
 variable "discord_notification_secret_name" {
-  type = string
+  type    = string
   default = "discord-notification"
 }

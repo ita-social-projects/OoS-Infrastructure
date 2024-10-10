@@ -14,9 +14,9 @@ resource "google_project_iam_member" "pubsub" {
 
 resource "google_project_iam_member" "eventarc" {
   for_each = toset(local.discord_sa_roles)
-  role    = each.value
-  member  = "serviceAccount:${google_service_account.notification.email}"
-  project = var.project
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.notification.email}"
+  project  = var.project
 }
 
 resource "google_service_account_key" "notification" {
