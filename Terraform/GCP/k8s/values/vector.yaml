@@ -290,26 +290,6 @@ customConfig:
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
-    # kibana_server_logs_sink:
-    #   type: elasticsearch
-    #   inputs:
-    #     - kibana_server_logs
-    #   api_version: v8
-    #   compression: none
-    #   endpoints:
-    #     - "${ES_ENDPOINT}"
-    #   mode: data_stream
-    #   data_stream:
-    #     type: vector
-    #     dataset: logs
-    #     namespace: kibana-server-logs
-    #   auth:
-    #     strategy: basic
-    #     user: "${ES_USERNAME}"
-    #     password: "${ES_PASSWORD}"
-    #   tls:
-    #     ca_path : "/usr/share/vector/elastic/ca.crt"
-    #     verify_certificate : true
     pubsub_alerting:
       type: gcp_pubsub
       inputs:
