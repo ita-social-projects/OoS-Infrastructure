@@ -25,6 +25,6 @@ locals {
   topic_name = "uptime-notification"
   file_name  = "uptime-notification.zip"
 
-  topic_kibana = "kibana-notification"
+  topic_kibana     = "kibana-notification"
   kibana_file_name = "kibana-notification.zip"
 }

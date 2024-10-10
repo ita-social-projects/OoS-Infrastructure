@@ -1,9 +1,9 @@
 
 module "pubsub_kibana" {
-  source     = "terraform-google-modules/pubsub/google"
-  version    = "~> 6.0"
-  project_id = var.project
-  topic      = local.topic_kibana
+  source              = "terraform-google-modules/pubsub/google"
+  version             = "~> 6.0"
+  project_id          = var.project
+  topic               = local.topic_kibana
   grant_token_creator = false
   topic_labels = {
     name = "kibana-alerting"
