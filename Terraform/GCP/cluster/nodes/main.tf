@@ -105,7 +105,7 @@ resource "google_compute_instance_group_manager" "k3s_worker" {
     instance_template = google_compute_instance_template.k3s.id
   }
 
-  target_size = var.node_count
+  target_size = 0
 
   update_policy {
     type                  = "PROACTIVE"
@@ -120,6 +120,19 @@ resource "google_compute_per_instance_config" "k3s" {
   for_each               = var.node_role == "master" ? toset(local.full_names) : []
   zone                   = google_compute_instance_group_manager.k3s[0].zone
   instance_group_manager = google_compute_instance_group_manager.k3s[0].name
+  name                   = each.key
+  minimal_action         = "REPLACE"
+  preserved_state {
+    metadata = {
+      instance_template = google_compute_instance_template.k3s.self_link
+    }
+  }
+}
+
+resource "google_compute_per_instance_config" "k3s_worker" {
+  for_each               = var.node_role == "worker" ? toset(local.full_names) : []
+  zone                   = google_compute_instance_group_manager.k3s_worker[0].zone
+  instance_group_manager = google_compute_instance_group_manager.k3s_worker[0].name
   name                   = each.key
   minimal_action         = "REPLACE"
   preserved_state {
