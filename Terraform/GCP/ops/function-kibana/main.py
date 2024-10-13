@@ -19,5 +19,4 @@ def pubsub_event(cloud_event: CloudEvent) -> None:
   msg = base64.b64decode(cloud_event.data["message"]["data"]).decode()
   decoded_payload = json.loads(msg)
   summary = decoded_payload["message"]
-  sbl = '🟡'
-  send_discord_message(sbl +' KIBANA ALERTING: ' + '\nSummary: ' + summary)
+  send_discord_message('KIBANA ALERTING: ' + '\nSummary: ' + summary)
