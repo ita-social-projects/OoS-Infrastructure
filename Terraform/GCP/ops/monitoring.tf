@@ -68,7 +68,8 @@ resource "google_cloudfunctions2_function" "uptime" {
     ingress_settings               = "ALLOW_INTERNAL_ONLY"
     all_traffic_on_latest_revision = true
     environment_variables = {
-      WEBHOOK_URL = var.discord_webhook
+      WEBHOOK_URL      = var.discord_webhook
+      LOG_EXECUTION_ID = "true"
     }
   }
 
