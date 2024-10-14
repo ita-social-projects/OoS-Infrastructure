@@ -105,7 +105,7 @@ resource "google_compute_instance_group_manager" "k3s_worker" {
     instance_template = google_compute_instance_template.k3s.id
   }
 
-  target_size = 0
+  target_size = var.node_count
 
   update_policy {
     type                  = "PROACTIVE"

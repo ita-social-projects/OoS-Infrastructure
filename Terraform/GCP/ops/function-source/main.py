@@ -24,4 +24,4 @@ def pubsub_event(cloud_event: CloudEvent) -> None:
     sbl = '🟢'
   else:
     sbl = '🔴'
-  send_discord_message(sbl +' STATE: ' + state + '\nSummary: ' + summary)
+  send_discord_message(sbl +' GCP Uptime check STATE: ' + state + '\nSummary: ' + summary)
