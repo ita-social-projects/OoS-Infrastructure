@@ -3,7 +3,9 @@
     "vector-logs-nginx*",
     "vector-logs-app*",
     "vector-logs-error*",
-    "vector-logs-unstructured*"
+    "vector-logs-unstructured*",
+    "vector-logs-kibana-*",
+    "vector-logs-parse-*"
   ],
   "data_stream": { },
   "composed_of": [ "vector-logs-settings", "vector-geoip-mappings" ],

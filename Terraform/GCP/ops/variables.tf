@@ -33,3 +33,7 @@ variable "eck_rmon_password" {
   description = "Password for eck remote_monitoring_user"
 }
 
+variable "discord_kibana_webhook" {
+  type = string
+}
+

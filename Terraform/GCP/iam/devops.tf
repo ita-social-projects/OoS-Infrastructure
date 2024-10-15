@@ -24,6 +24,12 @@ locals {
         }
       ]
   ]))
+
+  discord_sa_roles = [
+    "roles/eventarc.eventReceiver",
+    "roles/pubsub.publisher",
+    "roles/pubsub.viewer",
+  ]
 }
 
 resource "google_service_account_iam_member" "vm_sa_user" {

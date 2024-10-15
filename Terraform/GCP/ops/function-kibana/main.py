@@ -18,10 +18,5 @@ def send_discord_message(msg) -> str:
 def pubsub_event(cloud_event: CloudEvent) -> None:
   msg = base64.b64decode(cloud_event.data["message"]["data"]).decode()
   decoded_payload = json.loads(msg)
-  summary = decoded_payload["incident"]["summary"]
-  state = decoded_payload["incident"]["state"]
-  if state == "closed":
-    sbl = '🟢'
-  else:
-    sbl = '🔴'
-  send_discord_message(sbl +' GCP Uptime check STATE: ' + state + '\nSummary: ' + summary)
+  summary = decoded_payload["message"]
+  send_discord_message('KIBANA ALERTING: ' + '\nSummary: ' + summary)

@@ -202,3 +202,7 @@ variable "staging_domain" {
   type    = string
   default = ""
 }
+
+variable "kibana_alerting_discord_webhook" {
+  type = string
+}
