@@ -40,14 +40,14 @@ eck-elasticsearch:
         - name: elasticsearch
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms768m -Xmx768m
+            value: -Xms1g -Xmx1g
           resources:
             requests:
               cpu: "200m"
-              memory: "1536Mi"
+              memory: "2Gi"
             limits:
               cpu: "1"
-              memory: "1792Mi"
+              memory: "2128Mi"
         affinity:
           podAntiAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
