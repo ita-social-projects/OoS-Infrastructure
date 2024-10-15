@@ -44,10 +44,10 @@ eck-elasticsearch:
           resources:
             requests:
               cpu: "200m"
-              memory: "1376Mi"
+              memory: "1536Mi"
             limits:
               cpu: "1"
-              memory: "1536Mi"
+              memory: "1792Mi"
         affinity:
           podAntiAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
