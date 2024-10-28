@@ -1,0 +1,59 @@
+PUT kbn:/api/alerting/rule/7b58d1e2-6e70-4fdc-95e9-f3e7f03d2a7c
+{
+  "name": "Node Memory Usage",
+  "tags": [],
+  "schedule": {
+    "interval": "1m"
+  },
+  "params": {
+    "nodeType": "host",
+    "criteria": [
+      {
+        "metric": "memory",
+        "comparator": ">=",
+        "threshold": [
+          90
+        ],
+        "timeSize": 1,
+        "timeUnit": "m",
+        "customMetric": {
+          "type": "custom",
+          "id": "alert-custom-metric",
+          "field": "",
+          "aggregation": "avg"
+        }
+      }
+    ],
+    "sourceId": "default"
+  },
+  "actions": [
+    {
+      "group": "metrics.inventory_threshold.fired",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": "🔴 \n{{context.alertState}}\n{{context.reason}}\n\n{{rule.name}} is active with the following conditions:\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Observed value: {{context.value}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "eee298ec-de30-45e8-8739-6fe95875d02a"
+    },
+    {
+      "group": "recovered",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": " 🟢  {{rule.name}} has recovered.\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "6f4e3a50-69ac-4470-b34e-d761b277eae0"
+    }
+  ]
+}
