@@ -7,7 +7,7 @@ resource "google_compute_instance_template" "k3s" {
   labels = var.labels
 
   instance_description = "${var.node_role} instance"
-  machine_type         = var.machine_type.e2medium
+  machine_type         = var.machine_type["e2custom10240"]
   can_ip_forward       = true
 
   scheduling {
