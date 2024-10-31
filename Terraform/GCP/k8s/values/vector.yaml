@@ -42,11 +42,16 @@ extraVolumeMounts:
   - name: elastic-certificates
     mountPath: /usr/share/vector/elastic
     readOnly: true
+  - name: discord-notification
+    mountPath: /usr/share/vector/gcp-sa
 
 extraVolumes:
   - name: elastic-certificates
     secret:
       secretName: elasticsearch-es-http-certs-internal
+  - name: discord-notification
+    secret:
+      secretName: "discord-notification"
 
 # customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
 # using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/)
@@ -58,13 +63,27 @@ customConfig:
     address: 127.0.0.1:8686
     playground: false
   sources:
-    file-syslog:
-      type: file
-      include:
-        - /var/log/syslog
     k3s_logs:
       type: kubernetes_logs
+    journald:
+      type: journald
+      extra_args:
+        - -D
+        - /var/log/journal
   transforms:
+    kibana_server_logs_filter:
+      type: filter
+      inputs:
+        - k3s_logs
+      condition: includes(["kibana"],.kubernetes.pod_labels."kibana.k8s.elastic.co/name")
+    kibana_server_logs:
+      type: remap
+      drop_on_error: true
+      inputs:
+        - kibana_server_logs_filter
+      source: |-
+        # Parse Kibana logs from alerting [plugins.actions.server-log]
+        parse_regex!(replace!(.message, r'\"', "\""), r'^(?P<timestamp>\[\d+\-\d+\-\d+T\d+:\d+\:\d+\.\d+\+\d+:\d+\])\[(?P<severity>\w+\s*)\]\[(?P<plugins>plugins\.actions\.server-log)\] (?P<logs>.*)$')
     remove_app_label:
       type: remap
       inputs:
@@ -214,7 +233,7 @@ customConfig:
       type: elasticsearch
       inputs:
         - remove_app_label
-        - file-syslog
+        - journald
       api_version: v8
       compression: none
       endpoints:
@@ -271,3 +290,15 @@ customConfig:
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
+    pubsub_alerting:
+      type: gcp_pubsub
+      inputs:
+        - kibana_server_logs
+      endpoint: https://pubsub.googleapis.com
+      project: gcp101292-pozashkillya
+      topic: kibana-notification
+      credentials_path: /usr/share/vector/gcp-sa/credentials.json
+      encoding:
+        codec: json
+
+

@@ -26,14 +26,16 @@ variable "machine_type" {
   type        = map(any)
   description = "Instance type used for instances"
   default = {
-    "n1micro"     = "f1-micro"      #1vCPU 0.6GB RAM
-    "n1small"     = "g1-small"      #1vCPU 1.7GB RAM
-    "e2micro"     = "e2-micro"      #2vCPU 1.0GB RAM
-    "e2small"     = "e2-small"      #2vCPU 2.0GB RAM
-    "e2medium"    = "e2-medium"     #2vCPU 4.0GB RAM
-    "n1standard1" = "n1-standard-1" #1vCPU 3.75GB RAM
-    "n1standard2" = "n1-standard-2" #2vCPU 7.5GB RAM
-    "n1standard4" = "n1-standard-4" #4vCPU 15GB RAM
+    "n1micro"       = "f1-micro"      #1vCPU 0.6GB RAM
+    "n1small"       = "g1-small"      #1vCPU 1.7GB RAM
+    "e2micro"       = "e2-micro"      #2vCPU 1.0GB RAM
+    "e2small"       = "e2-small"      #2vCPU 2.0GB RAM
+    "e2medium"      = "e2-medium"     #2vCPU 4.0GB RAM
+    "n1standard1"   = "n1-standard-1" #1vCPU 3.75GB RAM
+    "n1standard2"   = "n1-standard-2" #2vCPU 7.5GB RAM
+    "n1standard4"   = "n1-standard-4" #4vCPU 15GB RAM
+    "e2custom12288" = "e2-custom-2-12288" # 2vCPU 12GB RAM
+    "e2custom10240" = "e2-custom-2-10240" # 2vCPU 10GB RAM
   }
 }
 

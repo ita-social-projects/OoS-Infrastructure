@@ -7,7 +7,7 @@ resource "google_compute_instance_template" "k3s" {
   labels = var.labels
 
   instance_description = "${var.node_role} instance"
-  machine_type         = var.machine_type.e2medium
+  machine_type         = var.machine_type["e2custom10240"]
   can_ip_forward       = true
 
   scheduling {
@@ -120,6 +120,19 @@ resource "google_compute_per_instance_config" "k3s" {
   for_each               = var.node_role == "master" ? toset(local.full_names) : []
   zone                   = google_compute_instance_group_manager.k3s[0].zone
   instance_group_manager = google_compute_instance_group_manager.k3s[0].name
+  name                   = each.key
+  minimal_action         = "REPLACE"
+  preserved_state {
+    metadata = {
+      instance_template = google_compute_instance_template.k3s.self_link
+    }
+  }
+}
+
+resource "google_compute_per_instance_config" "k3s_worker" {
+  for_each               = var.node_role == "worker" ? toset(local.full_names) : []
+  zone                   = google_compute_instance_group_manager.k3s_worker[0].zone
+  instance_group_manager = google_compute_instance_group_manager.k3s_worker[0].name
   name                   = each.key
   minimal_action         = "REPLACE"
   preserved_state {
