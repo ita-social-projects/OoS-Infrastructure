@@ -95,7 +95,7 @@ eck-kibana:
                 value: "--max-old-space-size=1256"
             resources:
               requests:
-                cpu: "200m"
+                cpu: "100m"
                 memory: "512Mi"
               limits:
                 cpu: "500m"
@@ -321,7 +321,7 @@ eck-beats:
                 cpu: 200m
                 memory: 200Mi
               requests:
-                cpu: 100m
+                cpu: 50m
                 memory: 100Mi
           dnsPolicy: ClusterFirstWithHostNet
           hostNetwork: true # Allows to provide richer host metadata
@@ -457,7 +457,7 @@ eck-apm-server:
           readOnly: true
         resources:
           requests:
-            cpu: "200m"
+            cpu: "50m"
             memory: "128Mi"
           limits:
             cpu: "200m"
