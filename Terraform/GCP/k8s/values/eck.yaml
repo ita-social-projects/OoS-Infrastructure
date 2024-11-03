@@ -40,14 +40,14 @@ eck-elasticsearch:
         - name: elasticsearch
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms768m -Xmx768m
+            value: -Xms1g -Xmx1g
           resources:
             requests:
               cpu: "200m"
-              memory: "1376Mi"
+              memory: "2Gi"
             limits:
               cpu: "1"
-              memory: "1536Mi"
+              memory: "2128Mi"
         affinity:
           podAntiAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
@@ -163,24 +163,25 @@ eck-beats:
           - process
           - process_summary
           - uptime
+          - filesystem
           process:
             include_top_n:
               by_cpu: 5
               by_memory: 5
+            cgroups:
+              enabled: false
           processes:
-          - .*
+            - .*
         - module: system
           period: 1m
           metricsets:
-          - filesystem
-          - fsstat
+            - fsstat
           processors:
-          - drop_event:
-              when:
-                regexp:
-                  system:
-                    filesystem:
-                      mount_point: ^/(sys|cgroup|proc|dev|etc|host|lib)($|/)
+          - drop_event.when.regexp:
+              system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib|snap)($|/)'
+          process:
+            cgroups:
+              enabled: false
         - module: kubernetes
           period: 30s
           node: ${NODE_NAME}

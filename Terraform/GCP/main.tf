@@ -34,15 +34,16 @@ module "network" {
 }
 
 module "ops" {
-  source             = "./ops"
-  discord_webhook    = var.gcp_monitoring_discord_webhook
-  eck_rmon_password  = module.passwords.es_user_rmon_password
-  gcf_bucket         = module.storage.gcf_bucket
-  network_id         = module.network.vpc.network_id
-  notification_email = var.letsencrypt_email
-  project            = var.project
-  random_number      = random_integer.ri.result
-  region             = var.region
+  source                 = "./ops"
+  discord_webhook        = var.gcp_monitoring_discord_webhook
+  discord_kibana_webhook = var.kibana_alerting_discord_webhook
+  eck_rmon_password      = module.passwords.es_user_rmon_password
+  gcf_bucket             = module.storage.gcf_bucket
+  network_id             = module.network.vpc.network_id
+  notification_email     = var.letsencrypt_email
+  project                = var.project
+  random_number          = random_integer.ri.result
+  region                 = var.region
 }
 
 module "storage" {

@@ -5,7 +5,7 @@ resource "google_sql_database_instance" "state" {
   deletion_protection = false
 
   settings {
-    tier              = "db-f1-micro"
+    tier              = "db-g1-small"
     availability_type = "ZONAL"
     disk_type         = "PD_HDD"
     disk_autoresize   = true
