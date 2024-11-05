@@ -121,3 +121,7 @@ variable "build_sa_id" {
 variable "staging_domain" {
   type = string
 }
+
+variable "iit_libraries_url" {
+  type = string
+}
