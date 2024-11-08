@@ -1,4 +1,3 @@
-PUT kbn:/api/alerting/rule/9ba49a1a-a43a-4422-a096-f1ee643de670
 {
   "name": "Node System Load_5m",
   "tags": [],
