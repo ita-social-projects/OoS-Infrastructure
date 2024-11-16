@@ -44,6 +44,7 @@ resource "google_cloudfunctions2_function" "function" {
     service_account_email          = var.gcf_sa_email
     environment_variables = {
       WEBHOOK_URL = var.discord_notification_webhook
+      LOG_EXECUTION_ID = "true"
     }
   }
 

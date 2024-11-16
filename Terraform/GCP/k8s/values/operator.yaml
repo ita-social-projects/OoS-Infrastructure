@@ -1,9 +1,10 @@
 replicaCount: 1
+# Elastic Operator
 # resources define the container resource limits for the operator.
 resources:
   limits:
-    cpu: 1
+    cpu: 500m
     memory: 512Mi
   requests:
-    cpu: 100m
+    cpu: 10m
     memory: 150Mi

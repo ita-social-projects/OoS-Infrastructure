@@ -13,3 +13,10 @@ ingress:
 db:
   allowArbitraryServer: false
   host: "mysql-instances"
+resources:
+  requests:
+    cpu: 50m
+    memory: 50Mi
+  limits:
+    cpu: 375m
+    memory: 384Mi
