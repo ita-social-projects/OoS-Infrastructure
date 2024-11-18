@@ -62,6 +62,7 @@ module "iam" {
   devops             = var.devops
   enable_dns         = var.enable_dns
   pubsub_id          = module.ops.pubsub.id
+  iit_secret_id      = module.secrets.iit_secret_id
 }
 
 module "passwords" {
@@ -158,6 +159,7 @@ module "k8s" {
   oauth2_github_teams          = var.oauth2_github_teams
   sso_hostname                 = local.hostnames["sso"]
   staging_domain               = var.staging_domain
+  external_secret_sa_key       = module.iam.external_secret_sa_key
   depends_on = [
     module.cluster
   ]

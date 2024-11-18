@@ -179,3 +179,8 @@ variable "discord_notification_secret_name" {
   type    = string
   default = "discord-notification"
 }
+
+variable "external_secret_sa_key" {
+  type = string
+}
+

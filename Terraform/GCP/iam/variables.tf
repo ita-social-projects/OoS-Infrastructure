@@ -38,3 +38,5 @@ variable "discord_notification_secret_name" {
   type    = string
   default = "discord-notification"
 }
+
+variable "iit_secret_id" {}

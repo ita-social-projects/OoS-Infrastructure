@@ -45,3 +45,7 @@ output "build_sa_id" {
 output "webapi_sa_key" {
   value = google_service_account_key.app.private_key
 }
+
+output "external_secret_sa_key" {
+  value = google_service_account_key.external_secret_key.private_key
+}
