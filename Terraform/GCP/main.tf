@@ -211,6 +211,8 @@ module "build" {
   build_sa_id                  = module.iam.build_sa_id
   staging_domain               = var.staging_domain
   iit_libraries_url            = var.iit_libraries_url
+  external_ca_json_url         = var.external_ca_json_url
+  external_ca_p7b_url          = var.external_ca_p7b_url
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run
