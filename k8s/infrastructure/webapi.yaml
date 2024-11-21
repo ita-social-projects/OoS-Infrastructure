@@ -177,7 +177,7 @@ initContainers:
     command:
       - sh
       - -c
-      - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/elastic/certs/*.crt /workspace/bindings/ca-certificates; cp /workspace/apm/certs/*.crt /workspace/bindings/ca-certificates"
+      - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/elastic/certs/ca.crt /workspace/bindings/ca-certificates/ca1.crt; cp /workspace/apm/certs/ca.crt /workspace/bindings/ca-certificates/ca2.crt"
     volumeMounts:
       - name: elastic-certs
         mountPath: "/workspace/elastic/certs"
