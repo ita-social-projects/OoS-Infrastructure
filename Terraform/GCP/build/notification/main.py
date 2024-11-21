@@ -59,6 +59,9 @@ def create_message(build: GoogleCloudBuild) -> DiscordMessage:
   elif "auth" in tag:
     content = "Auth server"
     commit_info = None
+  elif "encr" in tag:
+    content = "Encryption server"
+    commit_info = None
   if build['status'] == 'WORKING':
     embeds.append({
         'color':
@@ -88,7 +91,7 @@ def create_message(build: GoogleCloudBuild) -> DiscordMessage:
         'description':
         f"Deployment took a {(datetime.fromisoformat(build['finishTime']) - datetime.fromisoformat(build['startTime'])).seconds} seconds."
     })
-    if "auth" not in tag:
+    if ("auth" not in tag) and ("encr" not in tag):
       embeds.append({
           'color': 1027128,
           'title': url,

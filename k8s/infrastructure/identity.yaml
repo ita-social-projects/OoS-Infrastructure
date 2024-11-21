@@ -37,7 +37,6 @@ deploy:
 
 configuration:
   extraEnvironment:
-    DOTNET_gcServer: "0"
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
     ConnectionStringsOverride__DefaultConnection__UserId: oos

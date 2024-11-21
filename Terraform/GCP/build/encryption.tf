@@ -10,8 +10,10 @@ resource "google_cloudbuild_trigger" "backend_encryption" {
   }
 
   substitutions = {
-    _REGION  = var.region
-    _IIT_URL = var.iit_libraries_url
+    _REGION      = var.region
+    _IIT_URL     = var.iit_libraries_url
+    _CA_JSON_URL = var.external_ca_json_url
+    _CA_P7B_URL  = var.external_ca_p7b_url
   }
 
   filename        = "cloudbuild-enc.yml"
