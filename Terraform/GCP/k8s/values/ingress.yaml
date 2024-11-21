@@ -25,6 +25,13 @@ controller:
     enabled: false
     serviceMonitor:
       enabled: false
+  resources:
+    limits:
+      cpu: 100m
+      memory: 350Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
 defaultBackend:
   enabled: true
   autoscaling:
