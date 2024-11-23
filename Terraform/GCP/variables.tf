@@ -206,3 +206,7 @@ variable "staging_domain" {
 variable "kibana_alerting_discord_webhook" {
   type = string
 }
+
+variable "iit_libraries_url" {
+  type = string
+}

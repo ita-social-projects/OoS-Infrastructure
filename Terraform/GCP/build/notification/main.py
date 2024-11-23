@@ -48,12 +48,12 @@ def create_message(build: GoogleCloudBuild) -> DiscordMessage:
 
   if "front" in tag:
     content = "UI application"
-    url = f"https://{build['substitutions']['_HOST']}"
+    url = f"https://{build['substitutions']['_STAGING_HOST']}"
     if build['status'] == 'WORKING':
       commit_info = get_github_commit(FRONT_REPO, commit)
   elif "api" in tag:
     content = "Web API"
-    url = f"https://{build['substitutions']['_HOST']}/swagger/index.html"
+    url = f"https://{build['substitutions']['_STAGING_HOST']}/web/swagger/index.html"
     if build['status'] == 'WORKING':
       commit_info = get_github_commit(BACK_REPO, commit)
   elif "auth" in tag:

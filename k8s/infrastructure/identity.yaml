@@ -42,6 +42,7 @@ configuration:
     ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
     ConnectionStringsOverride__DefaultConnection__UserId: oos
     ElasticApm__ServiceVersion: $(AppDefaults__Version)
+    SERVICE_BINDING_ROOT: /workspace/bindings
   extraEnvVarsSecret: "authserver-secrets"
   secrets:
   - type: env

@@ -42,3 +42,4 @@ oauth2_github_teams=["team1", "team2"]
 sso_subdomain="sso"
 staging_domain="site.ua"
 kibana_alerting_discord_webhook = "https://discord.gg"
+iit_libraries_url="http://example.com/file.zip"

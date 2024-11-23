@@ -116,7 +116,6 @@ module "cluster" {
   ]
 }
 
-
 module "k8s" {
   source                       = "./k8s"
   project                      = var.project
@@ -211,6 +210,7 @@ module "build" {
   enable_cloud_run             = var.enable_cloud_run
   build_sa_id                  = module.iam.build_sa_id
   staging_domain               = var.staging_domain
+  iit_libraries_url            = var.iit_libraries_url
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run
