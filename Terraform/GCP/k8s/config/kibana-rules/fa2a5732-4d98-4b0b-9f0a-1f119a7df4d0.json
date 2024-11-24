@@ -25,6 +25,7 @@
     ],
     "sourceId": "default"
   },
+  "consumer":"alerts",
   "actions": [
     {
       "group": "metrics.inventory_threshold.fired",

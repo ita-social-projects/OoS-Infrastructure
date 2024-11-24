@@ -1,0 +1,59 @@
+{
+  "name": "Node System Load_5m",
+  "tags": [],
+  "schedule": {
+    "interval": "5m"
+  },
+  "params": {
+    "nodeType": "host",
+    "criteria": [
+      {
+        "metric": "load",
+        "comparator": ">=",
+        "threshold": [
+          2
+        ],
+        "timeSize": 5,
+        "timeUnit": "m",
+        "customMetric": {
+          "type": "custom",
+          "id": "alert-custom-metric",
+          "field": "",
+          "aggregation": "avg"
+        }
+      }
+    ],
+    "sourceId": "default"
+  },
+  "consumer":"alerts",
+  "actions": [
+    {
+      "group": "metrics.inventory_threshold.fired",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": "🔴 \n{{context.alertState}}\n{{context.reason}}\n\n{{rule.name}} is active with the following conditions:\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Observed value: {{context.value}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "43c24f27-53f7-4a72-8253-830465e9c18f"
+    },
+    {
+      "group": "recovered",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": " 🟢  {{rule.name}} has recovered.\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "b8efb9cc-5e44-493d-a0b8-753cb05c7f40"
+    }
+  ]
+}
