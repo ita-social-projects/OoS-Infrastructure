@@ -1,19 +1,21 @@
 {
-  "name": "Node System Load_5m",
+  "name": "Kubernetes Pods CPU Usage",
   "tags": [],
   "schedule": {
-    "interval": "5m"
+    "interval": "1m"
   },
+  "rule_type_id": "metrics.alert.inventory.threshold",
+  "consumer":"alerts",
   "params": {
-    "nodeType": "host",
+    "nodeType": "pod",
     "criteria": [
       {
-        "metric": "load",
-        "comparator": ">=",
+        "metric": "cpu",
+        "comparator": ">",
         "threshold": [
-          2
+          99
         ],
-        "timeSize": 5,
+        "timeSize": 1,
         "timeUnit": "m",
         "customMetric": {
           "type": "custom",
@@ -23,9 +25,9 @@
         }
       }
     ],
-    "sourceId": "default"
+    "sourceId": "default",
+    "alertOnNoData": true
   },
-  "consumer":"alerts",
   "actions": [
     {
       "group": "metrics.inventory_threshold.fired",
@@ -39,7 +41,7 @@
         "throttle": null,
         "summary": false
       },
-      "uuid": "43c24f27-53f7-4a72-8253-830465e9c18f"
+      "uuid": "924c3c8d-5e58-4125-bd7f-e255b39f813c"
     },
     {
       "group": "recovered",
@@ -53,7 +55,8 @@
         "throttle": null,
         "summary": false
       },
-      "uuid": "b8efb9cc-5e44-493d-a0b8-753cb05c7f40"
+      "uuid": "06be7d3c-ab30-421b-bee2-d969f488f057"
     }
   ]
 }
+

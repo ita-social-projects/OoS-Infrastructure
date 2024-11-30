@@ -34,7 +34,7 @@ for s in "$${kibana_rules_list[@]}"; do
 
   if [[ "$result_code" == 404 ]] # Not found
   then # Creat
-    echo Creating rule: "$${s}"
+    echo "============================ CREATE RULE: $${s} ===================================="
     output=$(curl --silent -X POST -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
       -u $USERNAME:$PASSWORD -k $KIBANA_ENDPOINT/api/alerting/rule/"$${s}" \
       -d @$MOUNT_PATH/"$${s}.json")
@@ -42,16 +42,13 @@ for s in "$${kibana_rules_list[@]}"; do
     echo $output | jq .
   elif [[ ! -z "$result_id" ]] # Not null
   then # Update
-    echo Updating rule: "$${s}"
-    output=$(curl --silent -X PUT -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
+    echo "============================ UPDATE RULE: $${s} ===================================="
+    rule=$(cat "$MOUNT_PATH/$${s}.json" | jq 'del(.rule_type_id, .consumer)')
+    output=$(curl -X PUT -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
       -u $USERNAME:$PASSWORD -k $KIBANA_ENDPOINT/api/alerting/rule/"$${s}" \
-      -d @$MOUNT_PATH/"$${s}.json")
-
+      -d "$rule")
     echo $output | jq .
   else
     echo Other error occurred!!!
   fi
 done
-
-
-

@@ -26,6 +26,7 @@
     "sourceId": "default"
   },
   "consumer":"alerts",
+  "rule_type_id": "metrics.alert.inventory.threshold",
   "actions": [
     {
       "group": "metrics.inventory_threshold.fired",

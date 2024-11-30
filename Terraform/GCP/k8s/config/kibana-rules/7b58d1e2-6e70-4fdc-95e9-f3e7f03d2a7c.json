@@ -1,10 +1,11 @@
-PUT kbn:/api/alerting/rule/7b58d1e2-6e70-4fdc-95e9-f3e7f03d2a7c
 {
   "name": "Node Memory Usage",
   "tags": [],
   "schedule": {
     "interval": "1m"
   },
+  "rule_type_id": "metrics.alert.inventory.threshold",
+  "consumer":"alerts",
   "params": {
     "nodeType": "host",
     "criteria": [

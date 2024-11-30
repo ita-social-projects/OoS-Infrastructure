@@ -1,20 +1,21 @@
-PUT kbn:/api/alerting/rule/1a149616-8628-4c66-8502-334231a7551f
 {
-  "name": "Kubernetes Pods CPU Usage",
+  "name": "Kubernetes Pods Memory Usage",
   "tags": [],
   "schedule": {
     "interval": "1m"
   },
+  "rule_type_id": "metrics.alert.inventory.threshold",
+  "consumer":"alerts",
   "params": {
     "nodeType": "pod",
     "criteria": [
       {
-        "metric": "cpu",
+        "metric": "memory",
         "comparator": ">",
         "threshold": [
-          99
+          99.9
         ],
-        "timeSize": 1,
+        "timeSize": 5,
         "timeUnit": "m",
         "customMetric": {
           "type": "custom",
@@ -40,7 +41,7 @@ PUT kbn:/api/alerting/rule/1a149616-8628-4c66-8502-334231a7551f
         "throttle": null,
         "summary": false
       },
-      "uuid": "924c3c8d-5e58-4125-bd7f-e255b39f813c"
+      "uuid": "b779d1a6-cccf-41d1-b97a-18a9c39d8864"
     },
     {
       "group": "recovered",
@@ -54,7 +55,7 @@ PUT kbn:/api/alerting/rule/1a149616-8628-4c66-8502-334231a7551f
         "throttle": null,
         "summary": false
       },
-      "uuid": "06be7d3c-ab30-421b-bee2-d969f488f057"
+      "uuid": "b94acd99-0026-4d0b-b982-ee837cef596a"
     }
   ]
 }
