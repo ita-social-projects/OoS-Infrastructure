@@ -12,6 +12,12 @@ locals {
       regions = ["EUROPE", "ASIA_PACIFIC", "SOUTH_AMERICA", "USA_IOWA"]
       path    = "/api/task_manager/_health"
     }
+    Webapi = {
+      host    = "pozashkillia-test.iea.gov.ua"
+      period  = "60s"
+      regions = ["EUROPE", "ASIA_PACIFIC", "SOUTH_AMERICA", "USA_IOWA"]
+      path    = "/web/healthz/active"
+    }
   }
 
   notification = {
