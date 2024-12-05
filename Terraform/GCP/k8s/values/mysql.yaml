@@ -17,7 +17,7 @@ podSpec:
         memory: "1Gi"
         # cpu: "1800m"
       limits:
-        memory: "1Gi"
+        memory: "1536Mi"
         # cpu: "3600m"
   affinity:
     podAntiAffinity:
