@@ -59,6 +59,12 @@ serverConfig:
   mycnf: |
     [mysqld]
     default-time-zone = 'Europe/Kiev'
+    innodb_buffer_pool_size=512M
+    innodb_buffer_pool_instances=1
+    innodb_log_file_size=50M
+    max_connections=150
+    innodb_log_buffer_size=64M
+    max_allowed_packet=256M
 # TODO: Replace by a Job
 # my_init_script.sh: |
 #   #!/bin/bash
