@@ -1,0 +1,58 @@
+{
+  "name": "Elasticsearch Volume Usage",
+  "tags": [],
+  "schedule": {
+    "interval": "1m"
+  },
+  "params": {
+    "criteria": [
+      {
+        "aggType": "max",
+        "comparator": ">",
+        "threshold": [
+          0.8
+        ],
+        "timeSize": 1,
+        "timeUnit": "m",
+        "metric": "kubernetes.volume.fs.used.pct"
+      }
+    ],
+    "sourceId": "default",
+    "alertOnNoData": true,
+    "alertOnGroupDisappear": true,
+    "filterQueryText": "kubernetes.volume.name: \"elasticsearch-data\"",
+    "filterQuery": "{\"bool\":{\"should\":[{\"term\":{\"kubernetes.volume.name\":{\"value\":\"elasticsearch-data\"}}}],\"minimum_should_match\":1}}"
+  },
+  "consumer":"alerts",
+  "rule_type_id": "metrics.alert.threshold",
+  "actions": [
+    {
+      "group": "metrics.threshold.fired",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": "🔴 {{context.reason}}\n\n{{rule.name}} is active with the following conditions:\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Observed value: {{context.value}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "9d932e6e-e909-4d10-952e-44605b4e6d6f"
+    },
+    {
+      "group": "recovered",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": "🟢 {{rule.name}} has recovered.\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "2cc1c9a9-c743-4bc9-a377-7cdede440712"
+    }
+  ]
+}

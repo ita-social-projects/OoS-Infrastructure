@@ -1,0 +1,56 @@
+{
+  "name": "Node Disk Usage",
+  "tags": [],
+  "schedule": {
+    "interval": "1m"
+  },
+  "rule_type_id": "metrics.alert.threshold",
+  "consumer":"alerts",
+  "params": {
+    "criteria": [
+      {
+        "aggType": "max",
+        "comparator": ">",
+        "threshold": [
+          0.8
+        ],
+        "timeSize": 1,
+        "timeUnit": "m",
+        "metric": "system.filesystem.used.pct"
+      }
+    ],
+    "sourceId": "default",
+    "alertOnNoData": true,
+    "alertOnGroupDisappear": true
+  },
+  "actions": [
+    {
+      "group": "metrics.threshold.fired",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": "🔴 \n{{context.alertState}}\n{{context.reason}}\n\n{{rule.name}} is active with the following conditions:\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Observed value: {{context.value}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "3afde928-6552-424f-a0ec-f6ef2bce98d7"
+    },
+    {
+      "group": "recovered",
+      "id": "735a866d-edba-41fe-a305-abadf67549ac",
+      "params": {
+        "level": "info",
+        "message": " 🟢  {{rule.name}} has recovered.\n\n- Affected: {{context.group}}\n- Metric: {{context.metric}}\n- Threshold: {{context.threshold}}\n\n[View alert details]({{context.alertDetailsUrl}})\n"
+      },
+      "frequency": {
+        "notify_when": "onActionGroupChange",
+        "throttle": null,
+        "summary": false
+      },
+      "uuid": "fe64023f-e9f5-4177-9f5b-767ef036f84c"
+    }
+  ]
+}
