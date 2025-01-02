@@ -125,3 +125,11 @@ variable "staging_domain" {
 variable "iit_libraries_url" {
   type = string
 }
+
+variable "external_ca_json_url" {
+  type = string
+}
+
+variable "external_ca_p7b_url" {
+  type = string
+}
