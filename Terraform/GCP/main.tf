@@ -253,6 +253,7 @@ module "dns" {
   subdomains = [
     for name, subdomain in local.subdomains : subdomain if name != "k8s"
   ]
+  k3s_lb_address = google_compute_address.lb.address
 }
 
 module "k3s_certs" {
