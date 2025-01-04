@@ -50,7 +50,9 @@ install_k3s() {
     --tls-san "${internal_lb_ip_address}" \
     --disable traefik \
     --disable servicelb \
-    --disable local-storage
+    --disable local-storage \
+    --kube-apiserver-arg="service-account-issuer=https://${external_hostname}:6443" \
+    --kube-apiserver-arg="service-account-jwks-uri=https://${external_hostname}:6433/openid/v1/jwks"
 
   # Check k3s running
   while true; do

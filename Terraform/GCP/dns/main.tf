@@ -23,5 +23,5 @@ resource "google_dns_record_set" "k3s_lb" {
 
   managed_zone = google_dns_managed_zone.oos_zone.name
 
-  rrdatas = [var.k3s_lb_address]
+  rrdatas = [var.k3s_xlb_address]
 }
