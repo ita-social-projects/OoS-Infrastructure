@@ -62,6 +62,7 @@ module "iam" {
   devops             = var.devops
   enable_dns         = var.enable_dns
   pubsub_id          = module.ops.pubsub.id
+  wif_issuer_uri     = format("https://%s:6443",local.hostnames["k8s"])
 }
 
 module "passwords" {
@@ -253,6 +254,8 @@ module "dns" {
   subdomains = [
     for name, subdomain in local.subdomains : subdomain if name != "k8s"
   ]
+  k3s_xlb_address = google_compute_address.lb.address
+  k3s_subdomain   = local.subdomains["k8s"]
 }
 
 module "k3s_certs" {

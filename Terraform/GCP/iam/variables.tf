@@ -38,3 +38,9 @@ variable "discord_notification_secret_name" {
   type    = string
   default = "discord-notification"
 }
+
+variable "wif_issuer_uri" {
+  type        = string
+  description = "Workload issuer uri"
+  default     = ""
+}

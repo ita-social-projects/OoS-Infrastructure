@@ -43,7 +43,8 @@ resource "google_compute_instance_template" "k3s" {
   lifecycle {
     create_before_destroy = true
     ignore_changes = [
-      labels
+      labels,
+      metadata_startup_script,
     ]
   }
 }

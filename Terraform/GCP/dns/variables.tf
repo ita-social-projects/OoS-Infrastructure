@@ -18,3 +18,14 @@ variable "subdomains" {
   default     = []
   description = "List of subdomains that need to be mapped to ingress ip address"
 }
+
+variable "k3s_xlb_address" {
+  type        = string
+  description = "Load Balancer IP address for K3s cluster"
+}
+
+variable "k3s_subdomain" {
+  type        = string
+  description = "Subdomain name for K3s cluster"
+  default     = "k8s"
+}
