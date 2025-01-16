@@ -62,6 +62,7 @@ module "iam" {
   devops             = var.devops
   enable_dns         = var.enable_dns
   pubsub_id          = module.ops.pubsub.id
+  wif_issuer_uri     = format("https://%s:6443",local.hostnames["k8s"])
 }
 
 module "passwords" {
