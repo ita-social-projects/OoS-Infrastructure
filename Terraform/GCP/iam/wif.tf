@@ -6,7 +6,7 @@ data "google_secret_manager_secret_version_access" "k3s_jwks" {
 
 resource "google_iam_workload_identity_pool" "k3s_pool" {
   project                   = var.project
-  workload_identity_pool_id = "k3s-cluster"
+  workload_identity_pool_id = "k3s-cluster-pool"
   display_name              = "K3s Cluster"
   description               = "Identity pool for k3s"
 }
