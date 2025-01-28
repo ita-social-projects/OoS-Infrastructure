@@ -44,3 +44,9 @@ variable "wif_issuer_uri" {
   description = "Workload issuer uri"
   default     = ""
 }
+
+variable "google_secret_name_k3s_jwks" {
+  type        = string
+  description = "Google secret name for k3s jwks"
+  default     = "k3s-jwks"
+}
