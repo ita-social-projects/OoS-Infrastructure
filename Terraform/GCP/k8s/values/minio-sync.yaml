@@ -1,0 +1,88 @@
+global: {}
+
+jobKind: CronJob
+schedule: "0 0 * * 0"
+startingDeadlineSeconds: 0
+concurrencyPolicy: "Forbid"
+successfulJobsHistoryLimit: 0
+failedJobsHistoryLimit: 0
+suspend: false
+
+args: []
+
+backoffLimit: 3
+activeDeadlineSeconds: 120
+ttlSecondsAfterFinished: 0
+restartPolicy: "Never"
+
+jobAnnotations: {}
+podAnnotations: {}
+
+image:
+  registry: docker.io
+  repository: google
+  name: cloud-sdk
+  pullPolicy: IfNotPresent
+  tag: "alpine"
+  fullTagOverride: ""
+
+command:
+  - /bin/sh
+  - '-c'
+  - |-
+    gcloud auth login --cred-file $GOOGLE_APPLICATION_CREDENTIALS
+    gsutil rsync s3://${MINIO_BUCKET} gs://${GCS_BUCKET}
+
+configuration:
+  extraEnvironment:
+    GOOGLE_APPLICATION_CREDENTIALS: "/root/gcp-sa/key.json"
+    BOTO_PATH: "/root/boto/.boto"
+
+  extraEnvVarsCM: ""
+
+  extraEnvVarsSecret: ""
+
+  secrets:
+    - type: env
+      name: minio-sync-boto
+      keys:
+        - key: gcs_bucket
+          envKey: GCS_BUCKET
+        - key: minio_buket
+          envKey: MINIO_BUCKET
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podSecurity:
+  enabled: false
+  context:
+    fsGroup: 2000
+    sysctls: []
+
+containerSecurity:
+  enabled: false
+  context:
+    runAsUser: 1000
+
+extraVolumeMounts:
+  - name: boto
+    mountPath: /root/boto
+  - name: gcp-sa
+    readOnly: true
+    mountPath: /root/gcp-sa
+
+extraVolumes:
+  - name: boto
+    secret:
+      secretName: minio-sync-boto
+      defaultMode: 420
+      items:
+        - key: ".boto"
+          path: ".boto"
+  - name: gcp-sa
+    secret:
+      secretName: webapi-gcp-sa
+      defaultMode: 420

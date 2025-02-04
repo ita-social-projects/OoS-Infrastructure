@@ -36,3 +36,17 @@ resource "kubectl_manifest" "sc" {
   volumeBindingMode: Immediate
   EOF
 }
+
+# Kubernetes CronJob to sync files from a production MinIO bucket to a GCS bucket in Development.
+resource "helm_release" "minio_rsync" {
+  name          = "minio-sync-job"
+  chart         = "../../k8s/job"
+  namespace     = data.kubernetes_namespace.oos.metadata[0].name
+  wait          = true
+  wait_for_jobs = true
+  timeout       = 60
+  max_history   = 3
+  values = [
+    "${file("${path.module}/values/minio-sync.yaml")}"
+  ]
+}
