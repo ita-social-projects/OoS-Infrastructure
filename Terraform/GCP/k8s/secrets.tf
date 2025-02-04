@@ -163,10 +163,13 @@ resource "kubernetes_secret" "webapi_secrets" {
   }
 
   data = {
-    Email__SendGridKey                = var.sendgrid_key
-    Email__AddressFrom                = var.sender_email
-    GeoCoding__ApiKey                 = var.geo_apikey
-    AuthorizationServer__ClientSecret = var.openiddict_introspection_key
+    Email__SendGridKey                           = var.sendgrid_key
+    Email__AddressFrom                           = var.sender_email
+    GeoCoding__ApiKey                            = var.geo_apikey
+    AuthorizationServer__ClientSecret            = var.openiddict_introspection_key
+    FileStorage__Providers__AmazonS3__AccessKey  = var.aws_access_key_id
+    FileStorage__Providers__AmazonS3__SecretKey  = var.aws_secret_access_key
+    FileStorage__Providers__AmazonS3__ServiceUrl = var.s3_host
   }
 }
 

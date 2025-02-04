@@ -62,7 +62,7 @@ module "iam" {
   devops             = var.devops
   enable_dns         = var.enable_dns
   pubsub_id          = module.ops.pubsub.id
-  wif_issuer_uri     = format("https://%s:6443",local.hostnames["k8s"])
+  wif_issuer_uri     = format("https://%s:6443", local.hostnames["k8s"])
 }
 
 module "passwords" {
@@ -159,6 +159,11 @@ module "k8s" {
   oauth2_github_teams          = var.oauth2_github_teams
   sso_hostname                 = local.hostnames["sso"]
   staging_domain               = var.staging_domain
+  aws_access_key_id            = var.aws_access_key_id
+  aws_secret_access_key        = var.aws_secret_access_key
+  s3_host                      = var.s3_host
+  s3_bucket                    = var.s3_bucket
+  storage_provider             = var.storage_provider
   depends_on = [
     module.cluster
   ]
@@ -214,6 +219,10 @@ module "build" {
   iit_libraries_url            = var.iit_libraries_url
   external_ca_json_url         = var.external_ca_json_url
   external_ca_p7b_url          = var.external_ca_p7b_url
+  images_bucket                = module.storage.image_bucket
+  storage_provider             = var.storage_provider
+  s3_host                      = var.s3_host
+  s3_bucket                    = var.s3_bucket
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run
