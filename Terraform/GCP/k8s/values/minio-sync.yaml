@@ -48,7 +48,7 @@ configuration:
       keys:
         - key: gcs_bucket
           envKey: GCS_BUCKET
-        - key: minio_buket
+        - key: minio_bucket
           envKey: MINIO_BUCKET
 
 serviceAccount:
