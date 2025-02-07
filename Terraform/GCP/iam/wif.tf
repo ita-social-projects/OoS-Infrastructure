@@ -17,7 +17,7 @@ resource "google_iam_workload_identity_pool_provider" "k3s_provider" {
   display_name                       = "K3s Kubernetes Cluster"
   oidc {
     issuer_uri        = var.wif_issuer_uri
-    allowed_audiences = ["sts.googleapis.com"]
+    #allowed_audiences = ["sts.googleapis.com"] # It will be used further
     jwks_json         = data.google_secret_manager_secret_version_access.k3s_jwks.secret_data
   }
   attribute_mapping = {
