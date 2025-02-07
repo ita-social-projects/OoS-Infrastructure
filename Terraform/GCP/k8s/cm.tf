@@ -5,6 +5,7 @@ resource "kubernetes_config_map" "webapi_cm" {
   }
 
   data = {
-    GoogleCloudPlatform__Storage__OosImages__BucketName = var.images_bucket
+    FileStorage__Containers__Images__BucketName = var.storage_provider == "GoogleCloud" ? var.images_bucket : var.s3_bucket
+    FileStorage__Provider                       = var.storage_provider
   }
 }

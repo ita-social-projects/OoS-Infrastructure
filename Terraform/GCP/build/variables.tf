@@ -133,3 +133,23 @@ variable "external_ca_json_url" {
 variable "external_ca_p7b_url" {
   type = string
 }
+
+variable "images_bucket" {
+  type = string
+}
+
+variable "s3_host" {
+  type = string
+}
+
+variable "s3_bucket" {
+  type = string
+}
+
+variable "storage_provider" {
+  type = string
+  validation {
+    condition     = contains(["AmazonS3", "GoogleCloud"], var.storage_provider)
+    error_message = "Valid value is one of the following: AmazonS3, GoogleCloud."
+  }
+}

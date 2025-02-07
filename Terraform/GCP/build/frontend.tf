@@ -13,6 +13,7 @@ resource "google_cloudbuild_trigger" "frontend" {
     _SERVICE_NAME  = "frontend"
     _STS_SERVER    = "https://${var.staging_domain}/auth"
     _API_SERVER    = "https://${var.staging_domain}/web"
+    _IMAGE_URL     = var.storage_provider == "GoogleCloud" ? "https://storage.googleapis.com/${var.images_bucket}/" : "https://${var.s3_host}/${var.s3_bucket}/"
     _GITHUB_DEPLOY = var.github_front_secret
     _REGION        = var.region
   }

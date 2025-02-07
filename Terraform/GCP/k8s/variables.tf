@@ -179,3 +179,27 @@ variable "discord_notification_secret_name" {
   type    = string
   default = "discord-notification"
 }
+
+variable "aws_access_key_id" {
+  type = string
+}
+
+variable "aws_secret_access_key" {
+  type = string
+}
+
+variable "s3_host" {
+  type = string
+}
+
+variable "s3_bucket" {
+  type = string
+}
+
+variable "storage_provider" {
+  type = string
+  validation {
+    condition     = contains(["AmazonS3", "GoogleCloud"], var.storage_provider)
+    error_message = "Valid value is one of the following: AmazonS3, GoogleCloud."
+  }
+}
