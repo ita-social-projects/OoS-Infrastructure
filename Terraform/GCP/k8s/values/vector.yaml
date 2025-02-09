@@ -176,7 +176,7 @@ customConfig:
       api_version: v8
       compression: none
       endpoints:
-        - "${ES_ENDPOINT}"
+        - "$${ES_ENDPOINT}"
       mode: data_stream
       data_stream:
         type: vector
@@ -185,8 +185,8 @@ customConfig:
       pipeline: geoip-nginx
       auth:
         strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
+        user: "$${ES_USERNAME}"
+        password: "$${ES_PASSWORD}"
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
@@ -197,7 +197,7 @@ customConfig:
       api_version: v8
       compression: none
       endpoints:
-        - "${ES_ENDPOINT}"
+        - "$${ES_ENDPOINT}"
       mode: data_stream
       data_stream:
         type: vector
@@ -205,8 +205,8 @@ customConfig:
         namespace: app
       auth:
         strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
+        user: "$${ES_USERNAME}"
+        password: "$${ES_PASSWORD}"
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
@@ -217,7 +217,7 @@ customConfig:
       api_version: v8
       compression: none
       endpoints:
-        - "${ES_ENDPOINT}"
+        - "$${ES_ENDPOINT}"
       mode: data_stream
       data_stream:
         type: vector
@@ -225,8 +225,8 @@ customConfig:
         namespace: error
       auth:
         strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
+        user: "$${ES_USERNAME}"
+        password: "$${ES_PASSWORD}"
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
@@ -238,7 +238,7 @@ customConfig:
       api_version: v8
       compression: none
       endpoints:
-        - "${ES_ENDPOINT}"
+        - "$${ES_ENDPOINT}"
       mode: data_stream
       data_stream:
         type: vector
@@ -246,8 +246,8 @@ customConfig:
         namespace: unstructured
       auth:
         strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
+        user: "$${ES_USERNAME}"
+        password: "$${ES_PASSWORD}"
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
@@ -258,7 +258,7 @@ customConfig:
       api_version: v8
       compression: none
       endpoints:
-        - "${ES_ENDPOINT}"
+        - "$${ES_ENDPOINT}"
       mode: data_stream
       data_stream:
         type: vector
@@ -266,8 +266,8 @@ customConfig:
         namespace: nginx-dropped
       auth:
         strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
+        user: "$${ES_USERNAME}"
+        password: "$${ES_PASSWORD}"
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
@@ -278,7 +278,7 @@ customConfig:
       api_version: v8
       compression: none
       endpoints:
-        - "${ES_ENDPOINT}"
+        - "$${ES_ENDPOINT}"
       mode: data_stream
       data_stream:
         type: vector
@@ -286,8 +286,8 @@ customConfig:
         namespace: parse-json-logs-dropped
       auth:
         strategy: basic
-        user: "${ES_USERNAME}"
-        password: "${ES_PASSWORD}"
+        user: "$${ES_USERNAME}"
+        password: "$${ES_PASSWORD}"
       tls:
         ca_path : "/usr/share/vector/elastic/ca.crt"
         verify_certificate : true
@@ -296,7 +296,7 @@ customConfig:
       inputs:
         - kibana_server_logs
       endpoint: https://pubsub.googleapis.com
-      project: gcp101292-pozashkillya
+      project: ${GCP_PROJECT_ID}
       topic: kibana-notification
       credentials_path: /usr/share/vector/gcp-sa/credentials.json
       encoding:
