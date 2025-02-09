@@ -203,3 +203,26 @@ variable "storage_provider" {
     error_message = "Valid value is one of the following: AmazonS3, GoogleCloud."
   }
 }
+
+variable "wif_provider_name" {
+  type = string
+}
+
+variable "secret_mars_reader_sa_email" {
+  type = string
+}
+
+variable "wif_credentials" {
+  default = {
+    cm_name            = "wif-credentials-configuration"
+    namespace          = "kube-system"
+    gsp_ksa_file       = "wif_credentials_config.json"
+    gcp_ksa_token_path ="/var/run/secrets/sts.googleapis.com/serviceaccount"
+  }
+}
+
+variable "secret_mars_name" {
+  type    = string
+  default = "encryption-mars-private-key"
+}
+

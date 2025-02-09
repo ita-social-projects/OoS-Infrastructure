@@ -164,6 +164,8 @@ module "k8s" {
   s3_host                      = var.s3_host
   s3_bucket                    = var.s3_bucket
   storage_provider             = var.storage_provider
+  wif_provider_name            = module.iam.wif_provider_name
+  secret_mars_reader_sa_email  = module.iam.secret_mars_reader_sa_email
   depends_on = [
     module.cluster
   ]
