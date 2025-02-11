@@ -23,8 +23,9 @@ resource "google_iam_workload_identity_pool_provider" "k3s_provider" {
   attribute_mapping = {
     "google.subject"                 = "assertion.sub"
     "attribute.kubernetes_namespace" = "assertion[\"kubernetes.io\"][\"namespace\"]"
+    "attribute.service_account_name" = "assertion[\"kubernetes.io\"][\"serviceaccount\"][\"name\"]"
   }
-  attribute_condition = "attribute.kubernetes_namespace==\"csi\""
+  attribute_condition = "attribute.kubernetes_namespace==\"default\""
 }
 
 resource "google_service_account" "secret_reader" {

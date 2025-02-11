@@ -142,6 +142,8 @@ readinessProbe:
 serviceAccount:
   imagePullSecrets:
   - name: outofschool-gcp-pull-secrets
+  annotations:
+    iam.gke.io/gcp-service-account: $GCP_SA_SECRET_REDER_EMAIL
 
 storage:
   extraVolumes:
