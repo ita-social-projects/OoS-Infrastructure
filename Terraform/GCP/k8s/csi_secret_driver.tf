@@ -55,15 +55,3 @@ spec:
         path: "secret_kep.jks"
 EOF
 }
-
-resource "kubectl_manifest" "wif_sa" {
-  yaml_body = <<-EOF
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: webapi-app-sa
-  namespace: csi
-  annotations:
-    iam.gke.io/gcp-service-account: ${var.secret_reader_sa_email}
-EOF
-}
