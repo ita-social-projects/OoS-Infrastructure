@@ -63,6 +63,7 @@ module "iam" {
   enable_dns         = var.enable_dns
   pubsub_id          = module.ops.pubsub.id
   wif_issuer_uri     = format("https://%s:6443", local.hostnames["k8s"])
+  gcp_secret_i_name  = var.gcp_secret_i_name
 }
 
 module "passwords" {
@@ -165,7 +166,8 @@ module "k8s" {
   s3_bucket                    = var.s3_bucket
   storage_provider             = var.storage_provider
   wif_provider_name            = module.iam.wif_provider_name
-  secret_mars_reader_sa_email  = module.iam.secret_mars_reader_sa_email
+  secret_reader_sa_email       = module.iam.secret_reader_sa_email
+  gcp_secret_i_name            = var.gcp_secret_i_name
   depends_on = [
     module.cluster
   ]

@@ -34,7 +34,7 @@ resource "kubernetes_config_map" "wif_credentials" {
   data = {
     config =  templatefile("${path.module}/config/wif_k3s/${var.wif_credentials.gsp_ksa_file}", {
       WIF_PROVIDER_NAME     = var.wif_provider_name,
-      SECRET_MARS_READER_SA = var.secret_mars_reader_sa_email,
+      SECRET_READER_SA      = var.secret_reader_sa_email,
       WIF_K3S_TOKEN_PATH    = var.wif_credentials.gcp_ksa_token_path,
     })
    }
@@ -51,7 +51,7 @@ spec:
   provider: gcp
   parameters:
     secrets: |
-      - resourceName: "projects/${var.project}/secrets/${var.secret_mars_name}/versions/latest"
+      - resourceName: "projects/${var.project}/secrets/${var.gcp_secret_i_name}/versions/latest"
         path: "secret_kep.jks"
 EOF
 }
@@ -64,6 +64,6 @@ metadata:
   name: webapi-app-sa
   namespace: csi
   annotations:
-    iam.gke.io/gcp-service-account: ${var.secret_mars_reader_sa_email}
+    iam.gke.io/gcp-service-account: ${var.secret_reader_sa_email}
 EOF
 }

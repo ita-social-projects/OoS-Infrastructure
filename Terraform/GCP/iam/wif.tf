@@ -24,17 +24,17 @@ resource "google_iam_workload_identity_pool_provider" "k3s_provider" {
     "google.subject"                 = "assertion.sub"
     "attribute.kubernetes_namespace" = "assertion[\"kubernetes.io\"][\"namespace\"]"
   }
-  attribute_condition = "attribute.kubernetes_namespace==\"default\""
+  attribute_condition = "attribute.kubernetes_namespace==\"csi\""
 }
 
 resource "google_service_account" "secret_reader" {
-  account_id   = "secret-mars-reader"
+  account_id   = "secret-reader"
   display_name = "Secret Reader GCP SA"
 }
 
-resource "google_secret_manager_secret_iam_binding" "secret_mars" {
+resource "google_secret_manager_secret_iam_binding" "secret_reader" {
   project   = var.project
-  secret_id = var.secret_mars_name
+  secret_id = var.gcp_secret_i_name
   role      = "roles/secretmanager.secretAccessor"
   members = [
     google_service_account.secret_reader.member

@@ -51,7 +51,6 @@ variable "google_secret_name_k3s_jwks" {
   default     = "k3s-jwks"
 }
 
-variable "secret_mars_name" {
-  type    = string
-  default = "encryption-mars-private-key"
+variable "gcp_secret_i_name" {
+  type = string
 }

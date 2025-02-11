@@ -208,7 +208,7 @@ variable "wif_provider_name" {
   type = string
 }
 
-variable "secret_mars_reader_sa_email" {
+variable "secret_reader_sa_email" {
   type = string
 }
 
@@ -221,8 +221,7 @@ variable "wif_credentials" {
   }
 }
 
-variable "secret_mars_name" {
+variable "gcp_secret_i_name" {
   type    = string
-  default = "encryption-mars-private-key"
 }
 

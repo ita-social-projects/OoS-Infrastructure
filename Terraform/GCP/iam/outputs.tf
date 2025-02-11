@@ -50,6 +50,6 @@ output "wif_provider_name" {
   value = google_iam_workload_identity_pool_provider.k3s_provider.name
 }
 
-output "secret_mars_reader_sa_email" {
+output "secret_reader_sa_email" {
   value = google_service_account.secret_reader.email
 }
