@@ -74,7 +74,9 @@ resource "helm_release" "vector" {
   timeout          = 600
   max_history      = 3
   values = [
-    "${file("${path.module}/values/vector.yaml")}"
+    templatefile("${path.module}/values/vector.yaml",{
+      GCP_PROJECT_ID = var.project,
+    })
   ]
   depends_on = [
     helm_release.eck_stack,

@@ -50,3 +50,7 @@ variable "google_secret_name_k3s_jwks" {
   description = "Google secret name for k3s jwks"
   default     = "k3s-jwks"
 }
+
+variable "gcp_secret_i_name" {
+  type = string
+}

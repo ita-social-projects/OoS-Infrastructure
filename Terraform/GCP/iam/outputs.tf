@@ -45,3 +45,11 @@ output "build_sa_id" {
 output "webapi_sa_key" {
   value = google_service_account_key.app.private_key
 }
+
+output "wif_provider_name" {
+  value = google_iam_workload_identity_pool_provider.k3s_provider.name
+}
+
+output "secret_reader_sa_email" {
+  value = google_service_account.secret_reader.email
+}

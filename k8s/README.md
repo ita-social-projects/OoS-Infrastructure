@@ -90,10 +90,11 @@ Modify tags to the latest version (github tag short sha).
 Pull images:
 
 ```bash
-docker pull gcr.io/gcp101292-pozashkillya/oos-api:LATEST_TAG
-docker pull gcr.io/gcp101292-pozashkillya/oos-auth:LATEST_TAG
+export GCP_PROJECT_ID="CHANGE ME"
+docker pull gcr.io/${GCP_PROJECT_ID}/oos-api:LATEST_TAG
+docker pull gcr.io/${GCP_PROJECT_ID}/oos-auth:LATEST_TAG
 ## Front is not working atm
-# docker pull gcr.io/gcp101292-pozashkillya/oos-frontend:LATEST_TAG
+# docker pull gcr.io/${GCP_PROJECT_ID}/oos-frontend:LATEST_TAG
 ```
 
 Launch application:
