@@ -227,6 +227,7 @@ module "build" {
   storage_provider             = var.storage_provider
   s3_host                      = var.s3_host
   s3_bucket                    = var.s3_bucket
+  secret_reader_sa_email       = module.iam.secret_reader_sa_email
 }
 
 ## TODO: For now it will be here so we can easily move back Cloud Run

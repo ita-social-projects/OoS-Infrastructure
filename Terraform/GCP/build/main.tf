@@ -33,15 +33,16 @@ resource "google_cloudbuild_trigger" "app_deploy" {
   }
 
   substitutions = {
-    _KUBE_CONFIG  = var.kube_secret
-    _POOL         = google_cloudbuild_worker_pool.pool.id
-    _ACTION       = "$(body.message.data.action)"
-    _IMAGE_TAG    = "$(body.message.data.tag)"
-    _HOST         = var.app_hostname
-    _STAGING_HOST = var.staging_domain
-    _SERVICE_NAME = "webapi"
-    _REGION       = var.region
-    _VALUES_PATH  = "./k8s/infrastructure/webapi.yaml"
+    _KUBE_CONFIG     = var.kube_secret
+    _POOL            = google_cloudbuild_worker_pool.pool.id
+    _ACTION          = "$(body.message.data.action)"
+    _IMAGE_TAG       = "$(body.message.data.tag)"
+    _HOST            = var.app_hostname
+    _STAGING_HOST    = var.staging_domain
+    _SERVICE_NAME    = "webapi"
+    _REGION          = var.region
+    _VALUES_PATH     = "./k8s/infrastructure/webapi.yaml"
+    _KSA_ANNOTATIONS = "iam.gke.io/gcp-service-account: ${var.secret_reader_sa_email}"
   }
 
   source_to_build {
