@@ -153,6 +153,8 @@ resource "kubernetes_secret" "authserver_secrets" {
     Email__SendGridKey                       = var.sendgrid_key
     AuthorizationServer__IntrospectionSecret = var.openiddict_introspection_key
     Email__AddressFrom                       = var.sender_email
+    AikomApiClient__ClientId                 = var.aikom_client_id
+    AikomApiClient__ClientSecret             = var.aikom_client_secret
   }
 }
 
@@ -170,6 +172,8 @@ resource "kubernetes_secret" "webapi_secrets" {
     FileStorage__Providers__AmazonS3__AccessKey  = var.aws_access_key_id
     FileStorage__Providers__AmazonS3__SecretKey  = var.aws_secret_access_key
     FileStorage__Providers__AmazonS3__ServiceUrl = var.s3_host
+    AikomApiClient__ClientId                     = var.aikom_client_id
+    AikomApiClient__ClientSecret                 = var.aikom_client_secret
   }
 }
 

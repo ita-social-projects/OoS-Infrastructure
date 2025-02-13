@@ -168,6 +168,10 @@ module "k8s" {
   wif_provider_name            = module.iam.wif_provider_name
   secret_reader_sa_email       = module.iam.secret_reader_sa_email
   gcp_secret_i_name            = var.gcp_secret_i_name
+  aikom_api_url                = var.aikom_api_url
+  aikom_client_id              = var.aikom_client_id
+  aikom_client_secret          = var.aikom_client_secret
+  aikom_token_endpoint         = var.aikom_token_endpoint
   depends_on = [
     module.cluster
   ]

@@ -217,11 +217,26 @@ variable "wif_credentials" {
     cm_name            = "wif-credentials-configuration"
     namespace          = "kube-system"
     gsp_ksa_file       = "wif_credentials_config.json"
-    gcp_ksa_token_path ="/var/run/secrets/sts.googleapis.com/serviceaccount"
+    gcp_ksa_token_path = "/var/run/secrets/sts.googleapis.com/serviceaccount"
   }
 }
 
 variable "gcp_secret_i_name" {
-  type    = string
+  type = string
 }
 
+variable "aikom_api_url" {
+  type = string
+}
+
+variable "aikom_client_id" {
+  type = string
+}
+
+variable "aikom_client_secret" {
+  type = string
+}
+
+variable "aikom_token_endpoint" {
+  type = string
+}
