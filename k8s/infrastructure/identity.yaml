@@ -43,6 +43,7 @@ configuration:
     ElasticApm__ServiceVersion: $(AppDefaults__Version)
     SERVICE_BINDING_ROOT: /workspace/bindings
   extraEnvVarsSecret: "authserver-secrets"
+  extraEnvVarsCM: "authserver-configmap"
   secrets:
   - type: env
     name: mysql-api-auth

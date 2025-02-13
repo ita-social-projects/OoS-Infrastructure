@@ -246,3 +246,19 @@ variable "storage_provider" {
 variable "gcp_secret_i_name" {
   type = string
 }
+
+variable "aikom_api_url" {
+  type = string
+}
+
+variable "aikom_client_id" {
+  type = string
+}
+
+variable "aikom_client_secret" {
+  type = string
+}
+
+variable "aikom_token_endpoint" {
+  type = string
+}
