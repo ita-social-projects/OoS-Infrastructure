@@ -153,3 +153,7 @@ variable "storage_provider" {
     error_message = "Valid value is one of the following: AmazonS3, GoogleCloud."
   }
 }
+
+variable "secret_reader_sa_email" {
+  type = string
+}
