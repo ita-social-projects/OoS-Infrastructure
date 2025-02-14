@@ -46,7 +46,7 @@ apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
   name: webapi-secrets
-  namespace: csi
+  namespace: default
 spec:
   provider: gcp
   parameters:
