@@ -150,11 +150,13 @@ resource "kubernetes_secret" "authserver_secrets" {
   }
 
   data = {
-    Email__SendGridKey                       = var.sendgrid_key
-    AuthorizationServer__IntrospectionSecret = var.openiddict_introspection_key
-    Email__AddressFrom                       = var.sender_email
-    AikomApiClient__ClientId                 = var.aikom_client_id
-    AikomApiClient__ClientSecret             = var.aikom_client_secret
+    Email__SendGridKey                               = var.sendgrid_key
+    AuthorizationServer__IntrospectionSecret         = var.openiddict_introspection_key
+    Email__AddressFrom                               = var.sender_email
+    AikomApiClient__ClientId                         = var.aikom_client_id
+    AikomApiClient__ClientSecret                     = var.aikom_client_secret
+    AuthorizationServer__ExternalLogin__ClientId     = var.external_auth_client_id
+    AuthorizationServer__ExternalLogin__ClientSecret = var.external_auth_client_secret
   }
 }
 

@@ -26,7 +26,7 @@ steps:
         --set=ingress.hosts[1].host=$_STAGING_HOST \
         --set=ingress.tls[1].hosts[0]=$_STAGING_HOST \
         --set=migrations.image.fullTagOverride=${_REGION}-docker.pkg.dev/$PROJECT_ID/outofschool/oos-migrations:${_IMAGE_TAG##*:} \
-        --set=serviceAccount.annotations=$_KSA_ANNOTATIONS \
+        --set "${_KSA_ANNOTATIONS}" \
         --wait \
         $_SERVICE_NAME \
         ./k8s/webapp

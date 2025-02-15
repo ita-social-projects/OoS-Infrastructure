@@ -42,7 +42,7 @@ resource "google_cloudbuild_trigger" "app_deploy" {
     _SERVICE_NAME    = "webapi"
     _REGION          = var.region
     _VALUES_PATH     = "./k8s/infrastructure/webapi.yaml"
-    _KSA_ANNOTATIONS = "iam.gke.io/gcp-service-account: ${var.secret_reader_sa_email}"
+    _KSA_ANNOTATIONS = "serviceAccount.annotations.iam\\.gke\\.io/gcp-service-account=${var.secret_reader_sa_email}"
   }
 
   source_to_build {
