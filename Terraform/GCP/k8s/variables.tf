@@ -230,13 +230,25 @@ variable "aikom_api_url" {
 }
 
 variable "aikom_client_id" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "aikom_client_secret" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "aikom_token_endpoint" {
   type = string
+}
+
+variable "external_auth_client_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "external_auth_client_secret" {
+  type      = string
+  sensitive = true
 }

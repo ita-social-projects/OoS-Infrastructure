@@ -172,6 +172,8 @@ module "k8s" {
   aikom_client_id              = var.aikom_client_id
   aikom_client_secret          = var.aikom_client_secret
   aikom_token_endpoint         = var.aikom_token_endpoint
+  external_auth_client_id      = var.external_auth_client_id
+  external_auth_client_secret  = var.external_auth_client_secret
   depends_on = [
     module.cluster
   ]
