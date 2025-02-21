@@ -274,3 +274,8 @@ variable "external_auth_client_secret" {
   type      = string
   sensitive = true
 }
+
+variable "wif_prv_k3s_conditions" {
+  type      = string
+  sensitive = true
+}

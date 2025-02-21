@@ -54,3 +54,8 @@ variable "google_secret_name_k3s_jwks" {
 variable "gcp_secret_i_name" {
   type = string
 }
+
+variable "wif_prv_k3s_conditions" {
+  type      = string
+  sensitive = true
+}
