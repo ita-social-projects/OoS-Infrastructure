@@ -6,6 +6,10 @@ resource "helm_release" "secrets_store_csi_driver" {
   wait             = true
   wait_for_jobs    = true
   max_history      = 5
+  set {
+    name  = "syncSecret.enabled"
+    value = "true"
+  }
 }
 
 resource "helm_release" "secret_store_csi_prv_gcp" {

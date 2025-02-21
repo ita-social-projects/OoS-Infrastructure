@@ -53,17 +53,18 @@ module "storage" {
 }
 
 module "iam" {
-  source             = "./iam"
-  random_number      = random_integer.ri.result
-  access_group_email = var.access_group_email
-  project            = var.project
-  bucket             = module.storage.image_bucket
-  logs_bucket        = module.storage.logs_bucket
-  devops             = var.devops
-  enable_dns         = var.enable_dns
-  pubsub_id          = module.ops.pubsub.id
-  wif_issuer_uri     = format("https://%s:6443", local.hostnames["k8s"])
-  gcp_secret_i_name  = var.gcp_secret_i_name
+  source                 = "./iam"
+  random_number          = random_integer.ri.result
+  access_group_email     = var.access_group_email
+  project                = var.project
+  bucket                 = module.storage.image_bucket
+  logs_bucket            = module.storage.logs_bucket
+  devops                 = var.devops
+  enable_dns             = var.enable_dns
+  pubsub_id              = module.ops.pubsub.id
+  wif_issuer_uri         = format("https://%s:6443", local.hostnames["k8s"])
+  gcp_secret_i_name      = var.gcp_secret_i_name
+  wif_prv_k3s_conditions = var.wif_prv_k3s_conditions
 }
 
 module "passwords" {

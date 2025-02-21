@@ -24,8 +24,9 @@ resource "google_iam_workload_identity_pool_provider" "k3s_provider" {
     "google.subject"                 = "assertion.sub"
     "attribute.kubernetes_namespace" = "assertion[\"kubernetes.io\"][\"namespace\"]"
     "attribute.service_account_name" = "assertion[\"kubernetes.io\"][\"serviceaccount\"][\"name\"]"
+    "attribute.pod"                  = "assertion[\"kubernetes.io\"][\"pod\"][\"name\"]"
   }
-  attribute_condition = "attribute.kubernetes_namespace==\"default\""
+  attribute_condition = var.wif_prv_k3s_conditions
 }
 
 resource "google_service_account" "secret_reader" {
