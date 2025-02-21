@@ -127,8 +127,21 @@ customConfig:
       reroute_dropped: true # send to sink nginx_logs_dropped
       source: |-
         # Leave only one possible field that contains IP
-        if .network.source_ip == "" {
-          .network.source_ip = del(.network.x_forwarded_for)
+        # If behind a proxy - .network.x_forwarded_for can include the "X-Forwarded-For" client
+        # request header field with the Nginx "remote_addr" variable appended to it, separated by a comma.
+        if .network.source_ip == "" && .network.x_forwarded_for != "" {
+          ip_list = split!(.network.x_forwarded_for, ",")
+
+          .network.source_ip = strip_whitespace!(ip_list[0])
+
+          .network.proxy_list = []
+          for_each(ip_list) -> |_index, ip| {
+            if _index != 0 {
+              push(.network.proxy_list, strip_whitespace(ip))
+            }
+          }
+
+          del(.network.x_forwarded_for)
         }
 
         .@timestamp = del(.timestamp)

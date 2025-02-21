@@ -7,8 +7,8 @@ global: {}
 jobKind: Job
 
 backoffLimit: 3
-activeDeadlineSeconds: 120
-ttlSecondsAfterFinished: 0
+activeDeadlineSeconds: 500
+ttlSecondsAfterFinished: 86400
 restartPolicy: "Never"
 
 image:
@@ -23,7 +23,10 @@ image:
 command:
   - bash
   - '-c'
-  - mysql -u$rootUser -p$rootPassword -h mysql mysql < /tmp/initdb.sql
+  - |
+    until mysql -h mysql -u$rootUser -p$rootPassword mysql -e "quit" &>/dev/null; do echo "Trying to connect to database..."; sleep 10; done
+    sed -e "s|<METRICS_USER>|${METRICS_USER}|g" \
+        -e "s|<METRICS_PASSWORD>|${METRICS_PASSWORD}|g" /tmp/initdb.sql | mysql -u$rootUser -p$rootPassword -h mysql mysql
 
 configuration:
   extraEnvironment: {}
@@ -32,7 +35,14 @@ configuration:
 
   extraEnvVarsSecret: "mysql-cluster-secret"
 
-  secrets: []
+  secrets:
+  - type: env
+    name: mysql-user-agent
+    keys:
+    - key: user
+      envKey: METRICS_USER
+    - key: password
+      envKey: METRICS_PASSWORD
 
 serviceAccount:
   # Specifies whether a service account should be created

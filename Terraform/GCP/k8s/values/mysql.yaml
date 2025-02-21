@@ -51,10 +51,11 @@ backupProfiles:
         claimName: mysql-backup-pvc
 backupSchedules:
 - name: backup-schedule
-  schedule: "0 2 * * *"
+  schedule: "0 2 * * 0"
   deleteBackupData: true
   backupProfileName: dump-instance
   enabled: true
+  timeZone: Europe/Kiev
 serverConfig:
   mycnf: |
     [mysqld]

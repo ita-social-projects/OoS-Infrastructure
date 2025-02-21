@@ -4,6 +4,8 @@ metadata:
   name: mysql-initdb-config
 data:
   initdb.sql: |
-    CREATE USER '${user_name}'@'%' IDENTIFIED BY '${user_password}';
-    GRANT SELECT, REPLICATION CLIENT, SHOW DATABASES, SUPER, PROCESS, EXECUTE ON *.* TO '${user_name}'@'%';
-    GRANT CREATE, INSERT ON mysql.* TO '${user_name}'@'%';
+    CREATE USER IF NOT EXISTS '<METRICS_USER>'@'%';
+    ALTER USER IF EXISTS '<METRICS_USER>'@'%' IDENTIFIED BY '<METRICS_PASSWORD>';
+    GRANT SELECT, REPLICATION CLIENT, SHOW DATABASES, SUPER, PROCESS, EXECUTE ON *.* TO '<METRICS_USER>'@'%';
+    GRANT CREATE, INSERT ON mysql.* TO '<METRICS_USER>'@'%';
+    FLUSH PRIVILEGES;
