@@ -1,0 +1,103 @@
+# Default values for outofschool.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+commonLabels:
+  tier: backend
+  service: encryption
+
+image:
+  fullTagOverride: ""
+  pullPolicy: IfNotPresent
+
+deploy:
+  containerPort: 8080
+
+configuration:
+  extraEnvironment:
+    ASPNETCORE_ENVIRONMENT: Kubernetes
+    SERVICE_BINDING_ROOT: /workspace/bindings
+    ElasticApm__ServiceVersion: $(AppDefaults__Version)
+  extraEnvVarsSecret: "encryption-iit-private-pass"
+  secrets:
+  - type: env
+    name: eck-stack-eck-apm-server-apm-token
+    keys:
+    - key: secret-token
+      envKey: ElasticApm__SecretToken
+      upper: false
+
+ingress:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 768Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPU: 60
+  targetMemory: 80
+
+readinessProbe:
+  enabled: false
+  port: 8080
+  path: "/healthz/ready"
+  initialDelaySeconds: 30
+  timeoutSeconds: 2
+  periodSeconds: 20
+  failureThreshold: 3
+  successThreshold: 1
+
+serviceAccount:
+  create: true
+  imagePullSecrets:
+  - name: outofschool-gcp-pull-secrets
+
+storage:
+  extraVolumes:
+    - name: apm-certs
+      secret:
+        secretName: eck-stack-eck-apm-server-apm-http-certs-public
+    - name: binding
+      emptyDir: {}
+    - name: encryption-pk
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "webapi-secrets"
+
+  extraVolumeMounts:
+    - name: apm-certs
+      mountPath: "/workspace/apm/certs"
+      readOnly: true
+    - name: binding
+      mountPath: /workspace/bindings/ca-certificates
+    - name: encryption-pk
+      mountPath: /workspace/iit-pk
+
+initContainers:
+  - name: init-myservice
+    image: busybox:1.36
+    command:
+      - sh
+      - -c
+      - "echo ca-certificates > /workspace/bindings/ca-certificates/type; cp /workspace/apm/certs/ca.crt /workspace/bindings/ca-certificates/ca.crt"
+    volumeMounts:
+      - name: apm-certs
+        mountPath: "/workspace/apm/certs"
+        readOnly: true
+      - name: binding
+        mountPath: /workspace/bindings/ca-certificates
