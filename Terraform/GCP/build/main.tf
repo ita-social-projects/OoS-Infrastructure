@@ -61,9 +61,9 @@ resource "google_cloudbuild_trigger" "app_deploy" {
   service_account = var.build_sa_id
 }
 
-resource "google_cloudbuild_trigger" "encription_deploy" {
+resource "google_cloudbuild_trigger" "encryption_deploy" {
   location = var.region
-  name     = "backend-encription-deploy"
+  name     = "backend-encryption-deploy"
   pubsub_config {
     topic = google_pubsub_topic.gcr.id
   }
@@ -73,9 +73,9 @@ resource "google_cloudbuild_trigger" "encription_deploy" {
     _POOL            = google_cloudbuild_worker_pool.pool.id
     _ACTION          = "$(body.message.data.action)"
     _IMAGE_TAG       = "$(body.message.data.tag)"
-    _SERVICE_NAME    = "encription"
+    _SERVICE_NAME    = "encryption"
     _REGION          = var.region
-    _VALUES_PATH     = "./k8s/infrastructure/encription.yaml"
+    _VALUES_PATH     = "./k8s/infrastructure/encryption.yaml"
     _KSA_ANNOTATIONS = local.ksa_annotations
   }
 
