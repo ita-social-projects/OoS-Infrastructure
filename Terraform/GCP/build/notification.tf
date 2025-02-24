@@ -24,8 +24,8 @@ resource "google_cloudfunctions2_function" "function" {
   description = "Discord build notification"
 
   build_config {
-    runtime     = "python311"
-    entry_point = "subscribe"
+    runtime           = "python311"
+    entry_point       = "subscribe"
     docker_repository = "projects/${var.project}/locations/${var.region}/repositories/gcf-artifacts"
     source {
       storage_source {
@@ -43,7 +43,7 @@ resource "google_cloudfunctions2_function" "function" {
     all_traffic_on_latest_revision = true
     service_account_email          = var.gcf_sa_email
     environment_variables = {
-      WEBHOOK_URL = var.discord_notification_webhook
+      WEBHOOK_URL      = var.discord_notification_webhook
       LOG_EXECUTION_ID = "true"
     }
   }
