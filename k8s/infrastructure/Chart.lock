@@ -23,6 +23,12 @@ dependencies:
 - name: secrets-store-csi-driver
   repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   version: 1.4.8
+- name: mariadb-operator-crds
+  repository: https://helm.mariadb.com/mariadb-operator
+  version: 0.37.1
+- name: mariadb-operator
+  repository: https://helm.mariadb.com/mariadb-operator
+  version: 0.37.1
 - name: outofschool
   repository: file://../webapp
   version: 1.0.7
@@ -32,5 +38,5 @@ dependencies:
 - name: eck-stack
   repository: file://eck-stack
   version: 0.11.0
-digest: sha256:ddbeadc59d1b077f8bcb97715400daf8205c18039efe106e1bd69af8739cf795
-generated: "2025-02-23T18:37:17.949641+02:00"
+digest: sha256:298d2e404f21c0419754c2bed9ac6a12b57ec0b22754e67c28a1c4843a98269e
+generated: "2025-02-24T19:33:56.957624+02:00"

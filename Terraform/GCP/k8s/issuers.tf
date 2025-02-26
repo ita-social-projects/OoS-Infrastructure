@@ -104,3 +104,55 @@ spec:
         %{endif}
 EOF
 }
+
+resource "kubectl_manifest" "mariadb_ca_cert" {
+  yaml_body = <<-EOF
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: root-ca
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+spec:
+  duration: 52596h # 6 years
+  commonName: root-ca
+  usages:
+  - digital signature
+  - key encipherment
+  - cert sign
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+  isCA: true
+  privateKey:
+    encoding: PKCS1
+    algorithm: ECDSA
+    size: 256
+  secretTemplate:
+    labels:
+      k8s.mariadb.com/watch: ""
+  secretName: root-ca
+  revisionHistoryLimit: 10
+EOF
+
+  depends_on = [
+    helm_release.cert_manager
+  ]
+}
+
+resource "kubectl_manifest" "mariadb_root_ca" {
+  yaml_body = <<-EOF
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: root-ca
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+spec:
+  ca:
+    secretName: root-ca
+EOF
+
+  depends_on = [
+    helm_release.cert_manager,
+    kubectl_manifest.mariadb_ca_cert
+  ]
+}

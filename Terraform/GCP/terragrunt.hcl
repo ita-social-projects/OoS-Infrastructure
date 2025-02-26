@@ -1,7 +1,7 @@
 locals {
     # get_env("GOOGLE_APPLICATION_CREDENTIALS")
     google_env_var = get_env("GOOGLE_APPLICATION_CREDENTIALS", "")
-        
+
     # get file path, second value is fallback parameter
     # command gcloud auth application-default login will save application_default_credentials.json
     home_dir = get_env("HOME")
@@ -29,7 +29,7 @@ terraform {
         commands = get_terraform_commands_that_need_vars()
 
         arguments = [
-            "-var-file=./gcp.tfvars"
+            "-var-file=${find_in_parent_folders("gcp.tfvars", "./gcp.tfvars")}"
         ]
     }
 }

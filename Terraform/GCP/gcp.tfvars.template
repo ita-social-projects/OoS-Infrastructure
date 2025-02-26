@@ -57,3 +57,8 @@ aikom_client_secret="secret"
 aikom_token_endpoint="https://example.com"
 external_auth_client_id="secret"
 external_auth_client_secret="secret"
+mariadb_config = {
+  version = "11.4"
+  database = "test"
+  users = {}
+}

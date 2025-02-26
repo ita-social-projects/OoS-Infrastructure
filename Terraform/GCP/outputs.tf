@@ -13,6 +13,16 @@ output "sql_auth_pass" {
   sensitive = true
 }
 
+output "sql_migrations_pass" {
+  value     = module.passwords.sql_migrations_pass
+  sensitive = true
+}
+
+output "sql_dev_qc_password" {
+  value     = module.passwords.sql_dev_qc_password
+  sensitive = true
+}
+
 output "es_admin_pass" {
   value     = module.passwords.es_admin_pass
   sensitive = true
