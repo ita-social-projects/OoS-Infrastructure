@@ -10,6 +10,14 @@ output "sql_auth_pass" {
   value = random_password.sql_auth_pass.result
 }
 
+output "sql_migrations_pass" {
+  value = random_password.sql_migrations_pass.result
+}
+
+output "sql_dev_qc_password" {
+  value = random_password.sql_dev_qc_password.result
+}
+
 output "es_admin_pass" {
   value = random_password.es_admin_pass.result
 }

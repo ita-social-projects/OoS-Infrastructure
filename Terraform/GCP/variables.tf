@@ -279,3 +279,16 @@ variable "wif_prv_k3s_conditions" {
   type      = string
   sensitive = true
 }
+
+variable "mariadb_config" {
+  type = object({
+    database = string
+    version  = string
+    users = object({
+      webapi     = string,
+      auth       = string,
+      migrations = string,
+      devqc      = string
+    })
+  })
+}

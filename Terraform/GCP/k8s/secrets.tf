@@ -265,3 +265,21 @@ resource "kubernetes_secret" "webapi_gcp_credentials" {
     "key.json" = base64decode(var.webapi_sa_key)
   }
 }
+
+resource "kubernetes_secret" "mariadb_credentials" {
+  metadata {
+    name      = "mariadb-credentials"
+    namespace = data.kubernetes_namespace.oos.metadata[0].name
+    labels = {
+      "k8s.mariadb.com/watch" = ""
+    }
+  }
+
+  data = {
+    rootPassword       = var.sql_root_pass
+    apiPassword        = var.sql_api_pass
+    authPassword       = var.sql_auth_pass
+    migrationsPassword = var.sql_migrations_pass
+    devqcPassword      = var.sql_dev_qc_password
+  }
+}

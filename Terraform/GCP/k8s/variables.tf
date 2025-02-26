@@ -25,6 +25,14 @@ variable "sql_root_pass" {
   type = string
 }
 
+variable "sql_migrations_pass" {
+  type = string
+}
+
+variable "sql_dev_qc_password" {
+  type = string
+}
+
 variable "es_admin_pass" {
   type = string
 }
@@ -251,4 +259,17 @@ variable "external_auth_client_id" {
 variable "external_auth_client_secret" {
   type      = string
   sensitive = true
+}
+
+variable "mariadb_config" {
+  type = object({
+    database = string
+    version  = string
+    users = object({
+      webapi     = string,
+      auth       = string,
+      migrations = string,
+      devqc      = string
+    })
+  })
 }
