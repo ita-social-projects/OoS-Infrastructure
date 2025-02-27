@@ -10,7 +10,7 @@ dependencies:
   version: 2.2.3
 - name: phpmyadmin
   repository: https://charts.bitnami.com/bitnami
-  version: 16.0.1
+  version: 18.1.4
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 19.1.2
@@ -38,5 +38,5 @@ dependencies:
 - name: eck-stack
   repository: file://eck-stack
   version: 0.11.0
-digest: sha256:298d2e404f21c0419754c2bed9ac6a12b57ec0b22754e67c28a1c4843a98269e
-generated: "2025-02-24T19:33:56.957624+02:00"
+digest: sha256:7a2ed8aaf61c684a88b95309e87cc78c367b17028e2a4e213efbfc379bc249d4
+generated: "2025-02-27T13:15:14.271079+02:00"

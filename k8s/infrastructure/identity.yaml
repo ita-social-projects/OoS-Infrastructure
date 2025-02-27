@@ -39,17 +39,34 @@ configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
-    ConnectionStringsOverride__DefaultConnection__UserId: oos
     ElasticApm__ServiceVersion: $(AppDefaults__Version)
     SERVICE_BINDING_ROOT: /workspace/bindings
   extraEnvVarsSecret: "authserver-secrets"
   extraEnvVarsCM: "authserver-configmap"
   secrets:
   - type: env
-    name: mysql-api-auth
+    name: auth-mariadb-connection
     keys:
-    - key: IDENTITY_PASSWORD
+    - key: username
+      envKey: ConnectionStringsOverride__DefaultConnection__UserId
+      upper: false
+  - type: env
+    name: auth-mariadb-connection
+    keys:
+    - key: password
       envKey: ConnectionStringsOverride__DefaultConnection__Password
+      upper: false
+  - type: env
+    name: auth-mariadb-connection
+    keys:
+    - key: host
+      envKey: ConnectionStringsOverride__DefaultConnection__Server
+      upper: false
+  - type: env
+    name: auth-mariadb-connection
+    keys:
+    - key: database
+      envKey: ConnectionStringsOverride__DefaultConnection__Database
       upper: false
   - type: env
     name: eck-stack-eck-apm-server-apm-token

@@ -11,6 +11,7 @@ ingress:
   tls: true
   ingressClassName: nginx
 db:
+  enableSsl: false
   allowArbitraryServer: false
   host: "mysql-instances"
 resources:
