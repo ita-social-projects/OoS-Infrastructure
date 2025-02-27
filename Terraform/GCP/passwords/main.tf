@@ -16,6 +16,18 @@ resource "random_password" "sql_auth_pass" {
   override_special = "_%@"
 }
 
+resource "random_password" "sql_migrations_pass" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
+
+resource "random_password" "sql_dev_qc_password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
+
 resource "random_password" "es_admin_pass" {
   length           = 16
   special          = true

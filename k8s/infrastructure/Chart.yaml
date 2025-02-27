@@ -33,6 +33,12 @@ dependencies:
   - name: secrets-store-csi-driver
     version: 1.4.8
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+  - name: mariadb-operator-crds
+    version: 0.37.1
+    repository: https://helm.mariadb.com/mariadb-operator
+  - name: mariadb-operator
+    version: 0.37.1
+    repository: https://helm.mariadb.com/mariadb-operator
   - name: outofschool
     version: 1.0.7
     repository: "file://../webapp"

@@ -1,0 +1,11 @@
+currentNamespaceOnly: false
+
+metrics:
+  enabled: false
+
+webhook:
+  cert:
+    certManager:
+      enabled: true
+  serviceMonitor:
+    enabled: false

@@ -128,6 +128,8 @@ module "k8s" {
   sql_root_pass                = module.passwords.sql_root_pass
   sql_api_pass                 = module.passwords.sql_api_pass
   sql_auth_pass                = module.passwords.sql_auth_pass
+  sql_migrations_pass          = module.passwords.sql_migrations_pass
+  sql_dev_qc_password          = module.passwords.sql_dev_qc_password
   es_admin_pass                = module.passwords.es_admin_pass
   es_api_pass                  = module.passwords.es_api_pass
   redis_pass                   = module.passwords.redis_pass
@@ -175,6 +177,7 @@ module "k8s" {
   aikom_token_endpoint         = var.aikom_token_endpoint
   external_auth_client_id      = var.external_auth_client_id
   external_auth_client_secret  = var.external_auth_client_secret
+  mariadb_config               = var.mariadb_config
   depends_on = [
     module.cluster
   ]
