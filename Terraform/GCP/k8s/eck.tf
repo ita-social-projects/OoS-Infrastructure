@@ -60,7 +60,7 @@ resource "helm_release" "eck_stack" {
     kubectl_manifest.elastic_roles,
     kubernetes_secret.elastic_credentials,
     kubernetes_secret.elastic_webapi_credentials,
-    resource.helm_release.initdb_job,
+    kubectl_manifest.mariadb_monitoring_user,
   ]
 }
 
@@ -74,7 +74,7 @@ resource "helm_release" "vector" {
   timeout          = 600
   max_history      = 3
   values = [
-    templatefile("${path.module}/values/vector.yaml",{
+    templatefile("${path.module}/values/vector.yaml", {
       GCP_PROJECT_ID = var.project,
     })
   ]

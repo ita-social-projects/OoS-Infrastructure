@@ -1,15 +1,3 @@
-resource "kubernetes_secret" "sql_api_credentials" {
-  metadata {
-    name      = "mysql-api-auth"
-    namespace = data.kubernetes_namespace.oos.metadata[0].name
-  }
-
-  data = {
-    API_PASSWORD      = var.sql_api_pass
-    IDENTITY_PASSWORD = var.sql_auth_pass
-  }
-}
-
 resource "kubectl_manifest" "elastic_roles" {
   yaml_body = <<-EOF
 kind: Secret

@@ -26,6 +26,6 @@ resource "helm_release" "phpmyadmin" {
   }
   depends_on = [
     helm_release.ingress,
-    helm_release.mysql
+    kubectl_manifest.mariadb_instance
   ]
 }
