@@ -19,7 +19,7 @@ dependencies:
     version: 2.2.3
     repository: https://mysql.github.io/mysql-operator
   - name: phpmyadmin
-    version: 16.0.1
+    version: 18.1.4
     repository: https://charts.bitnami.com/bitnami
   - name: redis
     version: 19.1.2

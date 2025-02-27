@@ -1,6 +1,6 @@
 resource "helm_release" "phpmyadmin" {
   name          = "phpmyadmin"
-  chart         = "../../k8s/infrastructure/charts/phpmyadmin-16.0.1.tgz"
+  chart         = "../../k8s/infrastructure/charts/phpmyadmin-18.1.4.tgz"
   namespace     = data.kubernetes_namespace.oos.metadata[0].name
   wait          = true
   wait_for_jobs = true

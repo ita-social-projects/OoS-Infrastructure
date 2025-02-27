@@ -22,7 +22,6 @@ configuration:
   extraEnvironment:
     ASPNETCORE_ENVIRONMENT: Kubernetes
     ASPNETCORE_URLS: http://0.0.0.0:$(PORT);http://0.0.0.0:9000
-    ConnectionStringsOverride__DefaultConnection__UserId: api
     SERVICE_BINDING_ROOT: /workspace/bindings
     Elasticsearch__Urls__0: https://elasticsearch-es-http:9200
     ElasticApm__ServiceVersion: $(AppDefaults__Version)
@@ -30,10 +29,28 @@ configuration:
   extraEnvVarsCM: "webapi-configmap"
   secrets:
   - type: env
-    name: mysql-api-auth
+    name: webapi-mariadb-connection
     keys:
-    - key: API_PASSWORD
+    - key: username
+      envKey: ConnectionStringsOverride__DefaultConnection__UserId
+      upper: false
+  - type: env
+    name: webapi-mariadb-connection
+    keys:
+    - key: password
       envKey: ConnectionStringsOverride__DefaultConnection__Password
+      upper: false
+  - type: env
+    name: webapi-mariadb-connection
+    keys:
+    - key: host
+      envKey: ConnectionStringsOverride__DefaultConnection__Server
+      upper: false
+  - type: env
+    name: webapi-mariadb-connection
+    keys:
+    - key: database
+      envKey: ConnectionStringsOverride__DefaultConnection__Database
       upper: false
   - type: env
     name: redis-auth
@@ -61,15 +78,30 @@ migrations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   configuration:
-    extraEnvironment:
-      DB_HOST: mysql
-      DB_USER: oos
-    secrets:
     - type: env
-      name: mysql-api-auth
+      name: migrations-mariadb-connection
       keys:
-      - key: IDENTITY_PASSWORD
+      - key: username
+        envKey: DB_USER
+        upper: false
+    - type: env
+      name: migrations-mariadb-connection
+      keys:
+      - key: password
         envKey: DB_PASS
+        upper: false
+    - type: env
+      name: migrations-mariadb-connection
+      keys:
+      - key: host
+        envKey: DB_HOST
+        upper: false
+    - type: env
+      name: migrations-mariadb-connection
+      keys:
+      - key: database
+        envKey: DB_NAME
+        upper: false
   image:
     fullTagOverride: ""
     pullPolicy: IfNotPresent

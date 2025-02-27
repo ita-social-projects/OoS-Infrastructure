@@ -297,3 +297,44 @@ EOF
     kubectl_manifest.mariadb_database
   ]
 }
+
+resource "kubectl_manifest" "mariadb_migrations_connection" {
+  yaml_body = <<-EOF
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Connection
+metadata:
+  name: migrations-connection
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+spec:
+  mariaDbRef:
+    name: mariadb
+  username: ${var.mariadb_config.users.migrations}
+  passwordSecretKeyRef:
+    name: mariadb-credentials
+    key: migrationsPassword
+  database: ${var.mariadb_config.database}
+  params:
+    parseTime: "true"
+  secretName: migrations-mariadb-connection
+  secretTemplate:
+    metadata:
+      labels:
+        k8s.mariadb.com/connection: migrations
+      annotations:
+        k8s.mariadb.com/connection: migrations
+    key: dsn
+    usernameKey: username
+    passwordKey: password
+    hostKey: host
+    portKey: port
+    databaseKey: database
+  healthCheck:
+    interval: 30s
+    retryInterval: 3s
+  serviceName: mariadb
+EOF
+
+  depends_on = [
+    kubectl_manifest.mariadb_database
+  ]
+}
