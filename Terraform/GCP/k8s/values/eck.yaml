@@ -58,7 +58,7 @@ eck-elasticsearch:
                   - key: statefulset.kubernetes.io/pod-name
                     operator: In
                     values:
-                      - mysql-0
+                      - mariadb-0
                   - key: common.k8s.elastic.co/type
                     operator: In
                     values:
@@ -111,7 +111,7 @@ eck-kibana:
                       operator: In
                       values:
                         - elasticsearch-es-elastic-0
-                        - mysql-0
+                        - mariadb-0
                   topologyKey: kubernetes.io/hostname
 eck-beats:
   enabled: true
@@ -298,7 +298,7 @@ eck-beats:
                   name: eck-stack-eck-beats-beat-kb-user
                   key: default-eck-stack-eck-beats-beat-kb-user
             - name: "MYSQL_HOST"
-              value: "tcp(mysql.default.svc:3306)/"
+              value: "tcp(mariadb.default.svc:3306)/"
             - name: "REDIS_HOST"
               value: "redis-master.default.svc:6379"
             - name: "REDIS_PASSWORD"
@@ -472,7 +472,7 @@ eck-apm-server:
                 - key: "statefulset.kubernetes.io/pod-name"
                   operator: In
                   values:
-                    - mysql-0
+                    - mariadb-0
               topologyKey: "kubernetes.io/hostname"
       volumes:
       - name: elasticsearch-ca

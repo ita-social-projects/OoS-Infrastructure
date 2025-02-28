@@ -13,7 +13,7 @@ ingress:
 db:
   enableSsl: false
   allowArbitraryServer: false
-  host: "mysql-instances"
+  host: "mariadb"
 resources:
   requests:
     cpu: 50m

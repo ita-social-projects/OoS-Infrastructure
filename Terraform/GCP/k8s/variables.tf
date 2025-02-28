@@ -81,11 +81,6 @@ variable "enable_ingress_http" {
   type = bool
 }
 
-variable "mysql_user" {
-  type    = string
-  default = "oos"
-}
-
 variable "pull_sa_key" {
 }
 

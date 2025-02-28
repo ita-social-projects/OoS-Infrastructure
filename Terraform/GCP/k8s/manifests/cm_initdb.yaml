@@ -1,3 +1,5 @@
+# Replaced by MariaDb CRDs
+# Do not delete in case we need it.
 apiVersion: v1
 kind: ConfigMap
 metadata:

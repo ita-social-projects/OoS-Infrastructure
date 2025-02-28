@@ -1,68 +1,100 @@
-resource "helm_release" "mysql_operator" {
-  name             = "mysql-operator"
-  chart            = "../../k8s/infrastructure/charts/mysql-operator-2.2.3.tgz"
-  namespace        = "mysql-operator"
-  create_namespace = true
-  wait             = true
-  wait_for_jobs    = true
-  max_history      = 3
-}
+# Replaced by MariaDb CRDs
+# Do not delete in case we need it.
+# resource "kubectl_manifest" "cm" {
+#   yaml_body = file("${path.module}/manifests/cm_initdb.yaml")
+# }
 
-resource "kubernetes_persistent_volume_claim" "backup_pvc" {
-  metadata {
-    name      = "mysql-backup-pvc"
-    namespace = data.kubernetes_namespace.oos.metadata[0].name
-  }
-  spec {
-    access_modes = ["ReadWriteOnce"]
-    resources {
-      requests = {
-        storage = "10Gi"
-      }
-    }
-    storage_class_name = "standard"
-  }
-}
+# resource "helm_release" "initdb_job" {
+#   name          = "mysql-initdb-job"
+#   chart         = "../../k8s/job"
+#   namespace     = data.kubernetes_namespace.oos.metadata[0].name
+#   wait          = true
+#   wait_for_jobs = true
+#   timeout       = 60
+#   max_history   = 3
+#   values = [
+#     "${file("${path.module}/values/initdb-job.yaml")}"
+#   ]
+#   depends_on = [
+#     resource.kubectl_manifest.cm,
+#   ]
+# }
+resource "kubectl_manifest" "mariadb_monitoring_user" {
+  yaml_body = <<-EOF
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: User
+metadata:
+  name: monitoring-user
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+spec:
+  name: ${var.mysql_agent_name}
+  mariaDbRef:
+    name: mariadb
+  passwordSecretKeyRef:
+    name: mysql-user-agent
+    key: password
+  maxUserConnections: 100
+  host: "%"
+  cleanupPolicy: Delete
+EOF
 
-resource "helm_release" "mysql" {
-  name          = "mysql"
-  chart         = "../../k8s/infrastructure/charts/mysql-innodbcluster-2.2.3.tgz"
-  namespace     = data.kubernetes_namespace.oos.metadata[0].name
-  wait          = true
-  wait_for_jobs = true
-  max_history   = 3
-  values = [
-    "${file("${path.module}/values/mysql.yaml")}"
-  ]
-  set {
-    name  = "credentials.root.password"
-    value = var.sql_root_pass
-  }
   depends_on = [
-    helm_release.mysql_operator,
-    helm_release.ingress,
-    kubernetes_persistent_volume_claim.backup_pvc
+    kubectl_manifest.mariadb_database
   ]
 }
 
-resource "kubectl_manifest" "cm" {
-  yaml_body = file("${path.module}/manifests/cm_initdb.yaml")
-}
+resource "kubectl_manifest" "mariadb_monitoring_grant_core" {
+  yaml_body = <<-EOF
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: monitoring-mysql-grant
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+spec:
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "CREATE"
+    - "INSERT"
+  database: mysql
+  table: "*"
+  username: ${var.mysql_agent_name}
+  grantOption: false
+  host: "%"
+  cleanupPolicy: Delete
+EOF
 
-resource "helm_release" "initdb_job" {
-  name          = "mysql-initdb-job"
-  chart         = "../../k8s/job"
-  namespace     = data.kubernetes_namespace.oos.metadata[0].name
-  wait          = true
-  wait_for_jobs = true
-  timeout       = 60
-  max_history   = 3
-  values = [
-    "${file("${path.module}/values/initdb-job.yaml")}"
-  ]
   depends_on = [
-    helm_release.mysql_operator,
-    resource.helm_release.mysql,
-    resource.kubectl_manifest.cm,
+    kubectl_manifest.mariadb_database
+  ]
+}
+
+resource "kubectl_manifest" "mariadb_monitoring_grant_extended" {
+  yaml_body = <<-EOF
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: monitoring-all-grant
+  namespace: ${data.kubernetes_namespace.oos.metadata[0].name}
+spec:
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "SELECT"
+    - "REPLICATION CLIENT"
+    - "SHOW DATABASES"
+    - "SUPER"
+    - "PROCESS"
+    - "EXECUTE"
+  database: "*"
+  table: "*"
+  username: ${var.mysql_agent_name}
+  grantOption: false
+  host: "%"
+  cleanupPolicy: Delete
+EOF
+
+  depends_on = [
+    kubectl_manifest.mariadb_database
   ]
 }

@@ -1,6 +1,5 @@
-# Default values for job.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Replaced by MariaDb CRDs
+# Do not delete in case we need it.
 
 global: {}
 
