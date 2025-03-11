@@ -176,6 +176,6 @@ affinity:
             operator: In
             values:
               - elasticsearch-es-elastic-0
-              - mysql-0
+              - mariadb-0
         topologyKey: kubernetes.io/hostname
 

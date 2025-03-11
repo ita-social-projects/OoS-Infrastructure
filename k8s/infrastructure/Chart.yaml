@@ -34,7 +34,7 @@ dependencies:
     version: 0.37.1
     repository: https://helm.mariadb.com/mariadb-operator
   - name: outofschool
-    version: 1.0.7
+    version: 1.0.8
     repository: "file://../webapp"
   - name: eck-operator
     version: 2.13.0
