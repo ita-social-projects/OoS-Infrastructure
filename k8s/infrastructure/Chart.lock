@@ -25,12 +25,12 @@ dependencies:
   version: 0.37.1
 - name: outofschool
   repository: file://../webapp
-  version: 1.0.7
+  version: 1.0.8
 - name: eck-operator
   repository: https://helm.elastic.co
   version: 2.13.0
 - name: eck-stack
   repository: file://eck-stack
   version: 0.11.0
-digest: sha256:1b0448b4d304c7b5afeb6af6169aa05d17169912b2569833e3bdfa9f45eac194
-generated: "2025-02-27T14:07:02.282281+02:00"
+digest: sha256:7f152be8fca23c0480100c095d4f905a4433202f79e17d8486a140fb3cd239ea
+generated: "2025-03-11T08:59:27.098895+02:00"
