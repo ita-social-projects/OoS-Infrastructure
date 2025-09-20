@@ -14,6 +14,7 @@ failedJobsHistoryLimit: 0
 suspend: false
 ## End of CronJob specific values ##
 
+generateName: false
 command: []
 args: []
 
