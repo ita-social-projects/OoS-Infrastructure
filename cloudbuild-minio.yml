@@ -1,0 +1,52 @@
+# TODO: need to have a cleaner way to build MinIO image.
+# Current approach adds another binary layer on top of previous open source image.
+# It doubles the image size and slows down the deployment.
+steps:
+  - name: gcr.io/cloud-builders/git
+    entrypoint: bash
+    args:
+    - -c
+    - |
+      set -euo pipefail
+      if [ -z "${_RELEASE}" ]; then echo "_RELEASE substitution is required (e.g. RELEASE.2025-10-15T17-29-55Z)" >&2; exit 1; fi
+      git clone https://github.com/minio/minio.git
+      cd minio
+      git checkout "${_RELEASE}"
+
+  - name: golang:1.24
+    dir: minio
+    entrypoint: bash
+    args:
+    - -c
+    - |
+      set -euo pipefail
+      echo "Compiling MinIO at ${_RELEASE} via make"
+      env GOOS=linux make build
+
+  - name: gcr.io/cloud-builders/docker
+    dir: minio
+    entrypoint: bash
+    args:
+    - -c
+    - |
+      set -euo pipefail
+      AR="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_NAME}"
+      echo "Building Docker image -> $$AR:${_RELEASE}"
+      docker build --pull -f "$_DOCKERFILE" \
+        -t "$$AR:${_RELEASE}" \
+        .
+
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_NAME}:${_RELEASE}'
+
+substitutions:
+  _REGION: ''
+  _REPOSITORY: ''
+  _IMAGE_NAME: 'minio'
+  _RELEASE: ''
+  _DOCKERFILE: 'Dockerfile'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  automapSubstitutions: true
+  dynamicSubstitutions: true
